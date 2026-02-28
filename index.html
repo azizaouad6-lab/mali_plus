@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>مالي+ | تسيير مالي ذكي</title>
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/static/manifest.json">
 <meta name="theme-color" content="#00b894">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="مالي+">
-<link rel="apple-touch-icon" href="/static/icon-192.png">
+<link rel="apple-touch-icon" href="./icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
@@ -185,11 +185,104 @@ main{padding:16px;max-width:1200px;margin:0 auto}
 @media print{header,.nav-tabs,.action-btn,.btn-sm{display:none!important}body{background:#fff;color:#000}.card,.panel{border:1px solid #ccc;background:#fff}}
 .loading{color:var(--text2);text-align:center;padding:24px;font-size:13px}
 .flex-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ── PIN LOCK ── */
+.pin-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
+.pin-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:36px 28px;width:100%;max-width:340px;text-align:center;box-shadow:var(--shadow);}
+.pin-logo{font-size:28px;font-weight:900;color:var(--green);margin-bottom:4px;}
+.pin-logo span{color:var(--gold);}
+.pin-sub{font-size:12px;color:var(--text2);margin-bottom:24px;}
+.pin-dots{display:flex;gap:14px;justify-content:center;margin-bottom:24px;}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);transition:.2s;}
+.pin-dot.filled{background:var(--green);border-color:var(--green);}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.pin-key{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:18px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;color:var(--text);}
+.pin-key:hover{background:var(--bg4);border-color:var(--green);}
+.pin-key:active{transform:scale(.95);}
+.pin-key.del{color:var(--red);}
+.pin-err{color:var(--red);font-size:12px;min-height:18px;margin-top:4px;}
+.pin-setup-link{color:var(--text2);font-size:11px;margin-top:12px;cursor:pointer;text-decoration:underline;}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:18px;}
+.stat-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
+.stat-title{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;}
+.chart-wrap-sm{height:180px;position:relative;}
+
+/* ── BUDGET ALERT ── */
+.budget-over{background:rgba(225,112,85,.1);border:1px solid var(--red);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:10px;display:none;}
+
+/* ── EMAIL MODAL ── */
+.email-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;}
+.email-modal.open{display:flex;}
+.email-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:400px;}
+.email-title{font-size:16px;font-weight:900;margin-bottom:16px;}
 </style>
 </head>
 <body>
 
 <!-- ══════════ مالي+ Standalone ══════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<!-- PIN LOCK OVERLAY -->
+<div id="pinOverlay" class="pin-overlay" style="display:none">
+  <div class="pin-box">
+    <div class="pin-logo">🇲🇦 مالي<span>+</span></div>
+    <div class="pin-sub" id="pinSubtitle">أدخل رمز PIN</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="dot0"></div>
+      <div class="pin-dot" id="dot1"></div>
+      <div class="pin-dot" id="dot2"></div>
+      <div class="pin-dot" id="dot3"></div>
+    </div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinPress('1')">1</button>
+      <button class="pin-key" onclick="pinPress('2')">2</button>
+      <button class="pin-key" onclick="pinPress('3')">3</button>
+      <button class="pin-key" onclick="pinPress('4')">4</button>
+      <button class="pin-key" onclick="pinPress('5')">5</button>
+      <button class="pin-key" onclick="pinPress('6')">6</button>
+      <button class="pin-key" onclick="pinPress('7')">7</button>
+      <button class="pin-key" onclick="pinPress('8')">8</button>
+      <button class="pin-key" onclick="pinPress('9')">9</button>
+      <button class="pin-key" onclick="pinPress('')">⌫ مسح</button>
+      <button class="pin-key" onclick="pinPress('0')">0</button>
+      <button class="pin-key del" onclick="pinClear()">✕</button>
+    </div>
+    <div class="pin-err" id="pinErr"></div>
+    <div class="pin-setup-link" id="pinSetupLink" onclick="showPinSetup()">تغيير أو إنشاء PIN</div>
+  </div>
+</div>
+
+<!-- EMAIL MODAL -->
+<div class="email-modal" id="emailModal">
+  <div class="email-box">
+    <div class="email-title">📧 إعداد الإيميل الشهري</div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label class="lbl">Service ID (من EmailJS)</label>
+      <input class="inp" id="ej-service" placeholder="service_xxxxxxx"/>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label class="lbl">Template ID</label>
+      <input class="inp" id="ej-template" placeholder="template_xxxxxxx"/>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label class="lbl">Public Key</label>
+      <input class="inp" id="ej-pubkey" placeholder="xxxxxxxxxxxxxxx"/>
+    </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label class="lbl">إيميلك</label>
+      <input class="inp" id="ej-email" type="email" placeholder="you@gmail.com"/>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="action-btn green" onclick="saveEmailConfig()" style="flex:1;justify-content:center">💾 حفظ</button>
+      <button class="action-btn" onclick="testEmail()" style="flex:1;justify-content:center;background:var(--blue);color:#fff">🧪 اختبار</button>
+      <button class="action-btn" onclick="closeEmailModal()" style="background:var(--bg3);color:var(--text2)">إلغاء</button>
+    </div>
+    <p style="font-size:11px;color:var(--text2);margin-top:10px">💡 سجل مجاناً على <a href="https://emailjs.com" target="_blank" style="color:var(--green)">emailjs.com</a> وأنشئ template</p>
+  </div>
+</div>
+
 <header>
   <div class="logo">🇲🇦 مالي<span>+</span></div>
   <div class="header-right">
@@ -220,6 +313,7 @@ main{padding:16px;max-width:1200px;margin:0 auto}
   <div class="nav-tab" onclick="showTab('expenses')">💸 المصاريف</div>
   <div class="nav-tab" onclick="showTab('goals')">🎯 الأهداف</div>
   <div class="nav-tab" onclick="showTab('annual')">📅 سنوي</div>
+  <div class="nav-tab" onclick="showTab('stats')">📈 إحصائيات</div>
   <div class="nav-tab" onclick="showTab('settings')">⚙️ الإعدادات</div>
 </div>
 
@@ -434,8 +528,110 @@ main{padding:16px;max-width:1200px;margin:0 auto}
 </div>
 
 <!-- ══ SETTINGS ══ -->
+<!-- ══ STATS ══ -->
+<div id="tab-stats" class="section">
+  <div class="sec-title">📈 إحصائيات متقدمة</div>
+
+  <!-- كاردات سريعة -->
+  <div class="cards-grid" id="stats-cards"></div>
+
+  <div class="stats-grid">
+    <!-- تطور المصاريف شهرياً -->
+    <div class="stat-panel">
+      <div class="stat-title">📉 تطور المصاريف (آخر 6 أشهر)</div>
+      <div class="chart-wrap-sm"><canvas id="chartTrend"></canvas></div>
+    </div>
+    <!-- نسبة الادخار -->
+    <div class="stat-panel">
+      <div class="stat-title">💰 نسبة الادخار الشهرية</div>
+      <div class="chart-wrap-sm"><canvas id="chartSaving"></canvas></div>
+    </div>
+    <!-- أكثر فئة مصاريف -->
+    <div class="stat-panel">
+      <div class="stat-title">🏆 أكثر الفئات إنفاقاً (هذه السنة)</div>
+      <div class="chart-wrap-sm"><canvas id="chartTopCats"></canvas></div>
+    </div>
+    <!-- مقارنة الدخل vs المصاريف -->
+    <div class="stat-panel">
+      <div class="stat-title">⚖️ الدخل مقابل المصاريف</div>
+      <div class="chart-wrap-sm"><canvas id="chartCompare"></canvas></div>
+    </div>
+  </div>
+
+  <!-- تحليل نصي -->
+  <div class="panel">
+    <div class="panel-header">🧠 تحليل مالي</div>
+    <div class="panel-body" id="stats-analysis" style="font-size:13px;line-height:2;color:var(--text2)">
+      اذهب للإحصائيات باش يتولّد التحليل...
+    </div>
+  </div>
+</div>
+
 <div id="tab-settings" class="section">
   <div class="sec-title">⚙️ الإعدادات</div>
+
+  <!-- بانيل الحفظ والاستعادة -->
+  <div class="panel" style="margin-bottom:14px;border:2px solid var(--green)">
+    <div class="panel-header" style="background:rgba(0,184,148,0.1)">💾 حفظ واستعادة البيانات</div>
+    <div class="panel-body">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.8">
+        ⚠️ البيانات مخزنة في التلفون فقط. احفظها بانتظام باش ماتضيعش إذا مسحتي التطبيق أو بدلتي الجهاز.
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button id="btn-export" class="action-btn green" onclick="expExcel()" style="flex:1;justify-content:center;min-width:140px">
+          💾 حفظ البيانات
+        </button>
+        <button class="action-btn" onclick="importData()" style="flex:1;justify-content:center;min-width:140px;background:var(--blue);color:#fff">
+          📂 استعادة البيانات
+        </button>
+      </div>
+      <p style="font-size:11px;color:var(--text2);margin-top:12px">
+        💡 الحفظ: كيحمّل ملف JSON في جهازك &nbsp;|&nbsp; الاستعادة: كيرجع بياناتك من ملف محفوظ
+      </p>
+    </div>
+  </div>
+
+  <!-- بانيل PIN -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">🔐 حماية PIN</div>
+    <div class="panel-body">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.8">
+        أضف رمز PIN من 4 أرقام لحماية التطبيق عند الفتح.
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="action-btn green" onclick="showPinSetup()" style="flex:1;justify-content:center;min-width:140px">
+          🔐 إنشاء / تغيير PIN
+        </button>
+        <button class="action-btn" onclick="disablePin()" style="flex:1;justify-content:center;min-width:140px;background:var(--red);color:#fff">
+          🔓 إلغاء الحماية
+        </button>
+      </div>
+      <p style="font-size:11px;color:var(--text2);margin-top:10px" id="pin-status-lbl"></p>
+    </div>
+  </div>
+
+  <!-- بانيل الإيميل -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">📧 الملخص الشهري بإيميل</div>
+    <div class="panel-body">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.8">
+        استلم ملخصاً تلقائياً كل أول شهر يتضمن دخلك، مصاريفك وادخارك.
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="action-btn green" onclick="openEmailModal()" style="flex:1;justify-content:center;min-width:140px">
+          📧 إعداد الإيميل
+        </button>
+        <button class="action-btn" onclick="sendMonthlyEmail()" style="flex:1;justify-content:center;min-width:140px;background:var(--blue);color:#fff">
+          📤 إرسال الآن
+        </button>
+      </div>
+      <p style="font-size:11px;color:var(--text2);margin-top:10px" id="email-status-lbl"></p>
+    </div>
+  </div>
+      </p>
+    </div>
+  </div>
+
   <div class="panel" style="margin-bottom:14px">
     <div class="panel-header">🔔 حدود التنبيه</div>
     <div class="panel-body">
@@ -614,6 +810,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('selMonth').value=curMonth;
   document.getElementById('selYear').value=curYear;
   document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];
+  initPin();
+  updateEmailStatusLabel();
+  checkAutoEmail();
   loadAll();
   buildBudgetLimits();
 });
@@ -717,14 +916,23 @@ function renderExpenses(){
 
 async function addExpense(){
   const amt=parseFloat(document.getElementById('exp-amt').value);
-  if(!amt){alert('خاصك تدخل المبلغ!');return;}
+  if(!amt||isNaN(amt)){alert('⚠️ خاصك تدخل المبلغ!');return;}
+  // استخدام الشهر والسنة المختارين دائماً
+  const finalDate=`${curYear}-${String(curMonth).padStart(2,'0')}-01`;
   await api('/api/expenses','POST',{
     category:document.getElementById('exp-cat').value,
-    description:document.getElementById('exp-desc').value,
-    amount:amt,date:document.getElementById('exp-date').value
+    description:document.getElementById('exp-desc').value||'—',
+    amount:amt,
+    date:finalDate
   });
   document.getElementById('exp-amt').value='';
   document.getElementById('exp-desc').value='';
+  // رسالة نجاح
+  const btn=document.querySelector('#tab-expenses .action-btn.green');
+  const orig=btn.textContent;
+  btn.textContent='✅ تم الإضافة!';
+  btn.style.background='var(--green-d)';
+  setTimeout(()=>{btn.textContent=orig;btn.style.background='';},1500);
   await loadExpenses(); renderDashboard();
 }
 
@@ -1142,6 +1350,7 @@ function renderDashboard(){
   renderIncomeSummary();
   updateHealthScore(inc,totalExp,rem);
   generateAiTips(inc,totalExp,rem);
+  checkBudgetAlerts();
 
   // Alert
   const banner=document.getElementById('alertBanner');
@@ -1238,13 +1447,14 @@ async function loadAnnual(){
 // ══════════════════════════════════════════
 //  TABS
 // ══════════════════════════════════════════
-const TABS=['dashboard','income','expenses','goals','annual','settings'];
+const TABS=['dashboard','income','expenses','goals','annual','stats','settings'];
 function showTab(name){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   document.querySelectorAll('.nav-tab')[TABS.indexOf(name)].classList.add('active');
   if(name==='annual')loadAnnual();
+  if(name==='stats')loadStats();
   if(name==='goals'){refreshAnnualAvg().catch(()=>{}).then(()=>{updateGoalPreview();loadGoals();});}
 }
 
@@ -1278,16 +1488,370 @@ function showToast(msg){
 }
 
 // ══════════════════════════════════════════
+//  PIN SYSTEM
+// ══════════════════════════════════════════
+let pinBuffer='';
+let pinMode='check'; // check | setup1 | setup2
+let pinTemp='';
+
+function initPin(){
+  const saved=localStorage.getItem('mali_pin');
+  const overlay=document.getElementById('pinOverlay');
+  updatePinStatusLabel();
+  if(saved){
+    overlay.style.display='flex';
+    pinMode='check';
+    document.getElementById('pinSubtitle').textContent='🔐 أدخل رمز PIN';
+    document.getElementById('pinSetupLink').style.display='none';
+  }else{
+    overlay.style.display='none';
+  }
+}
+
+function pinPress(v){
+  if(v==='') { // backspace
+    pinBuffer=pinBuffer.slice(0,-1);
+  } else {
+    if(pinBuffer.length>=4) return;
+    pinBuffer+=v;
+  }
+  updateDots();
+  if(pinBuffer.length===4) setTimeout(checkPin,200);
+}
+
+function pinClear(){
+  pinBuffer='';
+  pinTemp='';
+  updateDots();
+  document.getElementById('pinErr').textContent='';
+}
+
+function updateDots(){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('dot'+i);
+    d.className='pin-dot'+(i<pinBuffer.length?' filled':'');
+  }
+}
+
+function checkPin(){
+  if(pinMode==='check'){
+    const saved=localStorage.getItem('mali_pin');
+    if(pinBuffer===saved){
+      document.getElementById('pinOverlay').style.display='none';
+      document.getElementById('pinSetupLink').style.display='block';
+    }else{
+      document.getElementById('pinErr').textContent='❌ PIN خطأ، حاول مجدداً';
+      pinBuffer=''; updateDots();
+    }
+  } else if(pinMode==='setup1'){
+    pinTemp=pinBuffer;
+    pinBuffer='';
+    updateDots();
+    document.getElementById('pinSubtitle').textContent='✅ أعد إدخال PIN للتأكيد';
+    pinMode='setup2';
+    document.getElementById('pinErr').textContent='';
+  } else if(pinMode==='setup2'){
+    if(pinBuffer===pinTemp){
+      localStorage.setItem('mali_pin',pinBuffer);
+      document.getElementById('pinOverlay').style.display='none';
+      document.getElementById('pinSetupLink').style.display='block';
+      updatePinStatusLabel();
+      alert('✅ تم حفظ PIN بنجاح!');
+    }else{
+      document.getElementById('pinErr').textContent='❌ PIN غير متطابق، حاول مجدداً';
+      pinBuffer=''; pinTemp=''; pinMode='setup1';
+      updateDots();
+      document.getElementById('pinSubtitle').textContent='🔐 أدخل PIN جديد';
+    }
+  }
+}
+
+function showPinSetup(){
+  const overlay=document.getElementById('pinOverlay');
+  overlay.style.display='flex';
+  pinMode='setup1'; pinBuffer=''; pinTemp='';
+  updateDots();
+  document.getElementById('pinSubtitle').textContent='🔐 أدخل PIN جديد (4 أرقام)';
+  document.getElementById('pinErr').textContent='';
+  document.getElementById('pinSetupLink').style.display='none';
+}
+
+function disablePin(){
+  if(!confirm('واش متأكد تبغي تلغي حماية PIN؟')) return;
+  localStorage.removeItem('mali_pin');
+  updatePinStatusLabel();
+  alert('✅ تم إلغاء حماية PIN');
+}
+
+function updatePinStatusLabel(){
+  const lbl=document.getElementById('pin-status-lbl');
+  if(!lbl) return;
+  const saved=localStorage.getItem('mali_pin');
+  lbl.textContent=saved ? '🔐 PIN مفعّل — التطبيق محمي' : '🔓 لا يوجد PIN — التطبيق مفتوح';
+  lbl.style.color=saved ? 'var(--green)' : 'var(--text2)';
+}
+
+// ══════════════════════════════════════════
+//  EMAIL SYSTEM (EmailJS)
+// ══════════════════════════════════════════
+function openEmailModal(){
+  const cfg=DB.get('emailjs_config')||{};
+  document.getElementById('ej-service').value=cfg.service||'';
+  document.getElementById('ej-template').value=cfg.template||'';
+  document.getElementById('ej-pubkey').value=cfg.pubkey||'';
+  document.getElementById('ej-email').value=cfg.email||'';
+  document.getElementById('emailModal').classList.add('open');
+}
+
+function closeEmailModal(){
+  document.getElementById('emailModal').classList.remove('open');
+}
+
+function saveEmailConfig(){
+  const cfg={
+    service:document.getElementById('ej-service').value.trim(),
+    template:document.getElementById('ej-template').value.trim(),
+    pubkey:document.getElementById('ej-pubkey').value.trim(),
+    email:document.getElementById('ej-email').value.trim()
+  };
+  if(!cfg.service||!cfg.template||!cfg.pubkey||!cfg.email){
+    alert('⚠️ كمّل جميع الحقول!'); return;
+  }
+  DB.set('emailjs_config',cfg);
+  closeEmailModal();
+  updateEmailStatusLabel();
+  alert('✅ تم حفظ إعدادات الإيميل!');
+}
+
+function updateEmailStatusLabel(){
+  const lbl=document.getElementById('email-status-lbl');
+  if(!lbl) return;
+  const cfg=DB.get('emailjs_config');
+  lbl.textContent=cfg ? `📧 مفعّل — ${cfg.email}` : '📭 لم يتم الإعداد بعد';
+  lbl.style.color=cfg ? 'var(--green)' : 'var(--text2)';
+}
+
+async function sendMonthlyEmail(auto=false){
+  const cfg=DB.get('emailjs_config');
+  if(!cfg){
+    if(!auto) alert('⚠️ خاصك تعدّ الإيميل أولاً في الإعدادات!');
+    return;
+  }
+  const inc=incomeData.total||0;
+  const totalExp=expensesData.reduce((s,e)=>s+e.amount,0);
+  const rem=inc-totalExp;
+  const pct=inc>0?Math.round((rem/inc)*100):0;
+  const catMap={};
+  expensesData.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
+  const topCats=Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,3)
+    .map(([k,v])=>`${CAT_ICONS[k]||''} ${k}: ${fmt(v)}`).join(' | ');
+
+  const params={
+    to_email: cfg.email,
+    month_name: MONTHS[curMonth-1]+' '+curYear,
+    income: fmt(inc),
+    expenses: fmt(totalExp),
+    remaining: fmt(rem),
+    saving_pct: pct+'%',
+    top_cats: topCats||'—',
+    health: document.getElementById('health-lbl')?.textContent||'—'
+  };
+
+  try{
+    emailjs.init(cfg.pubkey);
+    await emailjs.send(cfg.service, cfg.template, params);
+    if(!auto) alert('✅ تم إرسال الملخص الشهري على '+cfg.email);
+    // حفظ تاريخ آخر إرسال
+    DB.set('last_email_sent', curMonth+'-'+curYear);
+  }catch(e){
+    if(!auto) alert('❌ فشل الإرسال: '+e.text||e.message||'تحقق من إعداداتك');
+  }
+}
+
+function testEmail(){
+  saveEmailConfig();
+  setTimeout(()=>sendMonthlyEmail(false),300);
+}
+
+// إرسال تلقائي أول الشهر
+function checkAutoEmail(){
+  const cfg=DB.get('emailjs_config');
+  if(!cfg) return;
+  const today=new Date();
+  if(today.getDate()===1){
+    const key=(today.getMonth()+1)+'-'+today.getFullYear();
+    if(DB.get('last_email_sent')!==key){
+      sendMonthlyEmail(true);
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+//  STATS TAB
+// ══════════════════════════════════════════
+let trendChart=null, savingChart=null, topCatsChart=null, compareChart=null;
+
+async function loadStats(){
+  // جمع بيانات آخر 6 أشهر
+  const months=[];
+  for(let i=5;i>=0;i--){
+    let m=curMonth-i, y=curYear;
+    if(m<=0){m+=12;y--;}
+    const inc=DB.get(`income_${y}_${m}`)||{};
+    const exps=DB.get(`expenses_${y}_${m}`)||[];
+    const income=inc.total||0;
+    const expenses=exps.reduce((s,e)=>s+e.amount,0);
+    months.push({label:MONTHS[m-1],income,expenses,saving:Math.max(0,income-expenses)});
+  }
+
+  // بيانات هذه السنة لأكثر فئات
+  const allExps=[];
+  for(let m=1;m<=12;m++){
+    const exps=DB.get(`expenses_${curYear}_${m}`)||[];
+    allExps.push(...exps);
+  }
+  const catMap={};
+  allExps.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
+  const sortedCats=Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+  // Stats cards
+  const totalInc=months.reduce((s,m)=>s+m.income,0);
+  const totalExp=months.reduce((s,m)=>s+m.expenses,0);
+  const avgSaving=months.length?Math.round(months.reduce((s,m)=>s+m.saving,0)/months.length):0;
+  const bestMonth=months.reduce((best,m)=>m.saving>best.saving?m:best,months[0]||{saving:0,label:'—'});
+
+  document.getElementById('stats-cards').innerHTML=`
+    <div class="card green"><div class="card-label">مجموع الدخل (6 أشهر)</div><div class="card-value green">${fmt(totalInc)}</div></div>
+    <div class="card red"><div class="card-label">مجموع المصاريف (6 أشهر)</div><div class="card-value red">${fmt(totalExp)}</div></div>
+    <div class="card blue"><div class="card-label">متوسط الادخار الشهري</div><div class="card-value blue">${fmt(avgSaving)}</div></div>
+    <div class="card gold"><div class="card-label">أفضل شهر ادخاراً</div><div class="card-value gold">${bestMonth.label||'—'}</div><div class="card-sub">${fmt(bestMonth.saving||0)}</div></div>`;
+
+  const chartOpts={responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#e8eaf0',font:{family:'Cairo',size:10}}}},
+    scales:{x:{ticks:{color:'#8892a4',font:{family:'Cairo',size:10}},grid:{color:'#2a3555'}},
+            y:{ticks:{color:'#8892a4'},grid:{color:'#2a3555'}}}};
+
+  // Chart 1: تطور المصاريف
+  if(trendChart)trendChart.destroy();
+  trendChart=new Chart(document.getElementById('chartTrend').getContext('2d'),{
+    type:'line',
+    data:{labels:months.map(m=>m.label),datasets:[
+      {label:'المصاريف',data:months.map(m=>m.expenses),borderColor:'#e17055',backgroundColor:'rgba(225,112,85,.1)',fill:true,tension:.4,pointBackgroundColor:'#e17055'},
+      {label:'الدخل',data:months.map(m=>m.income),borderColor:'#00b894',backgroundColor:'rgba(0,184,148,.05)',fill:false,tension:.4,borderDash:[5,5]}
+    ]},options:{...chartOpts,plugins:{...chartOpts.plugins,tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${fmt(c.raw)}`}}}}});
+
+  // Chart 2: نسبة الادخار
+  if(savingChart)savingChart.destroy();
+  savingChart=new Chart(document.getElementById('chartSaving').getContext('2d'),{
+    type:'bar',
+    data:{labels:months.map(m=>m.label),datasets:[{
+      label:'الادخار',data:months.map(m=>m.saving),
+      backgroundColor:months.map(m=>m.saving>0?'rgba(0,184,148,.7)':'rgba(225,112,85,.7)'),borderRadius:6
+    }]},options:chartOpts});
+
+  // Chart 3: أكثر فئات إنفاقاً
+  if(topCatsChart)topCatsChart.destroy();
+  if(sortedCats.length){
+    topCatsChart=new Chart(document.getElementById('chartTopCats').getContext('2d'),{
+      type:'bar',
+      data:{labels:sortedCats.map(([k])=>`${CAT_ICONS[k]||''} ${k}`),
+            datasets:[{label:'المصاريف',data:sortedCats.map(([,v])=>v),
+              backgroundColor:sortedCats.map(([k])=>CAT_COLORS[CATS.indexOf(k)]||'#aaa'),borderRadius:6}]},
+      options:{...chartOpts,indexAxis:'y',plugins:{legend:{display:false}}}});
+  }
+
+  // Chart 4: مقارنة
+  if(compareChart)compareChart.destroy();
+  compareChart=new Chart(document.getElementById('chartCompare').getContext('2d'),{
+    type:'bar',
+    data:{labels:months.map(m=>m.label),datasets:[
+      {label:'الدخل',data:months.map(m=>m.income),backgroundColor:'rgba(0,184,148,.7)',borderRadius:4},
+      {label:'المصاريف',data:months.map(m=>m.expenses),backgroundColor:'rgba(225,112,85,.7)',borderRadius:4}
+    ]},options:chartOpts});
+
+  // تحليل نصي
+  const analysis=[];
+  const lastM=months[months.length-1];
+  const prevM=months[months.length-2];
+  if(lastM&&prevM){
+    const diff=lastM.expenses-prevM.expenses;
+    if(diff>0) analysis.push(`📈 مصاريف ${lastM.label} زادت بـ ${fmt(diff)} مقارنة بـ ${prevM.label}`);
+    else if(diff<0) analysis.push(`📉 مصاريف ${lastM.label} نقصت بـ ${fmt(Math.abs(diff))} مقارنة بـ ${prevM.label} — مزيان! 🎉`);
+    else analysis.push(`➡️ مصاريف ${lastM.label} نفس ${prevM.label}`);
+  }
+  if(avgSaving>0) analysis.push(`💰 معدل ادخارك الشهري ${fmt(avgSaving)} — ${avgSaving>2000?'ممتاز 🏆':avgSaving>500?'جيد 👍':'يمكن تحسينه 💪'}`);
+  if(sortedCats.length) analysis.push(`🏆 أكثر مصروف عندك: ${CAT_ICONS[sortedCats[0][0]]||''} ${sortedCats[0][0]} بـ ${fmt(sortedCats[0][1])}`);
+  const savingMonths=months.filter(m=>m.saving>0).length;
+  analysis.push(`✅ ادخرتي في ${savingMonths} من ${months.length} أشهر الأخيرة`);
+
+  document.getElementById('stats-analysis').innerHTML=analysis.map(a=>`<div style="padding:6px 0;border-bottom:1px solid var(--border)">${a}</div>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  BUDGET OVERSPEND ALERTS
+// ══════════════════════════════════════════
+function checkBudgetAlerts(){
+  const limits=settingsData.budget_limits||{};
+  const catMap={};
+  expensesData.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
+  const alerts=[];
+  Object.entries(limits).forEach(([cat,lim])=>{
+    if(lim&&catMap[cat]>lim){
+      alerts.push(`🚨 ${CAT_ICONS[cat]||''} <b>${cat}</b>: صرفتي ${fmt(catMap[cat])} من حد ${fmt(lim)}`);
+    }
+  });
+  // عرض التنبيهات في داشبورد
+  let alertDiv=document.getElementById('budget-alerts');
+  if(!alertDiv){
+    alertDiv=document.createElement('div');
+    alertDiv.id='budget-alerts';
+    const banner=document.getElementById('alertBanner');
+    banner.parentNode.insertBefore(alertDiv,banner.nextSibling);
+  }
+  if(alerts.length){
+    alertDiv.innerHTML=alerts.map(a=>`<div class="budget-over" style="display:block">${a}</div>`).join('');
+  }else{
+    alertDiv.innerHTML='';
+  }
+}
+
+// ══════════════════════════════════════════
 //  EXPORT + LOGOUT
 // ══════════════════════════════════════════
 function expExcel(){
   const data=JSON.stringify(Object.fromEntries(Object.keys(localStorage).map(k=>[k,localStorage.getItem(k)])));
   const b=new Blob([data],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);
-  a.download=`mali-plus-backup-${curYear}-${curMonth}.json`;a.click();
+  a.download=`mali-plus-backup-${new Date().toISOString().split('T')[0]}.json`;a.click();
+  // رسالة نجاح
+  const btn=document.getElementById('btn-export');
+  if(btn){btn.textContent='✅ تم الحفظ!';setTimeout(()=>{btn.textContent='💾 حفظ البيانات';},2000);}
 }
 function expPDF(){window.print();}
 function exportData(){expExcel();}
+
+function importData(){
+  const input=document.createElement('input');
+  input.type='file';input.accept='.json';
+  input.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        if(typeof data!=='object')throw new Error();
+        // حذف البيانات القديمة
+        Object.keys(localStorage).forEach(k=>localStorage.removeItem(k));
+        // استيراد البيانات الجديدة
+        Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));
+        alert('✅ تم استيراد البيانات بنجاح! سيتم تحديث التطبيق.');
+        location.reload();
+      }catch{alert('❌ الملف غير صالح! خاصو يكون ملف backup من مالي+');}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
 
 // Close modal on overlay click
 document.getElementById('allocModal').addEventListener('click',function(e){
@@ -1305,7 +1869,7 @@ document.getElementById('allocModal').addEventListener('click',function(e){
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('/static/service-worker.js')
+    navigator.serviceWorker.register('./service-worker.js')
       .then(r=>console.log('SW:',r.scope)).catch(e=>console.log('SW err:',e));
   });
 }
