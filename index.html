@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head><!DOCTYPE html>
-<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -12,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="مالي+">
 <link rel="apple-touch-icon" href="./icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 :root{
@@ -26,43 +25,72 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-h
 
 /* ── AUTH ── */
 .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;
-  background:radial-gradient(ellipse at 30% 50%,rgba(0,184,148,.1) 0%,transparent 60%),
+  background:radial-gradient(ellipse at 30% 50%,rgba(0,184,148,.12) 0%,transparent 60%),
              radial-gradient(ellipse at 70% 20%,rgba(74,144,217,.08) 0%,transparent 50%),var(--bg)}
-.auth-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:420px;box-shadow:var(--shadow)}
-.auth-logo{text-align:center;font-size:32px;font-weight:900;color:var(--green);margin-bottom:6px}
+.auth-box{background:var(--bg2);border:1px solid rgba(0,184,148,.2);border-radius:24px;padding:40px 36px;width:100%;max-width:420px;box-shadow:0 8px 48px rgba(0,0,0,.5),0 0 0 1px rgba(0,184,148,.05)}
+.auth-logo{text-align:center;font-size:36px;font-weight:900;color:var(--green);margin-bottom:4px;text-shadow:0 0 30px rgba(0,184,148,.3)}
 .auth-logo span{color:var(--gold)}
-.auth-sub{text-align:center;color:var(--text2);font-size:13px;margin-bottom:28px}
+.auth-logo-icon{width:64px;height:64px;background:linear-gradient(135deg,var(--green),#00d4a8);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;box-shadow:0 8px 24px rgba(0,184,148,.35)}
+.auth-sub{text-align:center;color:var(--text2);font-size:13px;margin-bottom:28px;line-height:1.5}
 .form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
-.form-group input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;padding:12px 14px;outline:none;transition:.2s}
-.form-group input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,184,148,.1)}
-.btn{width:100%;padding:13px;border-radius:10px;border:none;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:.2s}
-.btn-green{background:var(--green);color:#fff}
-.btn-green:hover{background:var(--green-d);transform:translateY(-1px)}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:inherit;font-size:14px;padding:12px 16px;outline:none;transition:.2s}
+.form-group input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,184,148,.12)}
+.btn{width:100%;padding:14px;border-radius:12px;border:none;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:.2s}
+.btn-green{background:linear-gradient(135deg,var(--green),#00d4a8);color:#fff;box-shadow:0 4px 16px rgba(0,184,148,.3)}
+.btn-green:hover{background:linear-gradient(135deg,var(--green-d),var(--green));transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,184,148,.4)}
 .btn-green:active{transform:translateY(0)}
+.btn-google{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--text);display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;margin-bottom:16px;border-radius:12px;padding:13px;cursor:pointer;transition:.2s;font-family:inherit;font-weight:700;width:100%}
+.btn-google:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)}
+.btn-google img{width:20px;height:20px}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--text2);font-size:12px}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
 .auth-switch{text-align:center;margin-top:16px;font-size:13px;color:var(--text2)}
 .auth-switch a{color:var(--green);text-decoration:none;font-weight:700}
-.err-msg{background:rgba(225,112,85,.15);border:1px solid var(--red);color:var(--red);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none}
+.err-msg{background:rgba(225,112,85,.15);border:1px solid rgba(225,112,85,.3);color:var(--red);padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:14px;display:none;align-items:center;gap:8px}
+/* Login Screen overlay */
+#loginScreen{position:fixed;inset:0;z-index:99999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+#loginScreen.hidden{display:none}
 
 /* ── HEADER ── */
-header{background:var(--bg2);border-bottom:2px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.5)}
-.logo{font-size:20px;font-weight:900;color:var(--green)}
-.logo span{color:var(--gold)}
-.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.month-sel{background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:5px 10px;display:flex;align-items:center;gap:4px}
-.month-sel select{background:none;border:none;color:var(--text);font-family:inherit;font-size:13px;cursor:pointer;outline:none}
-.user-badge{background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--green);font-weight:700}
-.btn-sm{padding:6px 12px;border-radius:8px;border:none;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
-.btn-outline-sm{background:transparent;border:1px solid var(--border);color:var(--text2)}
-.btn-outline-sm:hover{border-color:var(--green);color:var(--green)}
-.btn-red-sm{background:var(--red);color:#fff}
+header{
+  background:linear-gradient(160deg,#0d1a2d 0%,var(--bg2) 60%,#0a1520 100%);
+  border-bottom:1px solid rgba(0,184,148,.18);
+  padding:0 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 30px rgba(0,0,0,.7);
+  gap:12px;
+}
+header::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 0%,var(--green) 30%,var(--gold) 50%,var(--green) 70%,transparent 100%);
+}
+.logo{font-size:21px;font-weight:900;color:var(--green);display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:default;text-shadow:0 0 25px rgba(0,184,148,.3);letter-spacing:-.3px;}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--green) 0%,#00d4a8 100%);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 4px 16px rgba(0,184,148,.4);}
+.logo-text{display:flex;flex-direction:column;gap:1px}
+.logo-name{line-height:1;font-size:20px}
+.logo-name span{color:var(--gold)}
+.logo-tagline{font-size:9px;font-weight:600;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;opacity:.7}
+.header-right{display:flex;align-items:center;gap:7px;flex-wrap:wrap;flex-shrink:0}
+.month-sel{background:rgba(255,255,255,.04);border:1px solid rgba(0,184,148,.2);border-radius:10px;padding:6px 11px;display:flex;align-items:center;gap:6px;transition:.25s ease;}
+.month-sel:hover{border-color:rgba(0,184,148,.5);background:rgba(0,184,148,.07)}
+.month-sel select{background:none;border:none;color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;outline:none;}
+.month-sel select option{background:#111827}
+.user-badge{background:rgba(0,184,148,.1);border:1px solid rgba(0,184,148,.25);border-radius:20px;padding:6px 13px;font-size:12px;color:var(--green);font-weight:700;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-sm{padding:7px 12px;border-radius:9px;border:none;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-sm:active{transform:scale(.94)}
+.btn-outline-sm{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--text2);}
+.btn-outline-sm:hover{border-color:rgba(0,184,148,.4);color:var(--green);background:rgba(0,184,148,.07);}
+.btn-red-sm{background:linear-gradient(135deg,#e17055,#c0392b);color:#fff;box-shadow:0 3px 12px rgba(225,112,85,.25);}
 
 /* ── NAV ── */
-.nav-tabs{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;padding:0 10px;gap:0;overflow-x:auto;scrollbar-width:none}
+.nav-tabs{background:linear-gradient(180deg,#0d1628 0%,var(--bg2) 100%);border-bottom:1px solid rgba(0,184,148,.1);display:flex;padding:0 14px;gap:0;overflow-x:auto;scrollbar-width:none}
 .nav-tabs::-webkit-scrollbar{display:none}
-.nav-tab{padding:12px 14px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);border-bottom:3px solid transparent;transition:.2s;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.nav-tab{padding:13px 15px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);border-bottom:2px solid transparent;transition:.2s ease;white-space:nowrap;display:flex;align-items:center;gap:5px;position:relative;}
 .nav-tab:hover{color:var(--text)}
 .nav-tab.active{color:var(--green);border-bottom-color:var(--green)}
+.nav-tab.active::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:5px;height:5px;background:var(--green);border-radius:50%;box-shadow:0 0 8px var(--green);}
 
 /* ── LAYOUT ── */
 main{padding:16px;max-width:1200px;margin:0 auto}
@@ -227,6 +255,62 @@ main{padding:16px;max-width:1200px;margin:0 auto}
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <!-- PIN LOCK OVERLAY -->
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="loginScreen">
+  <div class="auth-box">
+    <div class="auth-logo-icon">💚</div>
+    <div class="auth-logo">مالي<span>+</span></div>
+    <div class="auth-sub">تسيير مالي ذكي للمغاربة<br><small style="opacity:.6">سجل دخولك باش تحفظ بياناتك ديما</small></div>
+    <div class="err-msg" id="login-err">❌ <span id="login-err-text"></span></div>
+
+    <!-- Google Sign In -->
+    <button class="btn-google" onclick="signInWithGoogle()">
+      <img src="https://www.google.com/favicon.ico" alt="Google">
+      متابعة مع Google (Gmail)
+    </button>
+
+    <div class="auth-divider">أو بالإيميل</div>
+
+    <!-- Email/Password Login -->
+    <div id="login-form">
+      <div class="form-group">
+        <label>الإيميل</label>
+        <input type="email" id="auth-email" placeholder="you@gmail.com" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label>كلمة السر</label>
+        <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')loginUser()"/>
+      </div>
+      <button class="btn btn-green" onclick="loginUser()" style="margin-bottom:12px">🔑 تسجيل الدخول</button>
+      <div class="auth-switch">ما عندكش حساب؟ <a href="#" onclick="showRegister()">سجل دابا</a></div>
+    </div>
+
+    <!-- Register Form (hidden) -->
+    <div id="register-form" style="display:none">
+      <div class="form-group">
+        <label>الاسم</label>
+        <input type="text" id="auth-name" placeholder="اسمك"/>
+      </div>
+      <div class="form-group">
+        <label>الإيميل</label>
+        <input type="email" id="auth-email2" placeholder="you@gmail.com"/>
+      </div>
+      <div class="form-group">
+        <label>كلمة السر</label>
+        <input type="password" id="auth-pass2" placeholder="8 أحرف على الأقل"
+          onkeydown="if(event.key==='Enter')registerUser()"/>
+      </div>
+      <button class="btn btn-green" onclick="registerUser()" style="margin-bottom:12px">✨ إنشاء حساب</button>
+      <div class="auth-switch">عندك حساب؟ <a href="#" onclick="showLogin()">سجل الدخول</a></div>
+    </div>
+
+    <p style="font-size:11px;color:var(--text2);text-align:center;margin-top:16px;opacity:.6">
+      🔒 بياناتك محفوظة محلياً في تلفونك بأمان
+    </p>
+  </div>
+</div>
+
 <div id="pinOverlay" class="pin-overlay" style="display:none">
   <div class="pin-box">
     <div class="pin-logo">🇲🇦 مالي<span>+</span></div>
@@ -276,19 +360,33 @@ main{padding:16px;max-width:1200px;margin:0 auto}
       <label class="lbl">إيميلك</label>
       <input class="inp" id="ej-email" type="email" placeholder="you@gmail.com"/>
     </div>
-    <div style="display:flex;gap:10px">
-      <button class="action-btn green" onclick="saveEmailConfig()" style="flex:1;justify-content:center">💾 حفظ</button>
-      <button class="action-btn" onclick="testEmail()" style="flex:1;justify-content:center;background:var(--blue);color:#fff">🧪 اختبار</button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="action-btn green" onclick="saveEmailConfig()" style="flex:1;justify-content:center;min-width:100px">💾 حفظ</button>
+      <button class="action-btn" onclick="testEmail()" style="flex:1;justify-content:center;background:var(--blue);color:#fff;min-width:100px">🧪 اختبار</button>
+      <button class="action-btn" onclick="sendMonthlyEmail(false)" style="flex:1;justify-content:center;background:var(--purple);color:#fff;min-width:100px">📧 إرسال التقرير</button>
       <button class="action-btn" onclick="closeEmailModal()" style="background:var(--bg3);color:var(--text2)">إلغاء</button>
     </div>
-    <p style="font-size:11px;color:var(--text2);margin-top:10px">💡 سجل مجاناً على <a href="https://emailjs.com" target="_blank" style="color:var(--green)">emailjs.com</a> وأنشئ template</p>
+    <div style="background:rgba(0,184,148,.08);border:1px solid rgba(0,184,148,.2);border-radius:10px;padding:12px;margin-top:12px;font-size:12px;color:var(--text2);line-height:1.7">
+      💡 <b style="color:var(--green)">كيفاش تربط Gmail:</b><br>
+      1. سجل مجاناً على <a href="https://emailjs.com" target="_blank" style="color:var(--green)">emailjs.com</a><br>
+      2. أنشئ Service مع Gmail<br>
+      3. أنشئ Template بهاد المتغيرات:<br>
+      <code style="color:var(--gold);font-size:11px">{{month_name}} {{income}} {{expenses}} {{remaining}} {{saving_pct}} {{top_cats}} {{health}} {{to_name}}</code>
+    </div>
   </div>
 </div>
 
 <header>
-  <div class="logo">🇲🇦 مالي<span>+</span></div>
+  <div class="logo">
+    <div class="logo-icon">💚</div>
+    <div class="logo-text">
+      <div class="logo-name">مالي<span>+</span></div>
+      <div class="logo-tagline">تسيير مالي ذكي</div>
+    </div>
+  </div>
   <div class="header-right">
     <div class="month-sel">
+      <span style="font-size:13px">📅</span>
       <select id="selMonth" onchange="changeMonth()">
         <option value="1">يناير</option><option value="2">فبراير</option><option value="3">مارس</option>
         <option value="4">أبريل</option><option value="5">ماي</option><option value="6">يونيو</option>
@@ -301,7 +399,7 @@ main{padding:16px;max-width:1200px;margin:0 auto}
         <option value="2030">2030</option>
       </select>
     </div>
-    <span class="user-badge">👤 مالي+</span>
+    <span class="user-badge" id="header-username">👤 مالي+</span>
     <button class="btn-sm btn-outline-sm" onclick="expExcel()">📊 Excel</button>
     <button class="btn-sm btn-outline-sm" onclick="expPDF()">📄 PDF</button>
     <button class="btn-sm btn-outline-sm" onclick="window.print()">🖨️</button>
@@ -746,8 +844,9 @@ async function api(url,method='GET',body=null){
   }
   // add expense
   if(url==='/api/expenses' && method==='POST'){
-    const[,m,y]=[null,...body.date.split('-')];
-    const key=`expenses_${y}_${parseInt(m)}`;
+    const _parts=body.date.split('-');
+    const y=_parts[0], m=parseInt(_parts[1]);
+    const key=`expenses_${y}_${m}`;
     const list=DB.get(key)||[];
     const rec={...body,id:Date.now()};
     list.push(rec); DB.set(key,list); return rec;
@@ -808,15 +907,256 @@ async function api(url,method='GET',body=null){
 // ══════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════
-document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('selMonth').value=curMonth;
-  document.getElementById('selYear').value=curYear;
-  document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];
+
+// ══════════════════════════════════════════
+//  AUTH SYSTEM — تسجيل الدخول
+// ══════════════════════════════════════════
+let currentUser = null;
+
+function getUserKey(key){
+  // كل بيانات المستخدم مرتبطة بإيميله
+  const uid = currentUser ? currentUser.email.replace(/[^a-z0-9]/gi,'_') : 'guest';
+  return `mali_${uid}_${key}`;
+}
+
+// Override DB to use user-scoped keys
+const _DB_orig = {
+  get: k => { try{ return JSON.parse(localStorage.getItem(k)); }catch{ return null; } },
+  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
+  del: k => localStorage.removeItem(k),
+  keys: prefix => Object.keys(localStorage).filter(k=>k.startsWith(prefix))
+};
+
+// Patch DB to use user-scoped storage
+Object.assign(DB, {
+  get(k){ return _DB_orig.get(getUserKey(k)); },
+  set(k,v){ return _DB_orig.set(getUserKey(k), v); },
+  del(k){ return _DB_orig.del(getUserKey(k)); },
+  keys(prefix){ 
+    const uid = currentUser ? currentUser.email.replace(/[^a-z0-9]/gi,'_') : 'guest';
+    return _DB_orig.keys(`mali_${uid}_${prefix}`).map(k=>k.replace(`mali_${uid}_`,'')); 
+  }
+});
+
+// ── Google Sign In ──
+function signInWithGoogle(){
+  // Google One Tap
+  if(typeof google === 'undefined'){
+    showLoginErr('Google غير متاح، استخدم الإيميل وكلمة السر');
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: '248756671928-placeholder.apps.googleusercontent.com',
+    callback: handleGoogleCredential,
+    auto_select: false
+  });
+  google.accounts.id.prompt();
+}
+
+function handleGoogleCredential(response){
+  try{
+    // Decode JWT token
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    loginSuccess({
+      email: payload.email,
+      name: payload.name || payload.email.split('@')[0],
+      avatar: payload.picture || null,
+      provider: 'google'
+    });
+  } catch(e){
+    showLoginErr('فشل تسجيل الدخول بـ Google');
+  }
+}
+
+// ── Email/Password Auth ──
+function loginUser(){
+  const email = document.getElementById('auth-email').value.trim().toLowerCase();
+  const pass = document.getElementById('auth-pass').value;
+  if(!email || !pass){ showLoginErr('كمّل الإيميل وكلمة السر!'); return; }
+  const users = _DB_orig.get('mali_users') || {};
+  if(!users[email]){ showLoginErr('هذا الإيميل ما مسجلش، سجل أولاً'); return; }
+  if(users[email].pass !== btoa(pass)){ showLoginErr('كلمة السر غلط!'); return; }
+  loginSuccess({ email, name: users[email].name, provider: 'email' });
+}
+
+function registerUser(){
+  const name = document.getElementById('auth-name').value.trim();
+  const email = document.getElementById('auth-email2').value.trim().toLowerCase();
+  const pass = document.getElementById('auth-pass2').value;
+  if(!name || !email || !pass){ showLoginErr('كمّل جميع الحقول!'); return; }
+  if(pass.length < 6){ showLoginErr('كلمة السر خاصها 6 أحرف على الأقل'); return; }
+  if(!email.includes('@')){ showLoginErr('إيميل غير صحيح!'); return; }
+  const users = _DB_orig.get('mali_users') || {};
+  if(users[email]){ showLoginErr('هذا الإيميل مسجل سبق، سجل الدخول'); return; }
+  users[email] = { name, pass: btoa(pass), created: Date.now() };
+  _DB_orig.set('mali_users', users);
+  loginSuccess({ email, name, provider: 'email' });
+}
+
+function loginSuccess(user){
+  currentUser = user;
+  // حفظ الجلسة
+  _DB_orig.set('mali_session', { ...user, ts: Date.now() });
+  // إخفاء شاشة الدخول
+  document.getElementById('loginScreen').classList.add('hidden');
+  // تحديث الهيدر
+  updateHeaderUser();
+  // تشغيل التطبيق
+  initApp();
+}
+
+function updateHeaderUser(){
+  const badge = document.getElementById('header-username');
+  if(badge && currentUser){
+    const initial = currentUser.name ? currentUser.name[0].toUpperCase() : '?';
+    badge.innerHTML = `👤 ${currentUser.name || currentUser.email.split('@')[0]}`;
+  }
+}
+
+function logoutUser(){
+  if(!confirm('تبغي تخرج من حسابك؟')) return;
+  _DB_orig.del('mali_session');
+  currentUser = null;
+  location.reload();
+}
+
+function showLoginErr(msg){
+  const el = document.getElementById('login-err');
+  const txt = document.getElementById('login-err-text');
+  if(el && txt){ txt.textContent = msg; el.style.display = 'flex'; }
+}
+
+function showRegister(){
+  document.getElementById('login-form').style.display = 'none';
+  document.getElementById('register-form').style.display = 'block';
+  document.getElementById('login-err').style.display = 'none';
+}
+
+function showLogin(){
+  document.getElementById('register-form').style.display = 'none';
+  document.getElementById('login-form').style.display = 'block';
+  document.getElementById('login-err').style.display = 'none';
+}
+
+// ── Check existing session ──
+function checkSession(){
+  const session = _DB_orig.get('mali_session');
+  if(session && session.ts){
+    const age = Date.now() - session.ts;
+    const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+    if(age < thirtyDays){
+      // الجلسة ما زالت صالحة
+      currentUser = session;
+      document.getElementById('loginScreen').classList.add('hidden');
+      updateHeaderUser();
+      return true;
+    }
+  }
+  return false;
+}
+
+// ══════════════════════════════════════════
+//  ENHANCED MONTHLY EMAIL REPORT
+// ══════════════════════════════════════════
+async function sendEnhancedMonthlyEmail(auto=false){
+  const cfg = DB.get('emailjs_config');
+  if(!cfg){
+    if(!auto) alert('⚠️ خاصك تعدّ الإيميل أولاً في الإعدادات!');
+    return;
+  }
+  
+  const inc = incomeData.total || 0;
+  const totalExp = expensesData.reduce((s,e)=>s+e.amount,0);
+  const rem = inc - totalExp;
+  const pct = inc > 0 ? Math.round((rem/inc)*100) : 0;
+  const catMap = {};
+  expensesData.forEach(e=>{ catMap[e.category]=(catMap[e.category]||0)+e.amount; });
+  
+  const topCats = Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,5)
+    .map(([k,v], i) => `${i+1}. ${CAT_ICONS[k]||'📦'} ${k}: ${fmt(v)}`).join('\n');
+  
+  const health = pct >= 20 ? '🟢 ممتاز' : pct >= 10 ? '🟡 جيد' : '🔴 تحت المراقبة';
+  const userName = currentUser ? (currentUser.name || currentUser.email.split('@')[0]) : 'مستخدم مالي+';
+  const toEmail = currentUser ? currentUser.email : cfg.email;
+
+  const params = {
+    to_email: toEmail,
+    to_name: userName,
+    month_name: MONTHS[curMonth-1] + ' ' + curYear,
+    income: fmt(inc),
+    expenses: fmt(totalExp),
+    remaining: fmt(rem),
+    saving_pct: pct + '%',
+    top_cats: topCats || '—',
+    health: health,
+    transactions_count: expensesData.length,
+    app_name: 'مالي+'
+  };
+
+  try{
+    if(typeof emailjs === 'undefined') throw new Error('EmailJS غير محمّل');
+    emailjs.init(cfg.pubkey);
+    await emailjs.send(cfg.service, cfg.template, params);
+    if(!auto){
+      showToast('✅ تم إرسال التقرير الشهري على ' + toEmail);
+      DB.set('last_email_sent', curMonth+'-'+curYear);
+    }
+  } catch(e){
+    if(!auto) alert('❌ فشل الإرسال: ' + (e.text||e.message||'تحقق من إعداداتك'));
+  }
+}
+
+function showToast(msg, duration=3000){
+  let toast = document.getElementById('mali-toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'mali-toast';
+    toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#00b894;color:#fff;padding:12px 24px;border-radius:50px;font-family:Cairo,sans-serif;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,184,148,.4);transition:.3s;white-space:nowrap';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  setTimeout(()=>{ toast.style.opacity = '0'; }, duration);
+}
+
+function initApp(){
+  // Init EmailJS immediately with saved or default config
+  const _ejcfg = DB.get('emailjs_config') || EMAILJS_DEFAULTS;
+  if(typeof emailjs !== 'undefined' && _ejcfg.pubkey){
+    try{ emailjs.init(_ejcfg.pubkey); }catch(e){}
+  }
+  // Auto-save defaults if not yet saved
+  if(!DB.get('emailjs_config')){
+    DB.set('emailjs_config', EMAILJS_DEFAULTS);
+  }
+  document.getElementById('selMonth').value = curMonth;
+  document.getElementById('selYear').value = curYear;
+  const dateEl = document.getElementById('exp-date');
+  if(dateEl) dateEl.value = new Date().toISOString().split('T')[0];
   initPin();
   updateEmailStatusLabel();
   checkAutoEmail();
   loadAll();
   buildBudgetLimits();
+  // Add logout button to header
+  const hdr = document.querySelector('.header-right');
+  if(hdr && !document.getElementById('btn-logout')){
+    const logoutBtn = document.createElement('button');
+    logoutBtn.id = 'btn-logout';
+    logoutBtn.className = 'btn-sm btn-outline-sm';
+    logoutBtn.innerHTML = '🚪';
+    logoutBtn.title = 'تسجيل الخروج';
+    logoutBtn.onclick = logoutUser;
+    hdr.appendChild(logoutBtn);
+  }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  // إذا كانت هناك جلسة محفوظة، ادخل مباشرة
+  if(!checkSession()){
+    // وإلا اعرض شاشة الدخول
+    document.getElementById('loginScreen').classList.remove('hidden');
+  }
 });
 
 function changeMonth(){
@@ -1596,12 +1936,19 @@ function updatePinStatusLabel(){
 // ══════════════════════════════════════════
 //  EMAIL SYSTEM (EmailJS)
 // ══════════════════════════════════════════
+// ── EmailJS default config ──
+const EMAILJS_DEFAULTS = {
+  service:  'service_9mptc1o',
+  template: 'template_orys7g7',
+  pubkey:   'kKoM3S2tyy_yNJKDr'
+};
+
 function openEmailModal(){
-  const cfg=DB.get('emailjs_config')||{};
-  document.getElementById('ej-service').value=cfg.service||'';
-  document.getElementById('ej-template').value=cfg.template||'';
-  document.getElementById('ej-pubkey').value=cfg.pubkey||'';
-  document.getElementById('ej-email').value=cfg.email||'';
+  const cfg = DB.get('emailjs_config') || {};
+  document.getElementById('ej-service').value  = cfg.service  || EMAILJS_DEFAULTS.service;
+  document.getElementById('ej-template').value = cfg.template || EMAILJS_DEFAULTS.template;
+  document.getElementById('ej-pubkey').value   = cfg.pubkey   || EMAILJS_DEFAULTS.pubkey;
+  document.getElementById('ej-email').value    = cfg.email    || '';
   document.getElementById('emailModal').classList.add('open');
 }
 
@@ -1633,7 +1980,7 @@ function updateEmailStatusLabel(){
   lbl.style.color=cfg ? 'var(--green)' : 'var(--text2)';
 }
 
-async function sendMonthlyEmail(auto=false){
+async function sendMonthlyEmail(auto=false){ return sendEnhancedMonthlyEmail(auto); } async function _sendMonthlyEmail_orig(auto=false){
   const cfg=DB.get('emailjs_config');
   if(!cfg){
     if(!auto) alert('⚠️ خاصك تعدّ الإيميل أولاً في الإعدادات!');
