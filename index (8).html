@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>مالي+ | تسيير مالي ذكي</title>
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#00b894">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="مالي+">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --green:#00b894;--green-d:#00896e;--red:#e17055;--red-d:#c0392b;
+  --gold:#fdcb6e;--gold-d:#e0a800;--blue:#4a90d9;--purple:#8b5cf6;
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1a2235;--bg4:#243050;
+  --text:#e8eaf0;--text2:#8892a4;--border:#2a3555;
+  --radius:14px;--shadow:0 4px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;overflow-x:hidden}
+
+/* ── AUTH ── */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 30% 50%,rgba(0,184,148,.1) 0%,transparent 60%),
+             radial-gradient(ellipse at 70% 20%,rgba(74,144,217,.08) 0%,transparent 50%),var(--bg)}
+.auth-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:420px;box-shadow:var(--shadow)}
+.auth-logo{text-align:center;font-size:32px;font-weight:900;color:var(--green);margin-bottom:6px}
+.auth-logo span{color:var(--gold)}
+.auth-sub{text-align:center;color:var(--text2);font-size:13px;margin-bottom:28px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.form-group input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;padding:12px 14px;outline:none;transition:.2s}
+.form-group input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,184,148,.1)}
+.btn{width:100%;padding:13px;border-radius:10px;border:none;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:.2s}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green-d);transform:translateY(-1px)}
+.btn-green:active{transform:translateY(0)}
+.auth-switch{text-align:center;margin-top:16px;font-size:13px;color:var(--text2)}
+.auth-switch a{color:var(--green);text-decoration:none;font-weight:700}
+.err-msg{background:rgba(225,112,85,.15);border:1px solid var(--red);color:var(--red);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none}
+
+/* ── HEADER ── */
+header{background:var(--bg2);border-bottom:2px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.logo{font-size:20px;font-weight:900;color:var(--green)}
+.logo span{color:var(--gold)}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.month-sel{background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:5px 10px;display:flex;align-items:center;gap:4px}
+.month-sel select{background:none;border:none;color:var(--text);font-family:inherit;font-size:13px;cursor:pointer;outline:none}
+.user-badge{background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--green);font-weight:700}
+.btn-sm{padding:6px 12px;border-radius:8px;border:none;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.btn-outline-sm{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-outline-sm:hover{border-color:var(--green);color:var(--green)}
+.btn-red-sm{background:var(--red);color:#fff}
+
+/* ── NAV ── */
+.nav-tabs{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;padding:0 10px;gap:0;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{padding:12px 14px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);border-bottom:3px solid transparent;transition:.2s;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--green);border-bottom-color:var(--green)}
+
+/* ── LAYOUT ── */
+main{padding:16px;max-width:1200px;margin:0 auto}
+.section{display:none;animation:fadeUp .3s ease}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sec-title{font-size:17px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* ── CARDS ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;transition:.2s}
+.card:hover{transform:translateY(-2px)}
+.card::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%}
+.card.green::before{background:var(--green)}.card.red::before{background:var(--red)}
+.card.gold::before{background:var(--gold)}.card.blue::before{background:var(--blue)}
+.card.purple::before{background:var(--purple)}
+.card-label{font-size:10px;color:var(--text2);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.card-value{font-size:20px;font-weight:900;transition:.3s}
+.card-value.green{color:var(--green)}.card-value.red{color:var(--red)}
+.card-value.gold{color:var(--gold)}.card-value.blue{color:var(--blue)}.card-value.purple{color:var(--purple)}
+.card-sub{font-size:10px;color:var(--text2);margin-top:3px}
+.card-trend{font-size:11px;font-weight:700;margin-top:4px}
+.card-trend.up{color:var(--green)}.card-trend.down{color:var(--red)}
+
+/* ── PANELS ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+@media(max-width:700px){.grid-2{grid-template-columns:1fr}}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px}
+.panel-header{padding:13px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.panel-body{padding:16px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.inp{background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;padding:10px 12px;outline:none;transition:.2s;width:100%}
+.inp:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,184,148,.1)}
+.lbl{display:block;font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.action-btn{padding:9px 18px;border-radius:9px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.action-btn:active{transform:scale(.97)}
+.action-btn.green{background:var(--green);color:#fff}.action-btn.green:hover{background:var(--green-d)}
+.action-btn.red{background:var(--red);color:#fff}.action-btn.red:hover{background:var(--red-d)}
+.action-btn.gold{background:var(--gold);color:#111}.action-btn.gold:hover{background:var(--gold-d)}
+.action-btn.blue{background:var(--blue);color:#fff}
+.action-btn.outline{background:transparent;border:1px solid var(--border);color:var(--text2)}.action-btn.outline:hover{border-color:var(--green);color:var(--green)}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{padding:9px 10px;text-align:right;color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);font-weight:700}
+.tbl td{padding:10px;border-bottom:1px solid rgba(42,53,85,.4);vertical-align:middle}
+.tbl tr:hover td{background:var(--bg3)}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(74,144,217,.15);color:var(--blue)}
+.badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700}
+.badge-green{background:rgba(0,184,148,.15);color:var(--green)}
+.badge-red{background:rgba(225,112,85,.15);color:var(--red)}
+.badge-gold{background:rgba(253,203,110,.15);color:var(--gold)}
+
+/* ── PROGRESS ── */
+.prog-row{margin-bottom:10px}
+.prog-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;font-weight:700}
+.prog-bar{height:8px;background:var(--bg4);border-radius:8px;overflow:hidden}
+.prog-fill{height:100%;border-radius:8px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.chart-wrap{position:relative;height:220px}
+
+/* ── ALERT ── */
+.alert-banner{border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;font-weight:700;display:none;align-items:center;gap:8px}
+.alert-banner.warning{background:rgba(253,203,110,.15);border:1px solid var(--gold);color:var(--gold);display:flex}
+.alert-banner.danger{background:rgba(225,112,85,.15);border:1px solid var(--red);color:var(--red);display:flex}
+.alert-banner.success{background:rgba(0,184,148,.15);border:1px solid var(--green);color:var(--green);display:flex}
+
+/* ── GOALS ── */
+.goal-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;transition:.2s;position:relative;overflow:hidden}
+.goal-card:hover{border-color:var(--green);transform:translateY(-1px)}
+.goal-emoji{font-size:36px;text-align:center;margin-bottom:8px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3))}
+.goal-type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:500px){.goal-type-grid{grid-template-columns:repeat(4,1fr)}}
+.goal-type-btn{background:var(--bg3);border:2px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;font-size:11px;font-weight:700;color:var(--text2)}
+.goal-type-btn:hover{border-color:var(--green);color:var(--green)}
+.goal-type-btn.selected{border-color:var(--green);background:rgba(0,184,148,.1);color:var(--green)}
+.goal-type-btn .type-icon{font-size:24px;display:block;margin-bottom:4px}
+
+/* ── ALLOCATION MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow);animation:fadeUp .3s ease}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15px;position:sticky;top:0;background:var(--bg2);z-index:1}
+.modal-body{padding:20px}
+.modal-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:4px;border-radius:6px;transition:.2s}
+.modal-close:hover{color:var(--red)}
+
+.alloc-row{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.alloc-slider{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:var(--bg4);border-radius:6px;outline:none;cursor:pointer;margin:8px 0}
+.alloc-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--green);cursor:pointer;box-shadow:0 0 6px rgba(0,184,148,.5)}
+.alloc-total-bar{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:12px;text-align:center}
+
+/* ── AI TIPS ── */
+.ai-card{background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(74,144,217,.1));border:1px solid rgba(139,92,246,.3);border-radius:12px;padding:14px;margin-bottom:16px}
+.ai-tip{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(139,92,246,.1);font-size:13px}
+.ai-tip:last-child{border-bottom:none}
+.ai-tip-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+
+/* ── HEALTH SCORE ── */
+.health-ring{width:100px;height:100px;position:relative;margin:0 auto 10px}
+.health-ring svg{transform:rotate(-90deg)}
+.health-ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.health-score-num{font-size:24px;font-weight:900}
+.health-score-lbl{font-size:10px;color:var(--text2)}
+
+/* ── CONFETTI ── */
+.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:9999;animation:confettiFall 2.5s ease-in forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* ── COUNTER ANIMATION ── */
+.counting{transition:all .05s}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .header-right .btn-sm:not(.btn-red-sm){display:none}
+  main{padding:10px}
+  .cards-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .card{padding:12px}
+  .card-value{font-size:16px}
+  .panel-body{padding:12px}
+  .goal-type-grid{gap:6px}
+}
+@media print{header,.nav-tabs,.action-btn,.btn-sm{display:none!important}body{background:#fff;color:#000}.card,.panel{border:1px solid #ccc;background:#fff}}
+.loading{color:var(--text2);text-align:center;padding:24px;font-size:13px}
+.flex-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<!-- ══════════ مالي+ Standalone ══════════ -->
+<header>
+  <div class="logo">🇲🇦 مالي<span>+</span></div>
+  <div class="header-right">
+    <div class="month-sel">
+      <select id="selMonth" onchange="changeMonth()">
+        <option value="1">يناير</option><option value="2">فبراير</option><option value="3">مارس</option>
+        <option value="4">أبريل</option><option value="5">ماي</option><option value="6">يونيو</option>
+        <option value="7">يوليوز</option><option value="8">غشت</option><option value="9">شتنبر</option>
+        <option value="10">أكتوبر</option><option value="11">نونبر</option><option value="12">دجنبر</option>
+      </select>
+      <select id="selYear" onchange="changeMonth()">
+        <option value="2026">2026</option><option value="2027">2027</option>
+        <option value="2028">2028</option><option value="2029">2029</option>
+        <option value="2030">2030</option>
+      </select>
+    </div>
+    <span class="user-badge">👤 مالي+</span>
+    <button class="btn-sm btn-outline-sm" onclick="expExcel()">📊 Excel</button>
+    <button class="btn-sm btn-outline-sm" onclick="expPDF()">📄 PDF</button>
+    <button class="btn-sm btn-outline-sm" onclick="window.print()">🖨️</button>
+    <button class="btn-sm btn-red-sm" onclick="exportData()">📤 تصدير</button>
+  </div>
+</header>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showTab('dashboard')">📊 القيادة</div>
+  <div class="nav-tab" onclick="showTab('income')">💰 الدخل</div>
+  <div class="nav-tab" onclick="showTab('expenses')">💸 المصاريف</div>
+  <div class="nav-tab" onclick="showTab('goals')">🎯 الأهداف</div>
+  <div class="nav-tab" onclick="showTab('annual')">📅 سنوي</div>
+  <div class="nav-tab" onclick="showTab('settings')">⚙️ الإعدادات</div>
+</div>
+
+<main>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="tab-dashboard" class="section active">
+  <div class="sec-title">📊 لوحة القيادة</div>
+  <div id="alertBanner" class="alert-banner"></div>
+
+  <!-- AI Tips -->
+  <div id="ai-section" class="ai-card" style="display:none">
+    <div style="font-size:13px;font-weight:900;color:#8b5cf6;margin-bottom:8px">🤖 توصيات ذكية</div>
+    <div id="ai-tips"></div>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card green"><div class="card-label">الصالير</div><div class="card-value green" id="d-salary">-</div></div>
+    <div class="card gold"><div class="card-label">الدخل الكلي</div><div class="card-value gold" id="d-income">-</div><div class="card-sub" id="d-bonus-sub"></div></div>
+    <div class="card red"><div class="card-label">المصاريف</div><div class="card-value red" id="d-exp">-</div><div class="card-trend" id="d-exp-trend"></div></div>
+    <div class="card blue"><div class="card-label">الباقي</div><div class="card-value blue" id="d-rem">-</div></div>
+    <div class="card purple"><div class="card-label">نسبة الادخار</div><div class="card-value purple" id="d-pct">-</div></div>
+    <div class="card green" style="cursor:pointer" onclick="showTab('goals')">
+      <div class="card-label">الصحة المالية</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="health-ring" style="width:54px;height:54px">
+          <svg width="54" height="54" viewBox="0 0 54 54">
+            <circle cx="27" cy="27" r="22" fill="none" stroke="var(--bg4)" stroke-width="5"/>
+            <circle id="health-arc" cx="27" cy="27" r="22" fill="none" stroke="var(--green)" stroke-width="5"
+              stroke-dasharray="138.2" stroke-dashoffset="138.2" stroke-linecap="round" style="transition:stroke-dashoffset 1s ease"/>
+          </svg>
+          <div class="health-ring-text"><span class="health-score-num" id="health-num">-</span></div>
+        </div>
+        <div style="font-size:11px;color:var(--text2)" id="health-lbl">جاري...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-header">📊 توزيع المصاريف</div>
+      <div class="panel-body"><div class="chart-wrap"><canvas id="chartPie"></canvas></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">📉 تفصيل الفئات</div>
+      <div class="panel-body" id="exp-breakdown"><div class="loading">جاري التحميل...</div></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">💳 آخر العمليات</div>
+    <div class="panel-body" style="overflow-x:auto">
+      <table class="tbl"><thead><tr><th>الفئة</th><th>الوصف</th><th>المبلغ</th><th>التاريخ</th></tr></thead>
+      <tbody id="recent-ops"><tr><td colspan="4" class="loading">جاري التحميل...</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ INCOME ══ -->
+<div id="tab-income" class="section">
+  <div class="sec-title">💰 الدخل</div>
+  <div class="panel">
+    <div class="panel-header">الصالير والبريم</div>
+    <div class="panel-body">
+      <div class="form-grid">
+        <div><label class="lbl">🏦 الصالير (درهم)</label><input class="inp" type="number" id="in-salary" oninput="saveIncome()" placeholder="مثال: 6000"/></div>
+        <div><label class="lbl">🎁 بريم شهرين</label><input class="inp" type="number" id="in-b2" oninput="saveIncome()" placeholder="مثال: 12000"/></div>
+        <div><label class="lbl">🎊 بريم 6 أشهر</label><input class="inp" type="number" id="in-b6" oninput="saveIncome()" placeholder="مثال: 36000"/></div>
+        <div><label class="lbl">🌍 يوم عالمي</label><input class="inp" type="number" id="in-intl" oninput="saveIncome()" placeholder="مثال: 3000"/></div>
+        <div><label class="lbl">➕ دخل إضافي</label><input class="inp" type="number" id="in-extra" oninput="saveIncome()" placeholder="مثال: 1500"/></div>
+        <div><label class="lbl">بريم شهرين هذا الشهر؟</label><select class="inp" id="in-b2a" onchange="saveIncome()"><option value="false">لا</option><option value="true">نعم</option></select></div>
+        <div><label class="lbl">بريم 6 أشهر هذا الشهر؟</label><select class="inp" id="in-b6a" onchange="saveIncome()"><option value="false">لا</option><option value="true">نعم</option></select></div>
+        <div><label class="lbl">يوم عالمي هذا الشهر؟</label><select class="inp" id="in-ia" onchange="saveIncome()"><option value="false">لا</option><option value="true">نعم</option></select></div>
+      </div>
+    </div>
+  </div>
+  <div class="cards-grid">
+    <div class="card green"><div class="card-label">الصالير</div><div class="card-value green" id="is-sal">-</div></div>
+    <div class="card gold"><div class="card-label">البريم</div><div class="card-value gold" id="is-bon">-</div></div>
+    <div class="card blue"><div class="card-label">إضافي</div><div class="card-value blue" id="is-ext">-</div></div>
+    <div class="card purple"><div class="card-label">المجموع</div><div class="card-value purple" id="is-tot">-</div></div>
+  </div>
+</div>
+
+<!-- ══ EXPENSES ══ -->
+<div id="tab-expenses" class="section">
+  <div class="sec-title">💸 المصاريف</div>
+  <div class="panel">
+    <div class="panel-header">➕ إضافة مصروف</div>
+    <div class="panel-body">
+      <div class="form-grid">
+        <div><label class="lbl">📂 الفئة</label>
+          <select class="inp" id="exp-cat">
+            <option>كراء</option><option>ماء وكهرباء</option><option>واي فاي</option>
+            <option>ترنسبور</option><option>تعليم العائلة</option><option>ماكلة</option>
+            <option>ترفيه</option><option>صحة</option><option>ملابس</option>
+            <option>ادخار</option><option>أخرى</option>
+          </select></div>
+        <div><label class="lbl">📝 الوصف</label><input class="inp" type="text" id="exp-desc" placeholder="وصف قصير"/></div>
+        <div><label class="lbl">💰 المبلغ (درهم)</label><input class="inp" type="number" id="exp-amt" placeholder="مثال: 500"/></div>
+        <div><label class="lbl">📅 التاريخ</label><input class="inp" type="date" id="exp-date"/></div>
+      </div>
+      <button class="action-btn green" onclick="addExpense()">➕ إضافة</button>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">📋 قائمة المصاريف
+      <button class="action-btn red" onclick="clearMonthExpenses()" style="font-size:11px;padding:5px 10px">🗑️ مسح الشهر</button>
+    </div>
+    <div class="panel-body" style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>#</th><th>الفئة</th><th>الوصف</th><th>المبلغ</th><th>التاريخ</th><th>حذف</th></tr></thead>
+        <tbody id="exp-list"><tr><td colspan="6" class="loading">جاري التحميل...</td></tr></tbody>
+        <tfoot><tr><td colspan="3" style="padding:10px;font-weight:700">المجموع</td>
+        <td colspan="3" style="padding:10px;font-weight:900;color:var(--red)" id="exp-total-foot">-</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GOALS ══ -->
+<div id="tab-goals" class="section">
+  <div class="sec-title">🎯 أهداف الادخار</div>
+
+  <!-- شريط الادخار المتاح -->
+  <div id="saving-banner" style="background:linear-gradient(135deg,rgba(0,184,148,.12),rgba(74,144,217,.1));border:1px solid rgba(0,184,148,.3);border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.5px">💰 الادخار المتاح هذا الشهر</div>
+      <div style="font-size:26px;font-weight:900;color:var(--green)" id="avail-saving">-</div>
+      <div style="font-size:11px;color:var(--text2)" id="saving-allocated">-</div>
+    </div>
+    <button class="action-btn green" onclick="openAllocModal()" id="alloc-btn">⚡ وزّع على الأهداف</button>
+  </div>
+
+  <!-- إضافة هدف -->
+  <div class="panel">
+    <div class="panel-header">➕ هدف جديد</div>
+    <div class="panel-body">
+      <!-- اختيار النوع -->
+      <div style="margin-bottom:14px">
+        <label class="lbl">🎨 نوع الهدف</label>
+        <div class="goal-type-grid" id="goal-type-picker">
+          <div class="goal-type-btn selected" data-type="🚗" data-label="سيارة" onclick="selectGoalType(this)"><span class="type-icon">🚗</span>سيارة</div>
+          <div class="goal-type-btn" data-type="🏠" data-label="شقة" onclick="selectGoalType(this)"><span class="type-icon">🏠</span>شقة</div>
+          <div class="goal-type-btn" data-type="✈️" data-label="سفر" onclick="selectGoalType(this)"><span class="type-icon">✈️</span>سفر</div>
+          <div class="goal-type-btn" data-type="🎓" data-label="تعليم" onclick="selectGoalType(this)"><span class="type-icon">🎓</span>تعليم</div>
+          <div class="goal-type-btn" data-type="💍" data-label="زواج" onclick="selectGoalType(this)"><span class="type-icon">💍</span>زواج</div>
+          <div class="goal-type-btn" data-type="📱" data-label="تقنية" onclick="selectGoalType(this)"><span class="type-icon">📱</span>تقنية</div>
+          <div class="goal-type-btn" data-type="🏥" data-label="صحة" onclick="selectGoalType(this)"><span class="type-icon">🏥</span>صحة</div>
+          <div class="goal-type-btn" data-type="⭐" data-label="أخرى" onclick="selectGoalType(this)"><span class="type-icon">⭐</span>أخرى</div>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div><label class="lbl">🏷️ اسم الهدف</label><input class="inp" type="text" id="g-name" placeholder="مثال: سيارة Dream..."/></div>
+        <div><label class="lbl">💰 المبلغ المطلوب (درهم)</label><input class="inp" type="number" id="g-amt" placeholder="مثال: 80000" oninput="updateGoalPreview()"/></div>
+<input type="hidden" id="g-saved" value="0"/>
+      </div>
+
+      <!-- النسبة المئوية -->
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div>
+            <div class="lbl" style="margin:0">📊 كم % من ادخارك الشهري لهذا الهدف؟</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">الادخار المتاح: <b style="color:var(--green)" id="g-avail-lbl">-</b></div>
+          </div>
+          <span style="font-size:28px;font-weight:900;color:var(--green)" id="g-pct-display">50%</span>
+        </div>
+        <input type="range" class="alloc-slider" min="5" max="100" step="5" value="50" id="g-pct" oninput="updateGoalPreview()"/>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-top:2px">
+          <span>5%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+        </div>
+
+        <!-- نتيجة الحساب -->
+        <div id="goal-preview" style="display:none;margin-top:14px;background:var(--bg4);border-radius:10px;padding:14px">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center">
+            <div style="background:rgba(0,184,148,.1);border-radius:8px;padding:10px">
+              <div style="font-size:10px;color:var(--text2);font-weight:700;margin-bottom:4px">💰 شهرياً</div>
+              <div style="font-size:15px;font-weight:900;color:var(--green)" id="prev-monthly">-</div>
+            </div>
+            <div style="background:rgba(253,203,110,.1);border-radius:8px;padding:10px">
+              <div style="font-size:10px;color:var(--text2);font-weight:700;margin-bottom:4px">📅 عدد الأشهر</div>
+              <div style="font-size:15px;font-weight:900;color:var(--gold)" id="prev-months">-</div>
+            </div>
+            <div style="background:rgba(74,144,217,.1);border-radius:8px;padding:10px">
+              <div style="font-size:10px;color:var(--text2);font-weight:700;margin-bottom:4px">🏁 تاريخ الإنجاز</div>
+              <div style="font-size:12px;font-weight:900;color:var(--blue)" id="prev-date">-</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--text2)" id="prev-remaining-lbl"></div>
+        </div>
+      </div>
+
+      <input type="hidden" id="g-months" value="0"/>
+      <button class="action-btn green" onclick="addGoal()">🎯 إضافة الهدف</button>
+    </div>
+  </div>
+
+  <div id="goals-list"><div class="loading">جاري التحميل...</div></div>
+</div>
+
+<!-- ══ ANNUAL ══ -->
+<div id="tab-annual" class="section">
+  <div class="sec-title">📅 التقرير السنوي</div>
+  <div class="cards-grid" id="annual-cards"></div>
+  <div class="grid-2">
+    <div class="panel"><div class="panel-header">📈 الدخل والمصاريف</div>
+      <div class="panel-body"><div class="chart-wrap"><canvas id="chartBar"></canvas></div></div></div>
+    <div class="panel"><div class="panel-header">💰 تطور الادخار</div>
+      <div class="panel-body"><div class="chart-wrap"><canvas id="chartLine"></canvas></div></div></div>
+  </div>
+  <div class="panel"><div class="panel-header">📊 شهر بشهر</div>
+    <div class="panel-body" style="overflow-x:auto"><table class="tbl" id="annual-tbl"></table></div></div>
+</div>
+
+<!-- ══ SETTINGS ══ -->
+<div id="tab-settings" class="section">
+  <div class="sec-title">⚙️ الإعدادات</div>
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">🔔 حدود التنبيه</div>
+    <div class="panel-body">
+      <div class="form-grid">
+        <div><label class="lbl">⚠️ تنبيه عند الباقي أقل من</label><input class="inp" type="number" id="s-warn" oninput="saveSettings()" placeholder="1000"/></div>
+        <div><label class="lbl">🚨 خطر عند الباقي أقل من</label><input class="inp" type="number" id="s-danger" oninput="saveSettings()" placeholder="500"/></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-header">📋 حدود الميزانية لكل فئة</div>
+    <div class="panel-body" id="budget-limits"></div>
+  </div>
+</div>
+
+</main>
+
+<!-- ══ ALLOCATION MODAL ══ -->
+<div class="modal-overlay" id="allocModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>⚡ توزيع الادخار على الأهداف</span>
+      <button class="modal-close" onclick="closeAllocModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:16px;text-align:center">
+        <div style="font-size:11px;color:var(--text2);font-weight:700">💰 إجمالي الادخار المتاح</div>
+        <div style="font-size:22px;font-weight:900;color:var(--green)" id="modal-total-saving">-</div>
+      </div>
+      <div id="alloc-rows"></div>
+      <div class="alloc-total-bar">
+        <div style="font-size:11px;color:var(--text2);font-weight:700;margin-bottom:6px">📊 مجموع النسب الموزعة</div>
+        <div style="font-size:28px;font-weight:900" id="alloc-pct-total">0%</div>
+        <div class="prog-bar" style="margin-top:8px;height:10px">
+          <div class="prog-fill" id="alloc-prog" style="width:0%;background:var(--green)"></div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-top:6px" id="alloc-remaining-lbl"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="action-btn green" style="flex:1;justify-content:center" onclick="applyAllocation()">✅ تطبيق التوزيع</button>
+        <button class="action-btn outline" onclick="closeAllocModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ══ مالي+ Standalone — localStorage ══
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+const MONTHS=['يناير','فبراير','مارس','أبريل','ماي','يونيو','يوليوز','غشت','شتنبر','أكتوبر','نونبر','دجنبر'];
+const CAT_COLORS=['#e17055','#fdcb6e','#00b894','#4a90d9','#8b5cf6','#fd79a8','#00cec9','#55efc4','#fab1a0','#6c5ce7','#b2bec3'];
+const CATS=['كراء','ماء وكهرباء','واي فاي','ترنسبور','تعليم العائلة','ماكلة','ترفيه','صحة','ملابس','ادخار','أخرى'];
+const CAT_ICONS={كراء:'🏠','ماء وكهرباء':'💡','واي فاي':'📶',ترنسبور:'🚌','تعليم العائلة':'📚',ماكلة:'🛒',ترفيه:'🎬',صحة:'🏥',ملابس:'👔',ادخار:'💎',أخرى:'📌'};
+let curMonth=new Date().getMonth()+1, curYear=Math.max(2026,new Date().getFullYear());
+let incomeData={}, expensesData=[], settingsData={warn_threshold:1000,danger_threshold:500,budget_limits:{}};
+let goalsData=[];
+let prevMonthExp=0;
+let selectedGoalType='🚗';
+let pieChart=null,barChart=null,lineChart=null;
+let saveIncomeTimer=null, saveSettingsTimer=null;
+let monthlyAvgSaving=0;
+let realMonthsCount=0;
+
+// ══════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════
+function fmt(n){return(n||0).toLocaleString('ar-MA')+' درهم';}
+
+function animateCount(el, target, prefix='', suffix=' درهم'){
+  const start=0, duration=800, startTime=performance.now();
+  function step(now){
+    const p=Math.min((now-startTime)/duration,1);
+    const ease=p<.5?2*p*p:(4-2*p)*p-1;
+    const val=Math.round(start+(target-start)*ease);
+    el.textContent=prefix+val.toLocaleString('ar-MA')+suffix;
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ══ localStorage API — يحاكي Flask API ══
+const DB={
+  get(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},
+  set(k,v){localStorage.setItem(k,JSON.stringify(v));},
+  del(k){localStorage.removeItem(k);},
+  keys(prefix=''){return Object.keys(localStorage).filter(k=>k.startsWith(prefix));}
+};
+
+async function api(url,method='GET',body=null){
+  // income
+  if(url.match(/\/api\/income\/(\d+)\/(\d+)/)){
+    const[,m,y]=url.match(/\/api\/income\/(\d+)\/(\d+)/);
+    const key=`income_${y}_${m}`;
+    if(method==='POST'){
+      const sal=body.salary||0, b2=body.bonus2_active?body.bonus2:0,
+            b6=body.bonus6_active?body.bonus6:0, bi=body.intl_active?body.bonus_intl:0;
+      const total=sal+b2+b6+bi+(body.extra||0);
+      const rec={...body,total};
+      DB.set(key,rec); return rec;
+    }
+    return DB.get(key)||{};
+  }
+  // expenses list
+  if(url.match(/\/api\/expenses\/(\d+)\/(\d+)/) && method==='GET'){
+    const[,m,y]=url.match(/\/api\/expenses\/(\d+)\/(\d+)/);
+    return DB.get(`expenses_${y}_${m}`)||[];
+  }
+  // add expense
+  if(url==='/api/expenses' && method==='POST'){
+    const[,m,y]=[null,...body.date.split('-')];
+    const key=`expenses_${y}_${parseInt(m)}`;
+    const list=DB.get(key)||[];
+    const rec={...body,id:Date.now()};
+    list.push(rec); DB.set(key,list); return rec;
+  }
+  // delete expense
+  if(url.match(/\/api\/expenses\/(\d+)/) && method==='DELETE'){
+    const id=parseInt(url.split('/').pop());
+    DB.keys('expenses_').forEach(k=>{
+      const list=(DB.get(k)||[]).filter(e=>e.id!==id);
+      DB.set(k,list);
+    }); return {};
+  }
+  // goals
+  if(url==='/api/goals' && method==='GET') return DB.get('goals')||[];
+  if(url==='/api/goals' && method==='POST'){
+    const list=DB.get('goals')||[];
+    const rec={...body,id:Date.now(),progress_pct:Math.round((body.saved_amount/body.target_amount)*100),monthly_needed:body.target_amount>body.saved_amount?Math.ceil((body.target_amount-body.saved_amount)/body.months):0};
+    list.push(rec); DB.set('goals',list); return rec;
+  }
+  if(url.match(/\/api\/goals\/(\d+)/) && method==='PUT'){
+    const id=parseInt(url.split('/').pop());
+    const list=DB.get('goals')||[];
+    const idx=list.findIndex(g=>g.id===id);
+    if(idx>-1){
+      list[idx]={...list[idx],...body,
+        progress_pct:Math.round((body.saved_amount/list[idx].target_amount)*100),
+        monthly_needed:list[idx].target_amount>body.saved_amount?Math.ceil((list[idx].target_amount-body.saved_amount)/list[idx].months):0
+      };
+      DB.set('goals',list);
+    } return list[idx]||{};
+  }
+  if(url.match(/\/api\/goals\/(\d+)/) && method==='DELETE'){
+    const id=parseInt(url.split('/').pop());
+    DB.set('goals',(DB.get('goals')||[]).filter(g=>g.id!==id)); return {};
+  }
+  // settings
+  if(url==='/api/settings' && method==='GET') return DB.get('settings')||{warn_threshold:1000,danger_threshold:500,budget_limits:{}};
+  if(url==='/api/settings' && method==='POST'){DB.set('settings',body);return body;}
+  // annual
+  if(url.match(/\/api\/annual\/(\d+)/)){
+    const[,y]=url.match(/\/api\/annual\/(\d+)/);
+    return Array.from({length:12},(_,i)=>{
+      const m=i+1;
+      const inc=DB.get(`income_${y}_${m}`)||{};
+      const exps=DB.get(`expenses_${y}_${m}`)||[];
+      const expenses=exps.reduce((s,e)=>s+e.amount,0);
+      const income=inc.total||0;
+      return{month:m,income,expenses,remaining:income-expenses};
+    });
+  }
+  // logout
+  if(url==='/api/logout') return {};
+  // export
+  if(url.match(/\/api\/export/)) return null;
+  console.warn('API not handled:',url); return null;
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('selMonth').value=curMonth;
+  document.getElementById('selYear').value=curYear;
+  document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];
+  loadAll();
+  buildBudgetLimits();
+});
+
+function changeMonth(){
+  curMonth=parseInt(document.getElementById('selMonth').value);
+  curYear=parseInt(document.getElementById('selYear').value);
+  loadAll();
+}
+
+async function loadAll(){
+  const prevM=curMonth===1?12:curMonth-1;
+  const prevY=curMonth===1?curYear-1:curYear;
+  const [,,prevExps]=await Promise.all([
+    loadIncome(), loadExpenses(), api(`/api/expenses/${prevM}/${prevY}`), loadSettings()
+  ]);
+  prevMonthExp=((prevExps)||[]).reduce((s,e)=>s+e.amount,0);
+  try{await refreshAnnualAvg();}catch(e){}
+  renderDashboard();
+  updateGoalPreview();
+}
+
+async function refreshAnnualAvg(){
+  let allMonths=[];
+  for(let y=2026;y<=curYear;y++){
+    const data=await api(`/api/annual/${y}`)||[];
+    data.filter(d=>d.income>0).forEach(d=>allMonths.push(d));
+  }
+  realMonthsCount=allMonths.length||1;
+  const totalNet=allMonths.reduce((s,d)=>s+(d.income-d.expenses),0);
+  monthlyAvgSaving=Math.round(totalNet/realMonthsCount);
+}
+
+// ══════════════════════════════════════════
+//  INCOME
+// ══════════════════════════════════════════
+async function loadIncome(){
+  incomeData=await api(`/api/income/${curMonth}/${curYear}`)||{};
+  document.getElementById('in-salary').value=incomeData.salary||'';
+  document.getElementById('in-b2').value=incomeData.bonus2||'';
+  document.getElementById('in-b6').value=incomeData.bonus6||'';
+  document.getElementById('in-intl').value=incomeData.bonus_intl||'';
+  document.getElementById('in-extra').value=incomeData.extra||'';
+  document.getElementById('in-b2a').value=incomeData.bonus2_active?'true':'false';
+  document.getElementById('in-b6a').value=incomeData.bonus6_active?'true':'false';
+  document.getElementById('in-ia').value=incomeData.intl_active?'true':'false';
+}
+
+function saveIncome(){
+  clearTimeout(saveIncomeTimer);
+  saveIncomeTimer=setTimeout(async()=>{
+    const body={
+      salary:parseFloat(document.getElementById('in-salary').value)||0,
+      bonus2:parseFloat(document.getElementById('in-b2').value)||0,
+      bonus6:parseFloat(document.getElementById('in-b6').value)||0,
+      bonus_intl:parseFloat(document.getElementById('in-intl').value)||0,
+      extra:parseFloat(document.getElementById('in-extra').value)||0,
+      bonus2_active:document.getElementById('in-b2a').value==='true',
+      bonus6_active:document.getElementById('in-b6a').value==='true',
+      intl_active:document.getElementById('in-ia').value==='true'
+    };
+    incomeData=await api(`/api/income/${curMonth}/${curYear}`,'POST',body)||incomeData;
+    renderIncomeSummary(); renderDashboard();
+  },600);
+}
+
+function renderIncomeSummary(){
+  const inc=incomeData;
+  const bonus=(inc.bonus2_active?inc.bonus2:0)+(inc.bonus6_active?inc.bonus6:0)+(inc.intl_active?inc.bonus_intl:0);
+  document.getElementById('is-sal').textContent=fmt(inc.salary);
+  document.getElementById('is-bon').textContent=fmt(bonus);
+  document.getElementById('is-ext').textContent=fmt(inc.extra);
+  document.getElementById('is-tot').textContent=fmt(inc.total);
+}
+
+// ══════════════════════════════════════════
+//  EXPENSES
+// ══════════════════════════════════════════
+async function loadExpenses(){
+  expensesData=await api(`/api/expenses/${curMonth}/${curYear}`)||[];
+  renderExpenses();
+}
+
+function renderExpenses(){
+  const tbody=document.getElementById('exp-list');
+  if(!expensesData.length){
+    tbody.innerHTML='<tr><td colspan="6" class="loading">ما كاين مصاريف هذا الشهر</td></tr>';
+    document.getElementById('exp-total-foot').textContent='0 درهم';return;
+  }
+  const total=expensesData.reduce((s,e)=>s+e.amount,0);
+  tbody.innerHTML=expensesData.map((e,i)=>`
+    <tr><td style="color:var(--text2)">${i+1}</td>
+    <td><span class="tag">${CAT_ICONS[e.category]||''} ${e.category}</span></td>
+    <td>${e.description||'-'}</td>
+    <td style="color:var(--red);font-weight:700">${fmt(e.amount)}</td>
+    <td style="color:var(--text2)">${e.date}</td>
+    <td><button class="action-btn red" style="padding:4px 8px;font-size:11px" onclick="delExpense(${e.id})">🗑️</button></td>
+    </tr>`).join('');
+  document.getElementById('exp-total-foot').textContent=fmt(total);
+}
+
+async function addExpense(){
+  const amt=parseFloat(document.getElementById('exp-amt').value);
+  if(!amt){alert('خاصك تدخل المبلغ!');return;}
+  await api('/api/expenses','POST',{
+    category:document.getElementById('exp-cat').value,
+    description:document.getElementById('exp-desc').value,
+    amount:amt,date:document.getElementById('exp-date').value
+  });
+  document.getElementById('exp-amt').value='';
+  document.getElementById('exp-desc').value='';
+  await loadExpenses(); renderDashboard();
+}
+
+async function delExpense(id){
+  await api(`/api/expenses/${id}`,'DELETE');
+  await loadExpenses(); renderDashboard();
+}
+
+async function clearMonthExpenses(){
+  if(!confirm('تمسح جميع مصاريف هذا الشهر؟'))return;
+  for(const e of expensesData)await api(`/api/expenses/${e.id}`,'DELETE');
+  await loadExpenses(); renderDashboard();
+}
+
+// ══════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════
+async function loadSettings(){
+  settingsData=await api('/api/settings')||settingsData;
+  document.getElementById('s-warn').value=settingsData.warn_threshold||1000;
+  document.getElementById('s-danger').value=settingsData.danger_threshold||500;
+}
+
+function saveSettings(){
+  clearTimeout(saveSettingsTimer);
+  saveSettingsTimer=setTimeout(async()=>{
+    settingsData=await api('/api/settings','POST',{
+      warn_threshold:parseFloat(document.getElementById('s-warn').value)||1000,
+      danger_threshold:parseFloat(document.getElementById('s-danger').value)||500,
+      budget_limits:settingsData.budget_limits||{}
+    })||settingsData;
+    renderDashboard();
+  },600);
+}
+
+function buildBudgetLimits(){
+  document.getElementById('budget-limits').innerHTML=CATS.map(cat=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+      <span>${CAT_ICONS[cat]||''} ${cat}</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <input type="number" placeholder="لا حد" class="inp" style="width:120px;text-align:center"
+          id="bl-${cat.replace(/ /g,'_')}" onchange="updateBudgetLimit('${cat}',this.value)"/>
+        <span style="font-size:11px;color:var(--text2)">درهم</span>
+      </div>
+    </div>`).join('');
+}
+
+async function updateBudgetLimit(cat,val){
+  if(!settingsData.budget_limits)settingsData.budget_limits={};
+  settingsData.budget_limits[cat]=parseFloat(val)||0;
+  settingsData=await api('/api/settings','POST',{budget_limits:settingsData.budget_limits,...settingsData})||settingsData;
+  renderDashboard();
+}
+
+// ══════════════════════════════════════════
+//  GOALS
+// ══════════════════════════════════════════
+function selectGoalType(el){
+  document.querySelectorAll('.goal-type-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedGoalType=el.dataset.type;
+  const lbl=el.dataset.label;
+  const nameInp=document.getElementById('g-name');
+  if(!nameInp.value||Object.values({سيارة:'🚗',شقة:'🏠',سفر:'✈️',تعليم:'🎓',زواج:'💍',تقنية:'📱',صحة:'🏥',أخرى:'⭐'}).includes(nameInp.value)){
+    nameInp.value=lbl;
+  }
+}
+
+async function loadGoals(){
+  goalsData=await api('/api/goals')||[];
+  renderGoals();
+  updateSavingBanner();
+}
+
+function renderGoals(){
+  const container=document.getElementById('goals-list');
+  if(!goalsData.length){container.innerHTML='<div class="panel"><div class="panel-body loading">ما كاين أهداف — زيد هدف أول شي! 🎯</div></div>';return;}
+  const inc=incomeData.total||0;
+  const totalExp=expensesData.reduce((s,e)=>s+e.amount,0);
+  const avail=Math.max(0,inc-totalExp);
+
+  container.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">${goalsData.map(g=>{
+    const c=g.progress_pct>=100?'var(--green)':g.progress_pct>50?'var(--gold)':'var(--blue)';
+    const remaining=g.target_amount-g.saved_amount;
+    const etaMonths=g.monthly_needed>0?Math.ceil(remaining/g.monthly_needed):0;
+    const etaDate=new Date();etaDate.setMonth(etaDate.getMonth()+etaMonths);
+    const etaStr=etaMonths>0?`${MONTHS[etaDate.getMonth()]} ${etaDate.getFullYear()}`:'وصلت للهدف!';
+    const icon=g.name.includes('سيارة')||g.name.includes('car')?'🚗':
+                g.name.includes('شقة')||g.name.includes('منزل')||g.name.includes('بيت')?'🏠':
+                g.name.includes('سفر')||g.name.includes('رحلة')?'✈️':
+                g.name.includes('تعليم')||g.name.includes('دراسة')?'🎓':
+                g.name.includes('زواج')||g.name.includes('خطوبة')?'💍':
+                g.name.includes('هاتف')||g.name.includes('لابتوب')||g.name.includes('تلفون')?'📱':'⭐';
+    return`<div class="goal-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="font-size:38px;line-height:1">${icon}</div>
+        <button class="action-btn red" style="padding:4px 8px;font-size:11px" onclick="delGoal(${g.id})">🗑️</button>
+      </div>
+      <div style="font-size:15px;font-weight:900;margin:8px 0 4px">${g.name}</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">📅 ${g.months} شهر · 🏁 ${etaStr}</div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">
+        <span>تم: <b style="color:var(--green)">${fmt(g.saved_amount)}</b></span>
+        <span>الهدف: <b style="color:var(--gold)">${fmt(g.target_amount)}</b></span>
+      </div>
+      <div class="prog-bar" style="height:10px;margin-bottom:4px">
+        <div class="prog-fill" style="width:${g.progress_pct}%;background:${c}"></div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:var(--text2);margin-bottom:8px">${g.progress_pct}% مكمل</div>
+      ${g.monthly_needed>0
+        ?`<div style="background:rgba(0,184,148,.1);color:var(--green);text-align:center;font-size:12px;font-weight:700;padding:7px;border-radius:8px">💰 ${fmt(g.monthly_needed)} / شهر</div>`
+        :`<div style="background:rgba(0,184,148,.2);color:var(--green);text-align:center;font-size:12px;padding:7px;border-radius:8px">✅ وصلت للهدف!</div>`}
+      <button class="action-btn outline" style="width:100%;margin-top:8px;justify-content:center;font-size:12px" onclick="quickDeposit(${g.id},'${g.name}',${g.saved_amount})">➕ إضافة ادخار</button>
+    </div>`;
+  }).join('')}</div>`;
+
+  // تشغيل الـ progress bars بشكل متحرك
+  setTimeout(()=>{
+    document.querySelectorAll('.prog-fill').forEach(bar=>{
+      const target=bar.style.width;
+      bar.style.width='0%';
+      setTimeout(()=>{bar.style.width=target;},100);
+    });
+  },50);
+}
+
+async function quickDeposit(id, name, currentSaved){
+  const amount=prompt(`💰 كم تبغي تضيف للهدف "${name}"؟ (درهم)\nالمدخر حالياً: ${currentSaved.toLocaleString()} درهم`);
+  if(!amount||isNaN(amount)||parseFloat(amount)<=0)return;
+  const newSaved=currentSaved+parseFloat(amount);
+  await api(`/api/goals/${id}`,'PUT',{saved_amount:newSaved});
+  await loadGoals();
+
+  // تحقق من بلوغ الهدف
+  const goal=goalsData.find(g=>g.id===id);
+  if(goal&&newSaved>=goal.target_amount){
+    launchConfetti();
+    setTimeout(()=>alert(`🎉 مبروك! وصلت للهدف "${name}"! 🎊`),500);
+  }
+}
+
+async function addGoal(){
+  const n=document.getElementById('g-name').value;
+  const a=parseFloat(document.getElementById('g-amt').value);
+  const pct=parseInt(document.getElementById('g-pct').value)||50;
+  if(!n||!a){alert('خاصك تدخل الاسم والمبلغ المطلوب!');return;}
+  const inc=incomeData.total||0;
+  const totalExp=expensesData.reduce((s,e)=>s+e.amount,0);
+  const curSaving=inc-totalExp;
+  const monthlyAvg=realMonthsCount>0?monthlyAvgSaving:curSaving;
+  const monthlyForGoal=Math.round(monthlyAvg*pct/100);
+  const autoSaved=Math.max(0,monthlyForGoal*realMonthsCount);
+  const remaining=Math.max(0,a-autoSaved);
+  const m=monthlyForGoal>0?Math.ceil(remaining/monthlyForGoal):1;
+  await api('/api/goals','POST',{name:n,target_amount:a,months:m,saved_amount:autoSaved});
+  ['g-name','g-amt'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('g-pct').value=50;
+  document.getElementById('g-pct-display').textContent='50%';
+  document.getElementById('goal-preview').style.display='none';
+  await loadGoals();
+}
+
+async function delGoal(id){
+  if(!confirm('تمسح هذا الهدف؟'))return;
+  await api(`/api/goals/${id}`,'DELETE');
+  await loadGoals();
+}
+
+// ══════════════════════════════════════════
+//  ALLOCATION
+// ══════════════════════════════════════════
+function updateGoalPreview(){
+  const inc=incomeData.total||0;
+  const totalExp=expensesData.reduce((s,e)=>s+e.amount,0);
+  const curSaving=inc-totalExp;
+  const monthlyAvg=realMonthsCount>0?monthlyAvgSaving:curSaving;
+
+  const pct=parseInt(document.getElementById('g-pct').value)||50;
+  const target=parseFloat(document.getElementById('g-amt').value)||0;
+
+  document.getElementById('g-pct-display').textContent=pct+'%';
+  const availLbl=document.getElementById('g-avail-lbl');
+  if(availLbl) availLbl.textContent=inc>0
+    ?`معدل ${fmt(monthlyAvg)}/شهر (${realMonthsCount} شهر)`
+    :'ما كاين دخل — دخل الصالير أولاً';
+
+  const preview=document.getElementById('goal-preview');
+  if(!inc||!target){preview.style.display='none';return;}
+
+  const monthlyForGoal=Math.round(monthlyAvg*pct/100);
+  const autoSaved=Math.max(0,monthlyForGoal*realMonthsCount);
+  const remaining=Math.max(0,target-autoSaved);
+  const months=monthlyForGoal>0?Math.ceil(remaining/monthlyForGoal):999;
+  document.getElementById('g-months').value=months;
+
+  const etaDate=new Date(curYear,curMonth-1+months);
+  const etaStr=remaining<=0?'الآن! 🎉':`${MONTHS[etaDate.getMonth()]} ${etaDate.getFullYear()}`;
+
+  document.getElementById('prev-monthly').textContent=fmt(monthlyForGoal);
+  document.getElementById('prev-months').textContent=remaining<=0?'✅ وصلت!':months+' شهر';
+  document.getElementById('prev-date').textContent=etaStr;
+
+  const remLbl=document.getElementById('prev-remaining-lbl');
+  if(remLbl){
+    remLbl.innerHTML=remaining>0
+      ?`${fmt(monthlyForGoal)}/شهر · تم تلقائياً: <b style="color:var(--green)">${fmt(autoSaved)}</b> · باقي: <b style="color:var(--gold)">${fmt(remaining)}</b>`
+      :'✅ وصلت للهدف مسبقاً!';
+  }
+  preview.style.display='block';
+}
+
+function updateSavingBanner(){
+  const inc=incomeData.total||0;
+  const totalExp=expensesData.reduce((s,e)=>s+e.amount,0);
+  const avail=Math.max(0,inc-totalExp);
+  document.getElementById('avail-saving').textContent=fmt(avail);
+  const totalNeeded=goalsData.reduce((s,g)=>s+g.monthly_needed,0);
+  document.getElementById('saving-allocated').textContent=goalsData.length>0
+    ?`الأهداف تحتاج ${fmt(totalNeeded)} شهرياً`:'ما كاين أهداف بعد';
+}
+
+function openAllocModal(){
+  const inc=incomeData.total||0;
+  const totalExp=expensesData.reduce((s,e)=>s+e.amount,0);
+  const avail=Math.max(0,inc-totalExp);
+  if(avail<=0){alert('ما كاين ادخار متاح هذا الشهر!');return;}
+  if(!goalsData.length){alert('زيد هدف أول!');return;}
+  document.getElementById('modal-total-saving').textContent=fmt(avail);
+
+  // حساب النسب التلقائية
+  const totalNeeded=goalsData.reduce((s,g)=>s+g.monthly_needed,0);
+  const rows=document.getElementById('alloc-rows');
+  rows.innerHTML=goalsData.map((g,i)=>{
+    const autoPct=totalNeeded>0?Math.round((g.monthly_needed/totalNeeded)*100):Math.round(100/goalsData.length);
+    const amount=Math.round(avail*autoPct/100);
+    const icon=g.name.includes('سيارة')?'🚗':g.name.includes('شقة')||g.name.includes('منزل')?'🏠':
+               g.name.includes('سفر')?'✈️':g.name.includes('تعليم')?'🎓':g.name.includes('زواج')?'💍':'⭐';
+    return`<div class="alloc-row">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="display:flex;align-items:center;gap:8px;font-weight:700">
+          <span style="font-size:22px">${icon}</span>
+          <span>${g.name}</span>
+        </div>
+        <div style="text-align:left">
+          <span style="font-size:18px;font-weight:900;color:var(--green)" id="alloc-pct-${g.id}">${autoPct}%</span>
+          <div style="font-size:11px;color:var(--text2)" id="alloc-amt-${g.id}">${fmt(amount)}</div>
+        </div>
+      </div>
+      <input type="range" class="alloc-slider" min="0" max="100" value="${autoPct}"
+        id="alloc-slider-${g.id}" data-id="${g.id}" oninput="updateAllocSlider(${g.id},${avail})"/>
+      <div style="font-size:10px;color:var(--text2);margin-top:2px">
+        المطلوب شهرياً: <b style="color:var(--gold)">${fmt(g.monthly_needed)}</b>
+      </div>
+    </div>`;
+  }).join('');
+  updateAllocTotal(avail);
+  document.getElementById('allocModal').classList.add('open');
+}
+
+function updateAllocSlider(id, avail){
+  const pct=parseInt(document.getElementById(`alloc-slider-${id}`).value);
+  const amount=Math.round(avail*pct/100);
+  document.getElementById(`alloc-pct-${id}`).textContent=pct+'%';
+  document.getElementById(`alloc-amt-${id}`).textContent=fmt(amount);
+  updateAllocTotal(avail);
+}
+
+function updateAllocTotal(avail){
+  let total=0;
+  goalsData.forEach(g=>{
+    const s=document.getElementById(`alloc-slider-${g.id}`);
+    if(s)total+=parseInt(s.value);
+  });
+  const color=total>100?'var(--red)':total===100?'var(--green)':'var(--gold)';
+  document.getElementById('alloc-pct-total').textContent=total+'%';
+  document.getElementById('alloc-pct-total').style.color=color;
+  document.getElementById('alloc-prog').style.width=Math.min(total,100)+'%';
+  document.getElementById('alloc-prog').style.background=color;
+  const remaining=avail*(100-total)/100;
+  document.getElementById('alloc-remaining-lbl').textContent=total>100
+    ?'⚠️ تجاوزت 100% — نقص من بعض الأهداف'
+    :total===100?'✅ ممتاز! كل الادخار موزع'
+    :`باقي ${fmt(remaining)} بدون توزيع`;
+}
+
+function closeAllocModal(){
+  document.getElementById('allocModal').classList.remove('open');
+}
+
+async function applyAllocation(){
+  const inc=incomeData.total||0;
+  const totalExp=expensesData.reduce((s,e)=>s+e.amount,0);
+  const avail=Math.max(0,inc-totalExp);
+  let total=0;
+  goalsData.forEach(g=>{
+    const s=document.getElementById(`alloc-slider-${g.id}`);
+    if(s)total+=parseInt(s.value);
+  });
+  if(total>100){alert('المجموع تجاوز 100%! نقص من بعض الأهداف.');return;}
+  if(!confirm(`غادي تضيف الادخار على الأهداف. متأكد؟`))return;
+
+  let anyCompleted=false;
+  for(const g of goalsData){
+    const s=document.getElementById(`alloc-slider-${g.id}`);
+    if(!s)continue;
+    const pct=parseInt(s.value);
+    if(pct===0)continue;
+    const amount=Math.round(avail*pct/100);
+    const newSaved=g.saved_amount+amount;
+    await api(`/api/goals/${g.id}`,'PUT',{saved_amount:newSaved});
+    if(newSaved>=g.target_amount)anyCompleted=true;
+  }
+
+  closeAllocModal();
+  await loadGoals();
+  if(anyCompleted){launchConfetti();setTimeout(()=>alert('🎉 مبروك! وصلت لهدف!'),500);}
+  else{showToast('✅ تم توزيع الادخار على الأهداف!');}
+}
+
+// ══════════════════════════════════════════
+//  AI TIPS
+// ══════════════════════════════════════════
+function generateAiTips(inc, totalExp, rem){
+  const tips=[];
+  const pct=inc>0?Math.round((rem/inc)*100):0;
+  const catMap={};
+  expensesData.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
+
+  if(pct>=20)tips.push({icon:'🌟',text:`نسبة ادخارك ${pct}% ممتازة! استمر كذا.`});
+  else if(pct>=10)tips.push({icon:'👍',text:`ادخرت ${pct}% من دخلك. حاول توصل ل20%.`});
+  else if(pct>0)tips.push({icon:'⚠️',text:`نسبة ادخارك ضعيفة (${pct}%). راجع مصاريفك.`});
+
+  if(prevMonthExp>0){
+    const diff=totalExp-prevMonthExp;
+    const diffPct=Math.abs(Math.round((diff/prevMonthExp)*100));
+    if(diff>500)tips.push({icon:'📈',text:`مصاريفك زادت ${diffPct}% مقارنة بالشهر الماضي (+${Math.round(diff).toLocaleString()} درهم).`});
+    else if(diff<-500)tips.push({icon:'📉',text:`مصاريفك نقصت ${diffPct}% مقارنة بالشهر الماضي. ممتاز!`});
+  }
+
+  const ent=catMap['ترفيه']||0;
+  if(ent>inc*0.15)tips.push({icon:'🎬',text:`مصاريف الترفيه (${fmt(ent)}) تتجاوز 15% من دخلك. فكر فيها.`});
+  const food=catMap['ماكلة']||0;
+  if(food>inc*0.3)tips.push({icon:'🛒',text:`مصاريف الماكلة مرتفعة (${fmt(food)}). جرب التخطيط للأسبوع.`});
+  if(goalsData.length>0){
+    const totalNeeded=goalsData.reduce((s,g)=>s+g.monthly_needed,0);
+    if(rem<totalNeeded)tips.push({icon:'🎯',text:`الباقي (${fmt(rem)}) أقل من المطلوب للأهداف (${fmt(totalNeeded)}). راجع الميزانية.`});
+    else tips.push({icon:'✅',text:`الباقي كافي لتمويل كل أهدافك! (${fmt(totalNeeded)} مطلوب).`});
+  }
+
+  const aiSection=document.getElementById('ai-section');
+  const aiTips=document.getElementById('ai-tips');
+  if(tips.length){
+    aiTips.innerHTML=tips.slice(0,3).map(t=>`<div class="ai-tip"><span class="ai-tip-icon">${t.icon}</span><span>${t.text}</span></div>`).join('');
+    aiSection.style.display='block';
+  } else aiSection.style.display='none';
+}
+
+// ══════════════════════════════════════════
+//  HEALTH SCORE
+// ══════════════════════════════════════════
+function updateHealthScore(inc, totalExp, rem){
+  let score=0;
+  const savePct=inc>0?(rem/inc)*100:0;
+  if(savePct>=30)score+=40;else if(savePct>=20)score+=30;else if(savePct>=10)score+=20;else if(savePct>0)score+=10;
+  if(inc>0&&totalExp>0){
+    const catMap={};
+    expensesData.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
+    let overBudget=0;
+    const limits=settingsData.budget_limits||{};
+    Object.keys(limits).forEach(cat=>{if(limits[cat]>0&&(catMap[cat]||0)>limits[cat])overBudget++;});
+    if(overBudget===0)score+=20;else if(overBudget<=1)score+=10;
+  }
+  if(goalsData.length>0)score+=20;else score+=5;
+  if(rem>settingsData.warn_threshold)score+=20;else if(rem>settingsData.danger_threshold)score+=10;
+
+  const el=document.getElementById('health-num');
+  const arc=document.getElementById('health-arc');
+  const lbl=document.getElementById('health-lbl');
+  const circumference=138.2;
+  const offset=circumference-(circumference*score/100);
+  el.textContent=score;
+  arc.style.strokeDashoffset=offset;
+  arc.style.stroke=score>=70?'var(--green)':score>=40?'var(--gold)':'var(--red)';
+  el.style.color=score>=70?'var(--green)':score>=40?'var(--gold)':'var(--red)';
+  lbl.textContent=score>=70?'ممتاز 🌟':score>=40?'جيد 👍':'ضعيف ⚠️';
+}
+
+// ══════════════════════════════════════════
+//  DASHBOARD RENDER
+// ══════════════════════════════════════════
+function renderDashboard(){
+  const inc=incomeData.total||0;
+  const salary=incomeData.salary||0;
+  const bonus=(incomeData.bonus2_active?incomeData.bonus2:0)+(incomeData.bonus6_active?incomeData.bonus6:0)+(incomeData.intl_active?incomeData.bonus_intl:0);
+  const totalExp=expensesData.reduce((s,e)=>s+e.amount,0);
+  const rem=inc-totalExp;
+  const pct=inc>0?Math.round((rem/inc)*100):0;
+
+  // Animated counters
+  const animEl=(id,val)=>{
+    const el=document.getElementById(id);
+    if(el)animateCount(el,val);
+  };
+  animEl('d-salary',salary); animEl('d-income',inc); animEl('d-exp',totalExp); animEl('d-rem',rem);
+  document.getElementById('d-pct').textContent=pct+'%';
+  document.getElementById('d-bonus-sub').textContent=bonus>0?`+ بريم ${fmt(bonus)}`:'بدون بريم';
+
+  // Trend
+  const trend=document.getElementById('d-exp-trend');
+  if(prevMonthExp>0){
+    const diff=totalExp-prevMonthExp;
+    const p=Math.abs(Math.round((diff/prevMonthExp)*100));
+    trend.textContent=diff>0?`▲ +${p}% عن الشهر الماضي`:`▼ -${p}% عن الشهر الماضي`;
+    trend.className='card-trend '+(diff>0?'down':'up');
+  }
+  renderIncomeSummary();
+  updateHealthScore(inc,totalExp,rem);
+  generateAiTips(inc,totalExp,rem);
+
+  // Alert
+  const banner=document.getElementById('alertBanner');
+  banner.className='alert-banner';
+  if(rem<=settingsData.danger_threshold&&inc>0){
+    banner.className='alert-banner danger';
+    banner.innerHTML=`🚨 <b>خطر!</b> الباقي (${fmt(rem)}) أقل من ${fmt(settingsData.danger_threshold)}`;
+  } else if(rem<=settingsData.warn_threshold&&inc>0){
+    banner.className='alert-banner warning';
+    banner.innerHTML=`⚠️ <b>تنبيه!</b> الباقي (${fmt(rem)}) أقل من ${fmt(settingsData.warn_threshold)}`;
+  }
+
+  // Pie Chart
+  const catMap={};
+  expensesData.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
+  const labels=Object.keys(catMap), vals=labels.map(l=>catMap[l]);
+  const colors=labels.map(l=>CAT_COLORS[CATS.indexOf(l)]||'#aaa');
+  if(pieChart)pieChart.destroy();
+  if(labels.length){
+    pieChart=new Chart(document.getElementById('chartPie').getContext('2d'),{
+      type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#1a2235'}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'right',labels:{color:'#e8eaf0',font:{family:'Cairo',size:10},padding:8}},
+          tooltip:{callbacks:{label:c=>` ${c.label}: ${fmt(c.raw)}`}}}}});
+  }
+
+  // Breakdown
+  const bd=document.getElementById('exp-breakdown');
+  bd.innerHTML=labels.length?labels.map((l,i)=>{
+    const p=totalExp>0?Math.round((catMap[l]/totalExp)*100):0;
+    const lim=settingsData.budget_limits&&settingsData.budget_limits[l];
+    const over=lim&&catMap[l]>lim;
+    return`<div class="prog-row">
+      <div class="prog-label"><span>${CAT_ICONS[l]||''} ${l} ${over?'<span class="badge badge-red">تجاوز</span>':''}</span>
+      <span style="color:var(--text2)">${fmt(catMap[l])}</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${p}%;background:${colors[i]}"></div></div>
+    </div>`}).join(''):'<p class="loading">ما كاين مصاريف</p>';
+
+  // Recent ops
+  document.getElementById('recent-ops').innerHTML=
+    [...expensesData].sort((a,b)=>b.id-a.id).slice(0,8).map(e=>
+    `<tr><td><span class="tag">${CAT_ICONS[e.category]||''} ${e.category}</span></td>
+    <td>${e.description||'-'}</td><td style="color:var(--red);font-weight:700">${fmt(e.amount)}</td>
+    <td style="color:var(--text2)">${e.date}</td></tr>`).join('')
+    ||'<tr><td colspan="4" class="loading">ما كاين عمليات</td></tr>';
+}
+
+// ══════════════════════════════════════════
+//  ANNUAL
+// ══════════════════════════════════════════
+async function loadAnnual(){
+  if(!goalsData.length) goalsData=await api('/api/goals')||[];
+  const data=await api(`/api/annual/${curYear}`)||[];
+  let totI=0,totE=0,cumS=0;
+  data.forEach(d=>{totI+=d.income;totE+=d.expenses;});
+  const totalGoalsSaved=goalsData.reduce((s,g)=>s+g.saved_amount,0);
+  document.getElementById('annual-cards').innerHTML=`
+    <div class="card green"><div class="card-label">الدخل السنوي</div><div class="card-value green">${fmt(totI)}</div></div>
+    <div class="card red"><div class="card-label">المصاريف السنوية</div><div class="card-value red">${fmt(totE)}</div></div>
+    <div class="card blue"><div class="card-label">الادخار التقريبي</div><div class="card-value blue">${fmt(Math.max(0,totI-totE))}</div></div>
+    <div class="card gold"><div class="card-label">متوسط الادخار الشهري</div><div class="card-value gold">${fmt(monthlyAvgSaving)}</div><div class="card-sub">${realMonthsCount} شهر</div></div>`;
+
+  if(barChart)barChart.destroy();
+  barChart=new Chart(document.getElementById('chartBar').getContext('2d'),{
+    type:'bar',data:{labels:MONTHS,datasets:[
+      {label:'الدخل',data:data.map(d=>d.income),backgroundColor:'rgba(0,184,148,.7)',borderRadius:5},
+      {label:'المصاريف',data:data.map(d=>d.expenses),backgroundColor:'rgba(225,112,85,.7)',borderRadius:5}
+    ]},options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#e8eaf0',font:{family:'Cairo'}}}},
+      scales:{x:{ticks:{color:'#8892a4',font:{family:'Cairo'}},grid:{color:'#2a3555'}},
+              y:{ticks:{color:'#8892a4'},grid:{color:'#2a3555'}}}}});
+
+  if(lineChart)lineChart.destroy();
+  lineChart=new Chart(document.getElementById('chartLine').getContext('2d'),{
+    type:'line',data:{labels:MONTHS,datasets:[{label:'الادخار التراكمي',
+      data:data.map(d=>{cumS+=Math.max(0,d.remaining);return cumS;}),
+      borderColor:'#00b894',backgroundColor:'rgba(0,184,148,.1)',fill:true,tension:.4,pointBackgroundColor:'#00b894'}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#e8eaf0',font:{family:'Cairo'}}}},
+      scales:{x:{ticks:{color:'#8892a4',font:{family:'Cairo'}},grid:{color:'#2a3555'}},
+              y:{ticks:{color:'#8892a4'},grid:{color:'#2a3555'}}}}});
+
+  document.getElementById('annual-tbl').innerHTML=`
+    <thead><tr><th>الشهر</th><th>الدخل</th><th>المصاريف</th><th>الباقي</th><th>نسبة</th></tr></thead>
+    <tbody>${data.map(d=>{const p=d.income>0?Math.round((d.remaining/d.income)*100):0;
+      return`<tr><td style="font-weight:700">${MONTHS[d.month-1]}</td>
+      <td style="color:var(--green)">${fmt(d.income)}</td>
+      <td style="color:var(--red)">${fmt(d.expenses)}</td>
+      <td style="color:${d.remaining>=0?'var(--blue)':'var(--red)'};font-weight:700">${fmt(d.remaining)}</td>
+      <td><span class="badge ${p>=20?'badge-green':p>=10?'badge-gold':'badge-red'}">${p}%</span></td></tr>`;
+    }).join('')}</tbody>`;
+}
+
+// ══════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════
+const TABS=['dashboard','income','expenses','goals','annual','settings'];
+function showTab(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.nav-tab')[TABS.indexOf(name)].classList.add('active');
+  if(name==='annual')loadAnnual();
+  if(name==='goals'){refreshAnnualAvg().catch(()=>{}).then(()=>{updateGoalPreview();loadGoals();});}
+}
+
+// ══════════════════════════════════════════
+//  CONFETTI + TOAST
+// ══════════════════════════════════════════
+function launchConfetti(){
+  const colors=['#00b894','#fdcb6e','#4a90d9','#8b5cf6','#e17055','#fd79a8'];
+  for(let i=0;i<60;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='confetti-piece';
+      el.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};
+        width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;
+        animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),3000);
+    },i*30);
+  }
+}
+
+function showToast(msg){
+  const t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText=`position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--green);color:#fff;padding:12px 24px;border-radius:50px;
+    font-family:Cairo,sans-serif;font-size:14px;font-weight:700;z-index:9999;
+    box-shadow:0 4px 20px rgba(0,184,148,.5);animation:fadeUp .3s ease`;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},2500);
+}
+
+// ══════════════════════════════════════════
+//  EXPORT + LOGOUT
+// ══════════════════════════════════════════
+function expExcel(){
+  const data=JSON.stringify(Object.fromEntries(Object.keys(localStorage).map(k=>[k,localStorage.getItem(k)])));
+  const b=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download=`mali-plus-backup-${curYear}-${curMonth}.json`;a.click();
+}
+function expPDF(){window.print();}
+function exportData(){expExcel();}
+
+// Close modal on overlay click
+document.getElementById('allocModal').addEventListener('click',function(e){
+  if(e.target===this)closeAllocModal();
+});
+
+</script>
+
+<div id="pwa-banner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  background:#00b894;color:#fff;padding:12px 24px;border-radius:50px;font-family:Cairo,sans-serif;
+  font-size:14px;font-weight:700;z-index:9998;cursor:pointer;box-shadow:0 4px 20px rgba(0,184,148,0.5);
+  white-space:nowrap;align-items:center;gap:10px">
+  📲 حط التطبيق في تلفونك
+</div>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/static/service-worker.js')
+      .then(r=>console.log('SW:',r.scope)).catch(e=>console.log('SW err:',e));
+  });
+}
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredPrompt=e;
+  const b=document.getElementById('pwa-banner');b.style.display='flex';
+  b.onclick=async()=>{b.style.display='none';deferredPrompt.prompt();
+    await deferredPrompt.userChoice;deferredPrompt=null;};
+});
+window.addEventListener('appinstalled',()=>document.getElementById('pwa-banner').style.display='none');
+</script>
+</body>
+</html>
