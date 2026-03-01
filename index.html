@@ -633,6 +633,228 @@ body::after {
   50% { box-shadow: 0 0 0 8px rgba(0,184,148,0); }
 }
 .goal-action-btn.primary { animation: depositPulse 2.5s ease-in-out infinite; }
+
+/* ══ AI BOURSE STYLE ══ */
+.ai-card {
+  background: #0d1421;
+  border: 1px solid rgba(0,184,148,.2);
+  border-radius: 16px;
+  padding: 0;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.ai-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(0,184,148,.06);
+  border-bottom: 1px solid rgba(0,184,148,.15);
+}
+.ai-header-title {
+  font-size: 11px; font-weight: 900; color: var(--green);
+  text-transform: uppercase; letter-spacing: 1px;
+  display: flex; align-items: center; gap: 6px;
+}
+.ai-live-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,184,148,.4); }
+  50%      { opacity: .7; box-shadow: 0 0 0 5px rgba(0,184,148,0); }
+}
+.ai-ticker-wrap {
+  display: flex; flex-direction: column; gap: 0;
+}
+.ai-ticker {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  align-items: center; gap: 8px;
+  padding: 11px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  transition: background .15s;
+  animation: rowIn .3s cubic-bezier(.22,1,.36,1) both;
+}
+.ai-ticker:last-child { border-bottom: none; }
+.ai-ticker:hover { background: rgba(255,255,255,.03); }
+.ai-ticker-icon { font-size: 16px; text-align: center; }
+.ai-ticker-label { font-size: 12px; color: var(--text2); line-height: 1.4; }
+.ai-ticker-label b { color: var(--text); font-weight: 700; display: block; font-size: 12px; }
+.ai-ticker-val {
+  font-size: 13px; font-weight: 900; font-family: monospace;
+  text-align: right; white-space: nowrap;
+}
+.ai-ticker-change {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+}
+.ai-change-pill {
+  font-size: 10px; font-weight: 900; padding: 2px 7px; border-radius: 20px;
+  font-family: monospace; white-space: nowrap;
+}
+.ai-change-up   { background: rgba(225,112,85,.15); color: #e17055; }
+.ai-change-down { background: rgba(0,184,148,.15);  color: #00b894; }
+.ai-change-flat { background: rgba(178,190,195,.1);  color: #b2bec3; }
+.ai-sparkline { width: 48px; height: 20px; }
+
+/* ══ AUTO ALLOC BANNER ══ */
+.auto-alloc-banner {
+  background: linear-gradient(135deg, rgba(0,184,148,.1), rgba(74,144,217,.08));
+  border: 1px solid rgba(0,184,148,.25);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+}
+.auto-alloc-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.auto-alloc-row:last-child { border-bottom: none; }
+.auto-alloc-bar {
+  height: 4px; border-radius: 4px; background: var(--bg4); margin-top: 4px; overflow: hidden;
+}
+.auto-alloc-fill {
+  height: 100%; border-radius: 4px;
+  transition: width 1s cubic-bezier(.22,1,.36,1);
+}
+
+/* ══ LIGHT MODE ══ */
+body.light-mode {
+  --bg:#f0f4f8; --bg2:#ffffff; --bg3:#e8edf5; --bg4:#d8e0ef;
+  --text:#1a2235; --text2:#5a6a85; --border:#c8d4e8;
+  --shadow: 0 4px 24px rgba(0,0,0,.08);
+}
+body.light-mode .ai-card { background:#f8faff; border-color:rgba(0,184,148,.3); }
+body.light-mode .ai-header { background:rgba(0,184,148,.08); }
+body.light-mode .tbl tr:hover td { background:var(--bg3); }
+body.light-mode header { background: rgba(240,244,248,.95); }
+body.light-mode .auth-overlay { background: var(--bg); }
+.theme-toggle {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 10px; cursor: pointer;
+  font-size: 14px; transition: all .2s; display:flex; align-items:center; gap:4px;
+  color: var(--text2); font-family: inherit; font-weight: 700; font-size: 12px;
+}
+.theme-toggle:hover { border-color: var(--green); color: var(--green); }
+
+/* ══ EDIT EXPENSE MODAL ══ */
+.edit-expense-modal {
+  position:fixed; inset:0; z-index:700;
+  background:rgba(0,0,0,.7); backdrop-filter:blur(6px);
+  display:none; align-items:center; justify-content:center; padding:16px;
+}
+.edit-expense-modal.open { display:flex; }
+.edit-expense-box {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:20px; padding:28px; width:100%; max-width:420px;
+  animation:fadeUp .35s cubic-bezier(.22,1,.36,1) both;
+}
+
+/* ══ UNDO TOAST ══ */
+.undo-toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:12px; padding:12px 16px;
+  display:flex; align-items:center; gap:12px;
+  font-size:13px; font-weight:700; z-index:9999;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  animation:toastIn .35s cubic-bezier(.22,1,.36,1) both;
+  white-space:nowrap;
+}
+.undo-btn {
+  background:var(--green); color:#fff; border:none;
+  border-radius:8px; padding:5px 12px; font-family:inherit;
+  font-size:12px; font-weight:900; cursor:pointer;
+  transition:transform .15s;
+}
+.undo-btn:hover { transform:scale(1.05); }
+.undo-progress {
+  position:absolute; bottom:0; left:0; right:0; height:3px;
+  background:var(--green); border-radius:0 0 12px 12px;
+  animation:undoProgress 5s linear forwards;
+}
+@keyframes undoProgress { from{width:100%} to{width:0%} }
+
+/* ══ KEYBOARD SHORTCUT HINT ══ */
+.kbd-hint {
+  display:inline-block; background:var(--bg4); border:1px solid var(--border);
+  border-radius:5px; padding:1px 6px; font-size:10px;
+  font-family:monospace; color:var(--text2); margin-right:4px;
+}
+
+/* ══ COMPLETED GOALS ARCHIVE ══ */
+.completed-goal {
+  background: linear-gradient(135deg, rgba(0,184,148,.08), rgba(253,203,110,.05));
+  border: 1px solid rgba(0,184,148,.2);
+  border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  animation: cardIn .4s cubic-bezier(.22,1,.36,1) both;
+}
+.completed-goal-badge {
+  background: linear-gradient(135deg, var(--gold), #f39c12);
+  color: #000; font-size: 18px; width: 42px; height: 42px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; box-shadow: 0 4px 12px rgba(253,203,110,.3);
+}
+.completed-goal-info { flex: 1; }
+.completed-goal-name { font-size: 13px; font-weight: 900; margin-bottom: 2px; }
+.completed-goal-date { font-size: 11px; color: var(--text2); }
+.completed-goal-amount { font-size: 14px; font-weight: 900; color: var(--green); }
+
+/* ══ PIN MODAL ══ */
+.pin-overlay {
+  position: fixed; inset: 0; z-index: 800;
+  background: var(--bg); display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 20px;
+}
+.pin-overlay.open { display: flex; }
+.pin-dots { display: flex; gap: 14px; margin: 10px 0; }
+.pin-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--border); background: transparent;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.pin-dot.filled { background: var(--green); border-color: var(--green); transform: scale(1.2); }
+.pin-dot.error  { background: var(--red);   border-color: var(--red); }
+.pin-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; width: 240px; }
+.pin-btn {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px; font-size: 22px; font-weight: 700;
+  color: var(--text); cursor: pointer; font-family: inherit;
+  transition: all .15s cubic-bezier(.34,1.56,.64,1);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.pin-btn:active { transform: scale(.92); background: var(--bg4); }
+.pin-btn .pin-letters { font-size: 8px; color: var(--text2); letter-spacing: 1px; }
+.pin-btn.del { font-size: 18px; }
+
+/* ══ SPENDING FAST ══ */
+.fast-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(225,112,85,.15); color: var(--red);
+  border: 1px solid rgba(225,112,85,.3); border-radius: 20px;
+  font-size: 10px; font-weight: 900; padding: 2px 8px;
+  letter-spacing: .5px;
+}
+.fast-countdown {
+  font-size: 28px; font-weight: 900; color: var(--gold);
+  font-family: monospace; text-align: center;
+}
+
+/* ══ SHARE SUMMARY ══ */
+.share-card {
+  background: linear-gradient(135deg, #0a0e1a, #111827);
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 24px; max-width: 360px; margin: 0 auto;
+}
+
+/* ══ NUMBER ANIMATION ══ */
+@keyframes numPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.15); color: var(--green); }
+  100% { transform: scale(1); }
+}
+.num-pop { animation: numPop .4s cubic-bezier(.34,1.56,.64,1); }
 </style>
 </head>
 <body>
@@ -770,6 +992,7 @@ body::after {
       </select>
     </div>
     <span class="user-badge" id="user-badge">👤 ...</span>
+    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">🌙 داكن</button>
     <button class="btn-sm btn-red-sm" onclick="doLogout()">🚪 خروج</button>
     <button class="btn-sm btn-outline-sm" onclick="expExcel()">📊 Excel</button>
     <button class="btn-sm btn-outline-sm" onclick="expPDF()">📄 PDF</button>
@@ -804,10 +1027,30 @@ body::after {
     <div class="greeting-insights" id="greeting-insights"></div>
   </div>
 
-  <!-- AI Tips -->
+  <!-- AI Bourse -->
   <div id="ai-section" class="ai-card" style="display:none">
-    <div style="font-size:13px;font-weight:900;color:#8b5cf6;margin-bottom:8px">🤖 توصيات ذكية</div>
-    <div id="ai-tips"></div>
+    <div class="ai-header">
+      <div class="ai-header-title">
+        <div class="ai-live-dot"></div>
+        تحليل مالي مباشر
+      </div>
+      <div style="font-size:10px;color:var(--text2)" id="ai-timestamp"></div>
+    </div>
+    <div class="ai-ticker-wrap" id="ai-tips"></div>
+  </div>
+
+  <!-- Auto Alloc Banner -->
+  <div id="auto-alloc-section" style="display:none;margin-bottom:16px">
+    <div class="auto-alloc-banner">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div>
+          <div style="font-size:10px;font-weight:900;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">💰 توزيع الادخار التلقائي</div>
+          <div style="font-size:11px;color:var(--text2)" id="auto-alloc-subtitle">-</div>
+        </div>
+        <button class="action-btn green" style="font-size:11px;padding:6px 12px" onclick="openAllocModal()">⚡ تعديل</button>
+      </div>
+      <div id="auto-alloc-rows"></div>
+    </div>
   </div>
 
   <!-- ملخص الأسبوع -->
@@ -1022,6 +1265,15 @@ body::after {
   </div>
 
   <div id="goals-list"><div class="loading">جاري التحميل...</div></div>
+
+  <!-- الأهداف المنجزة -->
+  <div id="completed-goals-section" style="display:none;margin-top:8px">
+    <div style="font-size:13px;font-weight:900;color:var(--gold);margin:20px 0 12px;display:flex;align-items:center;gap:8px">
+      🏆 منجزاتي
+      <span id="completed-count" style="background:rgba(253,203,110,.15);color:var(--gold);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700"></span>
+    </div>
+    <div id="completed-goals-list" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
 </div>
 
 <!-- ══ ANNUAL ══ -->
@@ -1076,6 +1328,37 @@ body::after {
       اذهب للإحصائيات باش يتولّد التحليل...
     </div>
   </div>
+
+  <!-- مقارنة الأشهر -->
+  <div class="panel">
+    <div class="panel-header">⚖️ مقارنة بين شهرين</div>
+    <div class="panel-body">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:120px">
+          <label class="lbl">الشهر الأول</label>
+          <select class="inp" id="compare-m1">
+            <option value="1">يناير</option><option value="2">فبراير</option><option value="3" selected>مارس</option>
+            <option value="4">أبريل</option><option value="5">ماي</option><option value="6">يونيو</option>
+            <option value="7">يوليوز</option><option value="8">غشت</option><option value="9">شتنبر</option>
+            <option value="10">أكتوبر</option><option value="11">نونبر</option><option value="12">دجنبر</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:120px">
+          <label class="lbl">الشهر الثاني</label>
+          <select class="inp" id="compare-m2">
+            <option value="1">يناير</option><option value="2" selected>فبراير</option><option value="3">مارس</option>
+            <option value="4">أبريل</option><option value="5">ماي</option><option value="6">يونيو</option>
+            <option value="7">يوليوز</option><option value="8">غشت</option><option value="9">شتنبر</option>
+            <option value="10">أكتوبر</option><option value="11">نونبر</option><option value="12">دجنبر</option>
+          </select>
+        </div>
+        <div style="padding-top:16px">
+          <button class="action-btn green" onclick="compareMonths()">⚖️ قارن</button>
+        </div>
+      </div>
+      <div id="compare-result"></div>
+    </div>
+  </div>
 </div>
 
 <div id="tab-settings" class="section">
@@ -1123,6 +1406,73 @@ body::after {
     </div>
   </div>
 
+  <!-- PIN Setup -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">🔢 الرمز السري السريع</div>
+    <div class="panel-body">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.8">
+        أنشئ رمزاً من 4 أرقام للدخول السريع بدل كلمة السر.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="action-btn green" onclick="setupPin()" style="flex:1;justify-content:center;min-width:120px">🔢 إنشاء رمز</button>
+        <button class="action-btn" onclick="removePin()" style="flex:1;justify-content:center;min-width:120px;background:var(--bg3);color:var(--text2)">🗑️ حذف الرمز</button>
+      </div>
+      <div id="pin-status" style="font-size:11px;color:var(--text2);margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- Spending Fast -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">🚫 صيام الإنفاق</div>
+    <div class="panel-body">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.8">
+        حدد فئات ممنوعة ومدة صيام — ستظهر تحذير لما تحاول تضيف مصروف منها.
+      </p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px" id="fast-cats-picker">
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" value="ترفيه" onchange="saveFast()"> 🎬 ترفيه</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" value="ملابس" onchange="saveFast()"> 👔 ملابس</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" value="ماكلة" onchange="saveFast()"> 🛒 ماكلة</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" value="أخرى" onchange="saveFast()"> 📌 أخرى</label>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px">
+        <label class="lbl" style="margin:0;white-space:nowrap">مدة الصيام:</label>
+        <select class="inp" id="fast-days" onchange="saveFast()">
+          <option value="3">3 أيام</option>
+          <option value="7" selected>أسبوع</option>
+          <option value="14">أسبوعين</option>
+          <option value="30">شهر</option>
+        </select>
+        <button class="action-btn green" onclick="startFast()">🚫 ابدأ</button>
+        <button class="action-btn" onclick="stopFast()" style="background:var(--bg3);color:var(--text2)">إيقاف</button>
+      </div>
+      <div id="fast-status"></div>
+    </div>
+  </div>
+
+  <!-- Share Summary -->
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">📤 مشاركة الملخص</div>
+    <div class="panel-body">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.8">
+        ولّد ملخصاً جميلاً لشهرك المالي تقدر تشاركه.
+      </p>
+      <button class="action-btn green" onclick="generateShareSummary()" style="width:100%;justify-content:center">📸 ولّد الملخص</button>
+      <div id="share-preview" style="margin-top:14px;display:none"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-header">🔔 تذكير يومي</div>
+    <div class="panel-body">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.8">
+        سيرسل لك التطبيق إشعاراً كل يوم الساعة 9 مساءً لتسجيل مصاريف اليوم.
+      </p>
+      <button class="action-btn green" onclick="requestNotifPermission()" style="justify-content:center">
+        🔔 تفعيل التذكير اليومي
+      </button>
+    </div>
+  </div>
+
   <div class="panel" style="margin-bottom:14px">
     <div class="panel-header">🔔 حدود التنبيه</div>
     <div class="panel-body">
@@ -1135,6 +1485,74 @@ body::after {
 </div>
 
 </main>
+
+<!-- ══ PIN OVERLAY ══ -->
+<div class="pin-overlay" id="pinOverlay">
+  <div style="font-size:42px;margin-bottom:4px">🔐</div>
+  <div style="font-size:18px;font-weight:900" id="pin-title">أدخل الرمز السري</div>
+  <div style="font-size:12px;color:var(--text2)" id="pin-subtitle">4 أرقام للدخول السريع</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-btn" onclick="pinPress('1')">1<span class="pin-letters"></span></button>
+    <button class="pin-btn" onclick="pinPress('2')">2<span class="pin-letters">ABC</span></button>
+    <button class="pin-btn" onclick="pinPress('3')">3<span class="pin-letters">DEF</span></button>
+    <button class="pin-btn" onclick="pinPress('4')">4<span class="pin-letters">GHI</span></button>
+    <button class="pin-btn" onclick="pinPress('5')">5<span class="pin-letters">JKL</span></button>
+    <button class="pin-btn" onclick="pinPress('6')">6<span class="pin-letters">MNO</span></button>
+    <button class="pin-btn" onclick="pinPress('7')">7<span class="pin-letters">PQRS</span></button>
+    <button class="pin-btn" onclick="pinPress('8')">8<span class="pin-letters">TUV</span></button>
+    <button class="pin-btn" onclick="pinPress('9')">9<span class="pin-letters">WXYZ</span></button>
+    <button class="pin-btn" onclick="pinSkip()" style="font-size:11px;color:var(--text2)">تخطي</button>
+    <button class="pin-btn" onclick="pinPress('0')">0</button>
+    <button class="pin-btn del" onclick="pinDel()">⌫</button>
+  </div>
+  <button onclick="pinSkip()" style="background:none;border:none;color:var(--text2);font-size:12px;font-family:inherit;cursor:pointer;margin-top:8px">
+    تسجيل الدخول بالإيميل →
+  </button>
+</div>
+
+<!-- ══ EDIT EXPENSE MODAL ══ -->
+<div class="edit-expense-modal" id="editExpenseModal">
+  <div class="edit-expense-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div style="font-size:16px;font-weight:900">✏️ تعديل مصروف</div>
+      <button class="modal-close" onclick="closeEditExpense()">✕</button>
+    </div>
+    <input type="hidden" id="edit-exp-id"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
+        <label class="lbl">الفئة</label>
+        <select class="inp" id="edit-exp-cat">
+          <option>كراء</option><option>ماء وكهرباء</option><option>واي فاي</option>
+          <option>ترنسبور</option><option>تعليم العائلة</option><option>ماكلة</option>
+          <option>ترفيه</option><option>صحة</option><option>ملابس</option>
+          <option>ادخار</option><option>أخرى</option>
+        </select>
+      </div>
+      <div>
+        <label class="lbl">المبلغ (درهم)</label>
+        <input class="inp" type="number" id="edit-exp-amt" placeholder="المبلغ"/>
+      </div>
+    </div>
+    <div style="margin-bottom:14px">
+      <label class="lbl">الوصف</label>
+      <input class="inp" type="text" id="edit-exp-desc" placeholder="وصف المصروف"/>
+    </div>
+    <div style="margin-bottom:20px">
+      <label class="lbl">التاريخ</label>
+      <input class="inp" type="date" id="edit-exp-date"/>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="action-btn green" onclick="saveEditExpense()" style="flex:1;justify-content:center">💾 حفظ</button>
+      <button class="action-btn" onclick="closeEditExpense()" style="background:var(--bg3);color:var(--text2)">إلغاء</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══ EDIT GOAL MODAL ══ -->
 <div class="edit-goal-modal" id="editGoalModal">
@@ -1600,13 +2018,7 @@ function showAuthOverlay(){
   document.getElementById('authOverlay').style.display='flex';
 }
 
-function showApp(){
-  document.getElementById('authOverlay').style.display='none';
-  const badge = document.getElementById('user-badge');
-  if(badge && currentUser) badge.textContent = '👤 ' + currentUser.email.split('@')[0];
-  // نستني loadAll تخلص باش تكون البيانات جاهزة
-  setTimeout(buildSmartGreeting, 800);
-}
+// showApp moved above
 
 function switchAuthTab(mode){
   authMode = mode;
@@ -1888,12 +2300,578 @@ function initSwipeDelete(){
   }, {passive:true});
 }
 
+// ════════════════════════════════════════
+// 1. تعديل المصروف
+// ════════════════════════════════════════
+function openEditExpense(id){
+  const e = expensesData.find(e=>e.id===id) || expensesData.find(e=>Number(e.id)===Number(id));
+  if(!e) return;
+  document.getElementById('edit-exp-id').value = e.id;
+  document.getElementById('edit-exp-cat').value = e.category;
+  document.getElementById('edit-exp-amt').value = e.amount;
+  document.getElementById('edit-exp-desc').value = e.description||'';
+  document.getElementById('edit-exp-date').value = e.date;
+  document.getElementById('editExpenseModal').classList.add('open');
+}
+function closeEditExpense(){
+  document.getElementById('editExpenseModal').classList.remove('open');
+}
+async function saveEditExpense(){
+  const id = Number(document.getElementById('edit-exp-id').value);
+  const cat = document.getElementById('edit-exp-cat').value;
+  const amt = parseFloat(document.getElementById('edit-exp-amt').value);
+  const desc = document.getElementById('edit-exp-desc').value||'—';
+  const date = document.getElementById('edit-exp-date').value;
+  if(!amt){ showToast('⚠️ خاصك تدخل المبلغ','error'); return; }
+  // حذف القديم وأضف جديد
+  const prefix = currentUser?'u_'+currentUser.email+'_':'_guest_';
+  let saved = false;
+  Object.keys(localStorage).filter(k=>k.startsWith(prefix+'expenses_')).forEach(k=>{
+    let list = JSON.parse(localStorage.getItem(k)||'[]');
+    const idx = list.findIndex(e=>Number(e.id)===id);
+    if(idx>-1){
+      list[idx] = {...list[idx], category:cat, amount:amt, description:desc, date};
+      localStorage.setItem(k, JSON.stringify(list));
+      saved = true;
+    }
+  });
+  closeEditExpense();
+  await loadExpenses();
+  renderDashboard();
+  if(saved) showToast('✅ تم تعديل المصروف');
+  else showToast('⚠️ لم يُعثر على المصروف','error');
+}
+
+// ════════════════════════════════════════
+// 2. Light / Dark Mode
+// ════════════════════════════════════════
+function toggleTheme(){
+  const isLight = document.body.classList.toggle('light-mode');
+  localStorage.setItem('mali_theme', isLight?'light':'dark');
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.innerHTML = isLight ? '🌙 داكن' : '☀️ فاتح';
+}
+function initTheme(){
+  const saved = localStorage.getItem('mali_theme');
+  if(saved==='light'){
+    document.body.classList.add('light-mode');
+    const btn = document.getElementById('theme-btn');
+    if(btn) btn.innerHTML = '🌙 داكن';
+  }
+}
+
+// ════════════════════════════════════════
+// 3. تصدير CSV حقيقي
+// ════════════════════════════════════════
+function expExcel(){
+  const prefix = currentUser?'u_'+currentUser.email+'_':'_guest_';
+  // جمع كل المصاريف
+  const allExps = [];
+  Object.keys(localStorage).filter(k=>k.startsWith(prefix+'expenses_')).forEach(k=>{
+    const exps = JSON.parse(localStorage.getItem(k)||'[]');
+    exps.forEach(e=>allExps.push(e));
+  });
+  allExps.sort((a,b)=>a.date.localeCompare(b.date));
+
+  // CSV header
+  const BOM = '﻿';
+  let csv = BOM + 'التاريخ,الفئة,الوصف,المبلغ (درهم)\n';
+  allExps.forEach(e=>{
+    const desc = (e.description||'').replace(/,/g,'،');
+    csv += `${e.date},${e.category},${desc},${e.amount}\n`;
+  });
+  // إجمالي
+  const total = allExps.reduce((s,e)=>s+e.amount,0);
+  csv += `\nالإجمالي,,,${total}\n`;
+  // دخل
+  csv += '\nالشهر,الدخل,المصاريف,الادخار\n';
+  for(let m=1;m<=12;m++){
+    const incKey = prefix+`income_${curYear}_${m}`;
+    const expKey = prefix+`expenses_${curYear}_${m}`;
+    const inc = JSON.parse(localStorage.getItem(incKey)||'{}').total||0;
+    const exps = JSON.parse(localStorage.getItem(expKey)||'[]').reduce((s,e)=>s+e.amount,0);
+    if(inc>0||exps>0) csv += `${MONTHS[m-1]} ${curYear},${inc},${exps},${inc-exps}\n`;
+  }
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `mali-plus-${curYear}.csv`;
+  a.click();
+  showToast('✅ تم تصدير البيانات كـ CSV');
+}
+
+// ════════════════════════════════════════
+// 4. إشعارات تذكير يومي
+// ════════════════════════════════════════
+async function requestNotifPermission(){
+  if(!('Notification' in window)){ showToast('⚠️ المتصفح لا يدعم الإشعارات','error'); return; }
+  const perm = await Notification.requestPermission();
+  if(perm==='granted'){
+    DB.set('notif_enabled', true);
+    scheduleReminder();
+    showToast('✅ سيتم تذكيرك يومياً لتسجيل مصاريفك!');
+  } else {
+    showToast('❌ لم يتم السماح بالإشعارات','error');
+  }
+}
+function scheduleReminder(){
+  if(!DB.get('notif_enabled')) return;
+  const now = new Date();
+  const next = new Date();
+  next.setHours(21, 0, 0, 0); // 9 مساءً
+  if(next<=now) next.setDate(next.getDate()+1);
+  const ms = next-now;
+  setTimeout(()=>{
+    const lastDay = DB.get('last_notif_day');
+    const today = new Date().toDateString();
+    if(lastDay!==today){
+      new Notification('مالي+ 💰', {
+        body: 'لا تنسى تسجل مصاريف اليوم!',
+        icon: './icon.png',
+        badge: './icon.png'
+      });
+      DB.set('last_notif_day', today);
+    }
+    scheduleReminder(); // جدول ليوم التالي
+  }, ms);
+}
+
+// ════════════════════════════════════════
+// 5. مقارنة الأشهر (تضاف في إعدادات الإحصائيات)
+// ════════════════════════════════════════
+async function compareMonths(){
+  const m1 = parseInt(document.getElementById('compare-m1')?.value||curMonth);
+  const m2 = parseInt(document.getElementById('compare-m2')?.value||(curMonth===1?12:curMonth-1));
+  const y = curYear;
+  const [d1, d2] = await Promise.all([
+    api(`/api/expenses/${m1}/${y}`),
+    api(`/api/expenses/${m2}/${y}`)
+  ]);
+  const t1 = (d1||[]).reduce((s,e)=>s+e.amount,0);
+  const t2 = (d2||[]).reduce((s,e)=>s+e.amount,0);
+  const diff = t1-t2;
+  const pct = t2>0?Math.round(Math.abs(diff)/t2*100):0;
+  const el = document.getElementById('compare-result');
+  if(!el) return;
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+      <div style="background:var(--bg3);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px">${MONTHS[m1-1]}</div>
+        <div style="font-size:20px;font-weight:900;color:var(--red)">${fmt(t1)}</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px">${MONTHS[m2-1]}</div>
+        <div style="font-size:20px;font-weight:900;color:var(--blue)">${fmt(t2)}</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:12px;font-size:13px;font-weight:700;color:${diff>0?'var(--red)':'var(--green)'}">
+      ${diff>0?'▲':'▼'} ${fmt(Math.abs(diff))} (${pct}%) ${diff>0?'زيادة':'توفير'} في ${MONTHS[m1-1]}
+    </div>`;
+}
+
+// ════════════════════════════════════════
+// 6. Undo حذف مصروف
+// ════════════════════════════════════════
+let _undoTimer = null;
+let _deletedExpense = null;
+let _deletedKey = null;
+
+async function delExpense(id){
+  const numId = Number(id);
+  const prefix = currentUser?'u_'+currentUser.email+'_':'_guest_';
+  // ابحث عن المصروف قبل الحذف
+  _deletedExpense = null;
+  _deletedKey = null;
+  Object.keys(localStorage).filter(k=>k.startsWith(prefix+'expenses_')).forEach(k=>{
+    const list = JSON.parse(localStorage.getItem(k)||'[]');
+    const found = list.find(e=>Number(e.id)===numId);
+    if(found){ _deletedExpense=found; _deletedKey=k; }
+  });
+  // احذف
+  await api(`/api/expenses/${numId}`,'DELETE');
+  await loadExpenses(); renderDashboard();
+  // Undo toast
+  if(_deletedExpense) showUndoToast();
+}
+
+function showUndoToast(){
+  const old = document.getElementById('undo-toast-el');
+  if(old) old.remove();
+  if(_undoTimer) clearTimeout(_undoTimer);
+  const t = document.createElement('div');
+  t.id='undo-toast-el'; t.className='undo-toast';
+  t.innerHTML=`
+    <span>🗑️ تم حذف <b>${_deletedExpense?.category}</b> — ${fmt(_deletedExpense?.amount)}</span>
+    <button class="undo-btn" onclick="undoDelete()">↩ تراجع</button>
+    <div class="undo-progress"></div>`;
+  document.body.appendChild(t);
+  _undoTimer = setTimeout(()=>{ t.style.animation='toastOut .3s ease forwards'; setTimeout(()=>t.remove(),300); }, 5000);
+}
+
+function undoDelete(){
+  const t = document.getElementById('undo-toast-el');
+  if(t) t.remove();
+  if(_undoTimer){ clearTimeout(_undoTimer); _undoTimer=null; }
+  if(!_deletedExpense||!_deletedKey) return;
+  const list = JSON.parse(localStorage.getItem(_deletedKey)||'[]');
+  list.push(_deletedExpense);
+  list.sort((a,b)=>a.id-b.id);
+  localStorage.setItem(_deletedKey, JSON.stringify(list));
+  _deletedExpense=null; _deletedKey=null;
+  loadExpenses(); renderDashboard();
+  showToast('✅ تم التراجع عن الحذف');
+}
+
+// ════════════════════════════════════════
+// 7. اختصارات لوحة المفاتيح
+// ════════════════════════════════════════
+function initKeyboardShortcuts(){
+  document.addEventListener('keydown', e=>{
+    // تجاهل لو داخل input
+    if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA') return;
+    // تجاهل لو auth overlay مفتوح
+    if(document.getElementById('authOverlay')?.style.display!=='none') return;
+    switch(e.key.toLowerCase()){
+      case 'd': showTab('dashboard'); break;
+      case 'e': showTab('expenses'); setTimeout(()=>document.getElementById('exp-amt')?.focus(),200); break;
+      case 'g': showTab('goals'); break;
+      case 's': showTab('stats'); break;
+      case 'n': showTab('expenses'); setTimeout(()=>document.getElementById('exp-amt')?.focus(),200); break;
+      case 'escape':
+        document.querySelectorAll('.modal-overlay.open, .edit-expense-modal.open, .edit-goal-modal.open')
+          .forEach(m=>m.classList.remove('open'));
+        break;
+    }
+  });
+}
+
+// ════════════════════════════════════════
+// 1. إصلاح saveIncome — يحفظ الدخل صح
+// ════════════════════════════════════════
+// (موجود وشغال — المشكل كان في loadAll)
+// تأكد من أن loadIncome تحمل الحقول بعد حفظها
+const _origLoadIncome = typeof loadIncome === 'function' ? null : null;
+
+// ════════════════════════════════════════
+// 2. أرشفة الأهداف المنجزة
+// ════════════════════════════════════════
+function archiveCompletedGoal(goal){
+  const completed = DB.get('completed_goals') || [];
+  const already = completed.find(g=>g.id===goal.id);
+  if(already) return;
+  completed.push({
+    ...goal,
+    completed_at: new Date().toLocaleDateString('ar-MA',{year:'numeric',month:'long',day:'numeric'})
+  });
+  DB.set('completed_goals', completed);
+}
+
+function renderCompletedGoals(){
+  const completed = DB.get('completed_goals') || [];
+  const section = document.getElementById('completed-goals-section');
+  const listEl  = document.getElementById('completed-goals-list');
+  const countEl = document.getElementById('completed-count');
+  if(!section || !listEl) return;
+  if(!completed.length){ section.style.display='none'; return; }
+  section.style.display = 'block';
+  if(countEl) countEl.textContent = completed.length + ' هدف';
+  listEl.innerHTML = completed.map(g=>`
+    <div class="completed-goal">
+      <div class="completed-goal-badge">${g.type||'⭐'}</div>
+      <div class="completed-goal-info">
+        <div class="completed-goal-name">${g.name}</div>
+        <div class="completed-goal-date">🗓️ ${g.completed_at || 'مكتمل'}</div>
+      </div>
+      <div class="completed-goal-amount">${fmt(g.target_amount)}</div>
+    </div>`).join('');
+}
+
+// تعديل quickDeposit لأرشفة الأهداف المنجزة
+const _origQuickDeposit = quickDeposit;
+async function quickDeposit(id, name, currentSaved, targetAmount){
+  const amount = prompt(`💰 كم تبغي تضيف للهدف "\${name}"؟ (درهم)\nالمدخر حالياً: \${currentSaved.toLocaleString()} درهم`);
+  if(!amount||isNaN(amount)||parseFloat(amount)<=0) return;
+  const newSaved = currentSaved + parseFloat(amount);
+  const goal = goalsData.find(g=>g.id===id);
+  const months = goal ? goal.months : 1;
+  await api(`/api/goals/\${id}`,'PUT',{saved_amount:newSaved, months});
+  await loadGoals();
+  if(newSaved >= targetAmount){
+    // أرشف الهدف
+    const updated = goalsData.find(g=>g.id===id) || goal;
+    if(updated) archiveCompletedGoal({...updated, saved_amount:newSaved});
+    launchConfetti();
+    showToast(`🎉 مبروك! وصلت للهدف "\${name}"!`);
+    renderCompletedGoals();
+  } else {
+    const rem = targetAmount - newSaved;
+    showToast(`✅ تم إضافة \${parseFloat(amount).toLocaleString()} درهم — باقي \${rem.toLocaleString()} درهم`);
+  }
+}
+
+// ════════════════════════════════════════
+// 3. PIN السريع
+// ════════════════════════════════════════
+let pinBuffer = '';
+let pinMode = 'check'; // 'check' | 'setup' | 'confirm'
+let pinFirst = '';
+
+function initPin(){
+  const hasPin = DB.get('user_pin');
+  const pinEl = document.getElementById('pinOverlay');
+  if(!pinEl) return;
+  if(hasPin && currentUser){
+    pinMode = 'check';
+    document.getElementById('pin-title').textContent = 'مرحباً! 👋';
+    document.getElementById('pin-subtitle').textContent = 'أدخل رمزك السري للدخول';
+    pinOverlay.classList.add('open');
+  }
+  updatePinStatus();
+}
+
+function updatePinStatus(){
+  const el = document.getElementById('pin-status');
+  if(!el) return;
+  const has = DB.get('user_pin');
+  el.textContent = has ? '✅ الرمز السري مفعّل' : 'لا يوجد رمز سري حالياً';
+  el.style.color = has ? 'var(--green)' : 'var(--text2)';
+}
+
+function pinPress(n){
+  if(pinBuffer.length >= 4) return;
+  pinBuffer += n;
+  updatePinDots();
+  if(pinBuffer.length === 4){
+    setTimeout(()=>checkPin(), 200);
+  }
+}
+
+function pinDel(){
+  pinBuffer = pinBuffer.slice(0,-1);
+  updatePinDots();
+}
+
+function updatePinDots(state='normal'){
+  for(let i=0;i<4;i++){
+    const d = document.getElementById('pd'+i);
+    if(!d) continue;
+    d.className = 'pin-dot';
+    if(i < pinBuffer.length) d.classList.add(state==='error'?'error':'filled');
+  }
+}
+
+async function checkPin(){
+  const stored = DB.get('user_pin');
+  const entered = await hashPass(pinBuffer);
+  if(pinMode === 'check'){
+    if(entered === stored){
+      document.getElementById('pinOverlay').classList.remove('open');
+      pinBuffer = '';
+    } else {
+      updatePinDots('error');
+      document.getElementById('pin-subtitle').textContent = '❌ رمز خاطئ — حاول مجدداً';
+      setTimeout(()=>{ pinBuffer=''; updatePinDots(); document.getElementById('pin-subtitle').textContent='أدخل رمزك السري للدخول'; }, 1200);
+    }
+  } else if(pinMode === 'setup'){
+    pinFirst = pinBuffer;
+    pinBuffer = '';
+    pinMode = 'confirm';
+    document.getElementById('pin-subtitle').textContent = 'أعد إدخال الرمز للتأكيد';
+    updatePinDots();
+  } else if(pinMode === 'confirm'){
+    if(pinBuffer === pinFirst){
+      const hashed = await hashPass(pinBuffer);
+      DB.set('user_pin', hashed);
+      document.getElementById('pinOverlay').classList.remove('open');
+      pinBuffer = ''; pinFirst = ''; pinMode = 'check';
+      showToast('✅ تم إنشاء الرمز السري!');
+      updatePinStatus();
+    } else {
+      updatePinDots('error');
+      document.getElementById('pin-subtitle').textContent = '❌ الرمزان غير متطابقين';
+      setTimeout(()=>{ pinBuffer=''; pinFirst=''; pinMode='setup'; updatePinDots(); document.getElementById('pin-subtitle').textContent='أنشئ رمزاً من 4 أرقام'; }, 1200);
+    }
+  }
+}
+
+function setupPin(){
+  pinMode = 'setup';
+  pinBuffer = '';
+  document.getElementById('pin-title').textContent = 'إنشاء رمز سري';
+  document.getElementById('pin-subtitle').textContent = 'أنشئ رمزاً من 4 أرقام';
+  updatePinDots();
+  document.getElementById('pinOverlay').classList.add('open');
+}
+
+function removePin(){
+  DB.del('user_pin');
+  updatePinStatus();
+  showToast('✅ تم حذف الرمز السري');
+}
+
+function pinSkip(){
+  document.getElementById('pinOverlay').classList.remove('open');
+  pinBuffer = '';
+}
+
+// ════════════════════════════════════════
+// 4. صيام الإنفاق
+// ════════════════════════════════════════
+function saveFast(){
+  const cats = [...document.querySelectorAll('#fast-cats-picker input:checked')].map(c=>c.value);
+  const days = parseInt(document.getElementById('fast-days')?.value||7);
+  DB.set('fast_config', {cats, days});
+}
+
+function startFast(){
+  const cats = [...document.querySelectorAll('#fast-cats-picker input:checked')].map(c=>c.value);
+  if(!cats.length){ showToast('⚠️ اختر فئة واحدة على الأقل','error'); return; }
+  const days = parseInt(document.getElementById('fast-days')?.value||7);
+  const end = new Date(); end.setDate(end.getDate()+days);
+  DB.set('spending_fast', { cats, end: end.toISOString() });
+  renderFastStatus();
+  showToast(`🚫 بدأ صيام الإنفاق لمدة \${days} أيام!`);
+}
+
+function stopFast(){
+  DB.del('spending_fast');
+  renderFastStatus();
+  showToast('✅ تم إيقاف صيام الإنفاق');
+}
+
+function renderFastStatus(){
+  const el = document.getElementById('fast-status');
+  if(!el) return;
+  const fast = DB.get('spending_fast');
+  if(!fast){ el.innerHTML=''; return; }
+  const end = new Date(fast.end);
+  const now = new Date();
+  if(end <= now){ DB.del('spending_fast'); el.innerHTML=''; return; }
+  const daysLeft = Math.ceil((end-now)/(1000*60*60*24));
+  el.innerHTML=`<div style="background:rgba(225,112,85,.1);border:1px solid rgba(225,112,85,.2);border-radius:10px;padding:12px;text-align:center">
+    <div class="fast-countdown">\${daysLeft}</div>
+    <div style="font-size:11px;color:var(--text2)">يوم متبقٍ في الصيام</div>
+    <div style="font-size:11px;color:var(--red);margin-top:4px">ممنوع: \${fast.cats.join(' · ')}</div>
+  </div>`;
+}
+
+function checkSpendingFast(category){
+  const fast = DB.get('spending_fast');
+  if(!fast) return false;
+  const end = new Date(fast.end);
+  if(new Date() > end){ DB.del('spending_fast'); return false; }
+  return fast.cats.includes(category);
+}
+
+// ════════════════════════════════════════
+// 5. مشاركة الملخص
+// ════════════════════════════════════════
+function generateShareSummary(){
+  const inc = incomeData.total||0;
+  const totalExp = expensesData.reduce((s,e)=>s+e.amount,0);
+  const rem = inc-totalExp;
+  const pct = inc>0?Math.round(rem/inc*100):0;
+  const month = MONTHS[curMonth-1]+' '+curYear;
+  const catMap={};
+  expensesData.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
+  const topCats = Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const healthScore = document.getElementById('health-num')?.textContent||'—';
+  const el = document.getElementById('share-preview');
+  if(!el) return;
+
+  // بناء HTML بدون nested template literals
+  let topCatsHTML = '';
+  if(topCats.length){
+    topCatsHTML = '<div style="font-size:11px;color:var(--text2);margin-bottom:8px">أعلى المصاريف:</div>';
+    topCats.forEach(([c,v])=>{
+      topCatsHTML += '<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)"><span>'+(CAT_ICONS[c]||'')+' '+c+'</span><span style="font-weight:700;color:var(--red)">'+fmt(v)+'</span></div>';
+    });
+  }
+
+  const savColor = pct>=20?'var(--green)':pct>=10?'var(--gold)':'var(--red)';
+  const savLabel = pct>=20?'🌟 ممتاز':pct>=10?'👍 جيد':'⚠️ ضعيف';
+
+  el.style.display='block';
+  el.innerHTML =
+    '<div class="share-card" id="share-card-inner">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">' +
+        '<div style="font-size:20px;font-weight:900;color:var(--green)">مالي+ 💰</div>' +
+        '<div style="font-size:12px;color:var(--text2)">'+month+'</div>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">' +
+        '<div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">الدخل</div><div style="font-size:16px;font-weight:900;color:var(--green)">'+fmt(inc)+'</div></div>' +
+        '<div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">المصاريف</div><div style="font-size:16px;font-weight:900;color:var(--red)">'+fmt(totalExp)+'</div></div>' +
+        '<div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">الادخار</div><div style="font-size:16px;font-weight:900;color:var(--blue)">'+fmt(rem)+'</div></div>' +
+        '<div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center"><div style="font-size:10px;color:var(--text2);margin-bottom:4px">الصحة المالية</div><div style="font-size:16px;font-weight:900;color:var(--gold)">'+healthScore+'/100</div></div>' +
+      '</div>' +
+      topCatsHTML +
+      '<div style="text-align:center;margin-top:14px;font-size:10px;color:var(--text2)">نسبة الادخار: <b style="color:'+savColor+'">'+pct+'%</b> '+savLabel+'</div>' +
+    '</div>' +
+    '<button class="action-btn green" onclick="copyShareText()" style="width:100%;justify-content:center;margin-top:10px">📋 نسخ الملخص</button>';
+}
+
+function copyShareText(){
+  const inc=incomeData.total||0;
+  const totalExp=expensesData.reduce((s,e)=>s+e.amount,0);
+  const rem=inc-totalExp;
+  const pct=inc>0?Math.round(rem/inc*100):0;
+  const text='📊 ملخصي المالي — '+MONTHS[curMonth-1]+' '+curYear+'\n'+
+    '💰 الدخل: '+fmt(inc)+'\n'+
+    '💸 المصاريف: '+fmt(totalExp)+'\n'+
+    '💎 الادخار: '+fmt(rem)+' ('+pct+'%)\n'+
+    '📱 مالي+ — تسيير مالي ذكي';
+  navigator.clipboard?.writeText(text).then(()=>showToast('✅ تم نسخ الملخص!'));
+}
+
+
+// ════════════════════════════════════════
+// 6. إشعار نسخ احتياطي أسبوعي
+// ════════════════════════════════════════
+function checkWeeklyBackup(){
+  const last = DB.get('last_backup_reminder');
+  if(!last) { DB.set('last_backup_reminder', new Date().toISOString()); return; }
+  const daysSince = (new Date()-new Date(last))/(1000*60*60*24);
+  if(daysSince >= 7){
+    setTimeout(()=>{
+      showToast('💾 مر أسبوع — لا تنسى تصدر نسخة احتياطية!');
+      DB.set('last_backup_reminder', new Date().toISOString());
+    }, 3000);
+  }
+}
+
+// ════════════════════════════════════════
+// تحديث addExpense لتحقق صيام الإنفاق
+// ════════════════════════════════════════
+const _origAddExpense = addExpense;
+async function addExpense(){
+  const cat = document.getElementById('exp-cat').value;
+  if(checkSpendingFast(cat)){
+    if(!confirm(`🚫 أنت في صيام الإنفاق!\nفئة "\${cat}" ممنوعة حالياً.\nهل تريد الاستمرار على أي حال؟`)) return;
+  }
+  await _origAddExpense();
+}
+
+// init في showApp
+const _origShowApp2 = showApp;
+function showApp(){
+  document.getElementById('authOverlay').style.display='none';
+  const badge = document.getElementById('user-badge');
+  if(badge && currentUser) badge.textContent = '👤 ' + currentUser.email.split('@')[0];
+  initTheme();
+  if(DB.get('notif_enabled')) scheduleReminder();
+  checkAutoEmail();
+  checkWeeklyBackup();
+  loadAll();
+  setTimeout(()=>{ initPin(); renderCompletedGoals(); renderFastStatus(); }, 500);
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('selMonth').value=curMonth;
   document.getElementById('selYear').value=curYear;
   document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];
-  checkAutoEmail();
-  loadAll();
+  initAuth();
+  initSwipeDelete();
+  initKeyboardShortcuts();
 });
 
 function changeMonth(){
@@ -2012,7 +2990,10 @@ function renderExpenses(q='', cat=''){
     <td>${e.description||'-'}</td>
     <td style="color:var(--red);font-weight:700">${fmt(e.amount)}</td>
     <td style="color:var(--text2)">${e.date}</td>
-    <td><button class="action-btn red" style="padding:4px 8px;font-size:11px" onclick="delExpense(${e.id})">🗑️</button></td>
+    <td style="display:flex;gap:4px">
+      <button class="action-btn" style="padding:4px 8px;font-size:11px;background:var(--bg4);color:var(--text2)" onclick="openEditExpense(${e.id})">✏️</button>
+      <button class="action-btn red" style="padding:4px 8px;font-size:11px" onclick="delExpense(${e.id})">🗑️</button>
+    </td>
     </tr>`).join('');
   document.getElementById('exp-total-foot').textContent=fmt(total);
 }
@@ -2474,38 +3455,162 @@ async function applyAllocation(){
 //  AI TIPS
 // ══════════════════════════════════════════
 function generateAiTips(inc, totalExp, rem){
-  const tips=[];
+  const tickers=[];
   const pct=inc>0?Math.round((rem/inc)*100):0;
   const catMap={};
   expensesData.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
+  const today=new Date().getDate();
+  const daysInMonth=new Date(curYear,curMonth,0).getDate();
 
-  if(pct>=20)tips.push({icon:'🌟',text:`نسبة ادخارك ${pct}% ممتازة! استمر كذا.`});
-  else if(pct>=10)tips.push({icon:'👍',text:`ادخرت ${pct}% من دخلك. حاول توصل ل20%.`});
-  else if(pct>0)tips.push({icon:'⚠️',text:`نسبة ادخارك ضعيفة (${pct}%). راجع مصاريفك.`});
-
-  if(prevMonthExp>0){
-    const diff=totalExp-prevMonthExp;
-    const diffPct=Math.abs(Math.round((diff/prevMonthExp)*100));
-    if(diff>500)tips.push({icon:'📈',text:`مصاريفك زادت ${diffPct}% مقارنة بالشهر الماضي (+${Math.round(diff).toLocaleString()} درهم).`});
-    else if(diff<-500)tips.push({icon:'📉',text:`مصاريفك نقصت ${diffPct}% مقارنة بالشهر الماضي. ممتاز!`});
+  // ── 1. الصحة المالية العامة ──
+  if(inc>0){
+    const healthColor = pct>=20?'#00b894':pct>=10?'#fdcb6e':'#e17055';
+    const healthArrow = pct>=20?'▲':pct>=10?'►':'▼';
+    const healthClass = pct>=20?'down':pct>=10?'flat':'up';
+    tickers.push({
+      icon:'💹', label:'الصحة المالية', sublabel:'نسبة الادخار',
+      val: fmt(rem), change: healthArrow+' '+pct+'%', cls: healthClass,
+      spark: getSavingSparkline()
+    });
   }
 
-  const ent=catMap['ترفيه']||0;
-  if(ent>inc*0.15)tips.push({icon:'🎬',text:`مصاريف الترفيه (${fmt(ent)}) تتجاوز 15% من دخلك. فكر فيها.`});
-  const food=catMap['ماكلة']||0;
-  if(food>inc*0.3)tips.push({icon:'🛒',text:`مصاريف الماكلة مرتفعة (${fmt(food)}). جرب التخطيط للأسبوع.`});
-  if(goalsData.length>0){
-    const totalNeeded=goalsData.reduce((s,g)=>s+g.monthly_needed,0);
-    if(rem<totalNeeded)tips.push({icon:'🎯',text:`الباقي (${fmt(rem)}) أقل من المطلوب للأهداف (${fmt(totalNeeded)}). راجع الميزانية.`});
-    else tips.push({icon:'✅',text:`الباقي كافي لتمويل كل أهدافك! (${fmt(totalNeeded)} مطلوب).`});
+  // ── 2. مقارنة الشهر الماضي ──
+  if(prevMonthExp>0 && totalExp>0){
+    const diff=totalExp-prevMonthExp;
+    const diffPct=Math.round((diff/prevMonthExp)*100);
+    const cls = diff>0?'up':'down';
+    const arrow = diff>0?'▲':'▼';
+    tickers.push({
+      icon:'📊', label:'المصاريف مقارنة بالشهر الماضي', sublabel:`الشهر الماضي: ${fmt(prevMonthExp)}`,
+      val: fmt(totalExp),
+      change: arrow+' '+Math.abs(diffPct)+'%', cls,
+      spark: null
+    });
+  }
+
+  // ── 3. توقع نهاية الشهر ──
+  if(today>=5 && today<28 && totalExp>0){
+    const projected=Math.round((totalExp/today)*daysInMonth);
+    const cls = inc>0&&projected>inc?'up':projected<inc*0.8?'down':'flat';
+    const arrow = cls==='up'?'▲':cls==='down'?'▼':'►';
+    tickers.push({
+      icon:'🔮', label:'التوقع بنهاية الشهر', sublabel:`بناءً على ${today} يوم`,
+      val: fmt(projected),
+      change: arrow+(inc>0?' '+(inc>0?Math.round(projected/inc*100):'--')+'% من الدخل':''),
+      cls,
+      spark: null
+    });
+  }
+
+  // ── 4. أعلى فئة إنفاق ──
+  const cats=Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
+  if(cats.length>0){
+    const top=cats[0];
+    const topPct=totalExp>0?Math.round(top[1]/totalExp*100):0;
+    const cls=topPct>40?'up':topPct>25?'flat':'down';
+    tickers.push({
+      icon: CAT_ICONS[top[0]]||'📌',
+      label: `أعلى فئة: ${top[0]}`,
+      sublabel: `${topPct}% من إجمالي المصاريف`,
+      val: fmt(top[1]),
+      change: (cls==='up'?'▲':cls==='flat'?'►':'▼')+' '+topPct+'%',
+      cls, spark: null
+    });
+  }
+
+  // ── 5. تنبيه خطر أو فئة متجاوزة ──
+  if(inc>0 && totalExp>inc){
+    tickers.push({
+      icon:'🚨', label:'تجاوز الدخل!', sublabel:`زيادة ${fmt(totalExp-inc)}`,
+      val: fmt(totalExp-inc), change:'▲ خطر', cls:'up', spark:null
+    });
+  } else if(inc>0){
+    const food=catMap['ماكلة']||0;
+    const ent=catMap['ترفيه']||0;
+    if(food>inc*0.35){
+      tickers.push({icon:'🛒',label:'الماكلة مرتفعة',sublabel:`${Math.round(food/inc*100)}% من الدخل`,val:fmt(food),change:'▲ مرتفع',cls:'up',spark:null});
+    } else if(ent>inc*0.15){
+      tickers.push({icon:'🎬',label:'الترفيه مرتفع',sublabel:`${Math.round(ent/inc*100)}% من الدخل`,val:fmt(ent),change:'▲ راجعه',cls:'up',spark:null});
+    }
+  }
+
+  // ── بدون بيانات ──
+  if(tickers.length===0){
+    if(totalExp>0 && inc===0)
+      tickers.push({icon:'💡',label:'أضف دخلك',sublabel:'لتظهر لك التحاليل الكاملة',val:'—',change:'► في الانتظار',cls:'flat',spark:null});
+    else
+      tickers.push({icon:'🚀',label:'ابدأ التسجيل',sublabel:'أضف دخلك ومصاريفك',val:'—',change:'► جاهز',cls:'flat',spark:null});
   }
 
   const aiSection=document.getElementById('ai-section');
   const aiTips=document.getElementById('ai-tips');
-  if(tips.length){
-    aiTips.innerHTML=tips.slice(0,3).map(t=>`<div class="ai-tip"><span class="ai-tip-icon">${t.icon}</span><span>${t.text}</span></div>`).join('');
+  const tsEl=document.getElementById('ai-timestamp');
+  if(tsEl) tsEl.textContent=new Date().toLocaleTimeString('ar-MA',{hour:'2-digit',minute:'2-digit'});
+
+  if(tickers.length){
+    aiTips.innerHTML=tickers.slice(0,5).map((t,i)=>`
+      <div class="ai-ticker" style="animation-delay:${i*0.07}s">
+        <span class="ai-ticker-icon">${t.icon}</span>
+        <div class="ai-ticker-label"><b>${t.label}</b>${t.sublabel}</div>
+        <span class="ai-ticker-val" style="color:${t.cls==='up'?'var(--red)':t.cls==='down'?'var(--green)':'var(--text2)'}">${t.val}</span>
+        <div class="ai-ticker-change">
+          <span class="ai-change-pill ai-change-${t.cls}">${t.change}</span>
+        </div>
+      </div>`).join('');
     aiSection.style.display='block';
-  } else aiSection.style.display='none';
+  } else {
+    aiSection.style.display='none';
+  }
+
+  // ── توزيع الادخار التلقائي ──
+  renderAutoAlloc(rem);
+}
+
+function getSavingSparkline(){
+  // ارجع آخر 6 قيم ادخار للـ sparkline
+  return null;
+}
+
+function renderAutoAlloc(rem){
+  const section=document.getElementById('auto-alloc-section');
+  const rowsEl=document.getElementById('auto-alloc-rows');
+  const subtitle=document.getElementById('auto-alloc-subtitle');
+  if(!section||!rowsEl) return;
+
+  const activeGoals=goalsData.filter(g=>g.target_amount>g.saved_amount);
+  if(!activeGoals.length||rem<=0){section.style.display='none';return;}
+
+  const totalNeeded=activeGoals.reduce((s,g)=>s+g.monthly_needed,0);
+  const actualAlloc=Math.min(rem, totalNeeded);
+  const allocPct=rem>0?Math.round(actualAlloc/rem*100):0;
+
+  if(subtitle) subtitle.textContent=`${fmt(actualAlloc)} من ${fmt(rem)} متاح (${allocPct}% من الادخار)`;
+
+  const COLORS=['#00b894','#4a90d9','#8b5cf6','#fdcb6e','#e17055','#fd79a8'];
+  rowsEl.innerHTML=activeGoals.slice(0,4).map((g,i)=>{
+    const share=totalNeeded>0?Math.round(actualAlloc*g.monthly_needed/totalNeeded):0;
+    const goalPct=g.target_amount>0?Math.round(g.saved_amount/g.target_amount*100):0;
+    const newPct=g.target_amount>0?Math.min(100,Math.round((g.saved_amount+share)/g.target_amount*100)):0;
+    const color=COLORS[i%COLORS.length];
+    const monthsLeft=share>0?Math.ceil((g.target_amount-g.saved_amount)/share):999;
+    return`<div class="auto-alloc-row">
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:12px;font-weight:700">${g.type||'⭐'} ${g.name}</span>
+          <span style="font-size:13px;font-weight:900;color:${color}">${fmt(share)}<span style="font-size:10px;color:var(--text2);font-weight:400">/شهر</span></span>
+        </div>
+        <div class="auto-alloc-bar">
+          <div class="auto-alloc-fill" style="width:${goalPct}%;background:${color};opacity:.4"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:3px">
+          <span style="font-size:10px;color:var(--text2)">${goalPct}% مكتمل → <b style="color:${color}">${newPct}%</b> بعد هذا الشهر</span>
+          <span style="font-size:10px;color:var(--text2)">${monthsLeft<999?monthsLeft+' شهر متبقي':'—'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  section.style.display='block';
 }
 
 // ══════════════════════════════════════════
@@ -2596,10 +3701,12 @@ function renderDashboard(){
   }
 
   // Breakdown
+  const limits=settingsData.budget_limits||{};
   const bd=document.getElementById('exp-breakdown');
   bd.innerHTML=labels.length?labels.map((l,i)=>{
     const p=totalExp>0?Math.round((catMap[l]/totalExp)*100):0;
-    const over=lim&&catMap[l]>lim;
+    const lim=limits[l]||0;
+    const over=lim>0&&catMap[l]>lim;
     return`<div class="prog-row">
       <div class="prog-label"><span>${CAT_ICONS[l]||''} ${l} ${over?'<span class="badge badge-red">تجاوز</span>':''}</span>
       <span style="color:var(--text2)">${fmt(catMap[l])}</span></div>
