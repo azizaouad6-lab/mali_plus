@@ -723,11 +723,93 @@ body.light-mode {
   --text:#1a2235; --text2:#5a6a85; --border:#c8d4e8;
   --shadow: 0 4px 24px rgba(0,0,0,.08);
 }
+/* ── تصحيح شامل للـ light mode ── */
 body.light-mode .ai-card { background:#f8faff; border-color:rgba(0,184,148,.3); }
 body.light-mode .ai-header { background:rgba(0,184,148,.08); }
 body.light-mode .tbl tr:hover td { background:var(--bg3); }
 body.light-mode header { background: rgba(240,244,248,.95); }
 body.light-mode .auth-overlay { background: var(--bg); }
+
+/* chart backgrounds */
+body.light-mode .chart-wrap,
+body.light-mode .chart-wrap-sm { background: #ffffff; }
+
+/* panel body text */
+body.light-mode .panel-body { color: var(--text); }
+body.light-mode .panel-header { color: var(--text); background: var(--bg3); }
+
+/* prog bars */
+body.light-mode .prog-label { color: var(--text); }
+body.light-mode .prog-bar { background: var(--bg4); }
+
+/* cards */
+body.light-mode .card { background: var(--bg2); }
+body.light-mode .card-label { color: var(--text2); }
+
+/* table */
+body.light-mode .tbl th { background: var(--bg3); color: var(--text2); }
+body.light-mode .tbl td { border-color: var(--border); color: var(--text); }
+body.light-mode .tbl tr { background: var(--bg2); }
+
+/* ai tickers */
+body.light-mode .ai-ticker { border-color: var(--border); }
+body.light-mode .ai-ticker-label b { color: var(--text); }
+body.light-mode .ai-ticker-label { color: var(--text2); }
+body.light-mode .ai-change-up { background: rgba(225,112,85,.12); }
+body.light-mode .ai-change-down { background: rgba(0,184,148,.12); }
+body.light-mode .ai-change-flat { background: var(--bg4); }
+
+/* breakdown */
+body.light-mode #exp-breakdown { color: var(--text); }
+body.light-mode .prog-row { border-color: var(--border); }
+
+/* week summary */
+body.light-mode #week-summary {
+  background: linear-gradient(135deg,rgba(74,144,217,.06),rgba(139,92,246,.04));
+  border-color: rgba(74,144,217,.25);
+}
+
+/* goals */
+body.light-mode .goal-card-v2 { background: var(--bg2); border-color: var(--border); }
+body.light-mode .completed-goal { background: var(--bg3); border-color: rgba(0,184,148,.2); }
+
+/* auto alloc */
+body.light-mode .auto-alloc-banner {
+  background: linear-gradient(135deg,rgba(0,184,148,.06),rgba(74,144,217,.04));
+}
+body.light-mode .auto-alloc-bar { background: var(--bg4); }
+
+/* modals */
+body.light-mode .edit-expense-box,
+body.light-mode .edit-goal-modal > div { background: var(--bg2); }
+
+/* nav */
+body.light-mode .nav-tab { color: var(--text2); }
+body.light-mode .nav-tab.active { color: var(--green); background: rgba(0,184,148,.08); }
+body.light-mode .nav-tabs { background: rgba(240,244,248,.95); border-color: var(--border); }
+
+/* greeting card */
+body.light-mode .greeting-card { background: #f8faff; border-color: var(--border); }
+
+/* inputs */
+body.light-mode .inp { background: var(--bg3); border-color: var(--border); color: var(--text); }
+body.light-mode .inp:focus { border-color: var(--green); background: #fff; }
+
+/* tags */
+body.light-mode .tag { background: var(--bg4); color: var(--text2); }
+
+/* action btns */
+body.light-mode .action-btn:not(.green):not(.red) { background: var(--bg3); color: var(--text2); }
+
+/* toast */
+body.light-mode .toast { background: var(--bg2); color: var(--text); border-color: var(--border); }
+body.light-mode .undo-toast { background: var(--bg2); color: var(--text); }
+
+/* health ring bg */
+body.light-mode .health-ring circle:first-child { stroke: var(--bg4); }
+
+/* chart.js — نغير لون النص للـ legend */
+body.light-mode canvas { filter: none; }
 .theme-toggle {
   background: var(--bg3); border: 1px solid var(--border);
   border-radius: 20px; padding: 5px 10px; cursor: pointer;
@@ -855,6 +937,300 @@ body.light-mode .auth-overlay { background: var(--bg); }
   100% { transform: scale(1); }
 }
 .num-pop { animation: numPop .4s cubic-bezier(.34,1.56,.64,1); }
+
+/* ══════════════════════════════════════════
+   MOBILE-FIRST REDESIGN
+══════════════════════════════════════════ */
+
+/* ── Header موبايل ── */
+@media(max-width:600px){
+  header {
+    padding: 8px 12px !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+  }
+  .logo { font-size: 18px !important; }
+  .header-controls { gap: 5px !important; flex-wrap: nowrap !important; }
+  .header-controls select { font-size: 11px !important; padding: 4px 6px !important; max-width: 70px; }
+  .user-badge { font-size: 10px !important; padding: 3px 7px !important; max-width: 80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .theme-toggle { font-size: 11px !important; padding: 4px 8px !important; }
+  .btn-sm { font-size: 10px !important; padding: 4px 8px !important; }
+  .btn-red-sm { font-size: 10px !important; padding: 4px 8px !important; }
+}
+
+/* ── Nav tabs موبايل ── */
+@media(max-width:600px){
+  .nav-tabs { gap: 0 !important; overflow-x: auto; scrollbar-width: none; }
+  .nav-tabs::-webkit-scrollbar { display:none; }
+  .nav-tab { font-size: 10px !important; padding: 10px 12px !important; white-space: nowrap; flex-shrink: 0; }
+}
+
+/* ── Dashboard cards موبايل ── */
+@media(max-width:600px){
+  .cards-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .card { padding: 12px !important; border-radius: 12px !important; }
+  .card-label { font-size: 10px !important; }
+  .card-value { font-size: 17px !important; }
+  .card-sub, .card-trend { font-size: 9px !important; }
+
+  /* week summary موبايل */
+  #week-summary {
+    flex-direction: column !important;
+    gap: 6px !important;
+    padding: 12px !important;
+  }
+  #week-summary > div { text-align: right !important; }
+
+  /* grid-2 stack */
+  .grid-2 { grid-template-columns: 1fr !important; gap: 10px !important; }
+
+  /* chart */
+  .chart-wrap { height: 200px !important; }
+  .chart-wrap-sm { height: 140px !important; }
+
+  /* panels */
+  .panel-header { font-size: 12px !important; padding: 10px 12px !important; }
+  .panel-body { padding: 10px !important; }
+
+  /* section title */
+  .sec-title { font-size: 15px !important; margin-bottom: 12px !important; }
+}
+
+/* ══ DASHBOARD MOBILE - كاردات خاصة ══ */
+@media(max-width:600px){
+  /* هذا الأسبوع — grid 3 col */
+  .week-mobile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    text-align: center;
+  }
+  .week-mobile-item { }
+  .week-mobile-val { font-size: 14px; font-weight: 900; }
+  .week-mobile-lbl { font-size: 9px; color: var(--text2); margin-top: 2px; }
+
+  /* recent ops table */
+  .tbl thead { display: none; }
+  .tbl tr {
+    display: flex; flex-wrap: wrap;
+    padding: 10px 0; gap: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tbl td { border: none !important; padding: 0 !important; font-size: 12px !important; }
+  .tbl td:nth-child(1) { width: 100%; }
+  .tbl td:nth-child(2) { color: var(--text2) !important; font-weight: 400 !important; flex: 1; }
+  .tbl td:nth-child(3) { font-weight: 900 !important; }
+  .tbl td:nth-child(4) { color: var(--text2) !important; font-size: 10px !important; }
+  .tbl td:nth-child(5) { display: none; }
+  .tbl td:nth-child(6) { display: flex; gap: 4px; width: 100%; margin-top: 4px; }
+  .tbl td:nth-child(6) button { flex: 1; }
+
+  /* breakdown rows */
+  .prog-label { font-size: 11px !important; }
+  .prog-row { margin-bottom: 8px !important; }
+}
+
+/* ══ INCOME MOBILE ══ */
+@media(max-width:600px){
+  .form-grid { grid-template-columns: 1fr !important; gap: 8px !important; }
+  .inp { font-size: 14px !important; padding: 10px 12px !important; }
+  .lbl { font-size: 11px !important; }
+
+  /* أزرار الصالير السريعة */
+  .salary-quick-btns {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;
+  }
+  .salary-qbtn {
+    flex: 1; min-width: 60px; background: var(--bg4);
+    border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text2); font-family: inherit; font-size: 11px;
+    padding: 6px 4px; cursor: pointer; text-align: center;
+    transition: all .2s;
+  }
+  .salary-qbtn:hover, .salary-qbtn.active { background: rgba(0,184,148,.15); border-color: var(--green); color: var(--green); }
+}
+
+/* ══ EXPENSES MOBILE ══ */
+@media(max-width:600px){
+  /* فئات كـ chips */
+  .cat-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .cat-chip {
+    background: var(--bg4); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 12px; font-size: 11px;
+    cursor: pointer; transition: all .2s; color: var(--text2);
+    font-family: inherit;
+  }
+  .cat-chip.active { background: rgba(0,184,148,.15); border-color: var(--green); color: var(--green); }
+
+  /* إضافة مصروف سريع */
+  .quick-add-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+}
+
+/* ══ GOALS MOBILE ══ */
+@media(max-width:600px){
+  /* goal cards — full width stack */
+  #goals-list > div { grid-template-columns: 1fr !important; }
+  .goal-card-v2 { border-radius: 14px !important; }
+  .goal-ring-wrap { padding: 0 12px !important; }
+  .goal-name { font-size: 14px !important; }
+  .goal-actions button { font-size: 11px !important; padding: 10px !important; }
+}
+
+/* ══ SETTINGS MOBILE ══ */
+@media(max-width:600px){
+  /* إخفاء المحتوى غير المهم */
+
+  .settings-toggle-btn {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px; color: var(--text2);
+    font-family: inherit; font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+}
+
+/* ══ AI TICKERS MOBILE ══ */
+@media(max-width:600px){
+  .ai-ticker { gap: 6px !important; padding: 9px 12px !important; grid-template-columns: 22px 1fr auto auto !important; }
+  .ai-ticker-icon { font-size: 14px !important; }
+  .ai-ticker-label { font-size: 11px !important; }
+  .ai-ticker-val { font-size: 12px !important; }
+  .ai-change-pill { font-size: 9px !important; padding: 2px 5px !important; }
+  .ai-header { padding: 8px 12px !important; }
+}
+
+/* ══ AUTO ALLOC MOBILE ══ */
+@media(max-width:600px){
+  .auto-alloc-banner { padding: 10px 12px !important; }
+  .auto-alloc-row { flex-direction: column !important; gap: 4px !important; }
+}
+
+/* ══ MONTH PROGRESS BAR ══ */
+.month-progress-wrap {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
+  animation: cardIn .4s both;
+}
+.month-progress-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.month-progress-title { font-size: 11px; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; }
+.month-progress-status { font-size: 11px; font-weight: 700; }
+.month-dual-bar { position: relative; height: 10px; background: var(--bg4); border-radius: 10px; overflow: hidden; margin-bottom: 6px; }
+.month-bar-time { height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(.22,1,.36,1); opacity: .5; }
+.month-bar-spend { position: absolute; top: 0; height: 100%; border-radius: 10px; transition: width 1.2s cubic-bezier(.22,1,.36,1); }
+.month-progress-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text2); }
+
+/* ══ FORECAST CARD ══ */
+.forecast-card {
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 14px;
+  border: 1px solid; animation: cardIn .5s both;
+}
+.forecast-icon { font-size: 28px; flex-shrink: 0; }
+.forecast-body { flex: 1; }
+.forecast-label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
+.forecast-value { font-size: 20px; font-weight: 900; }
+.forecast-sub { font-size: 11px; margin-top: 3px; opacity: .8; }
+
+/* ══ STREAK CARD ══ */
+.streak-card {
+  background: linear-gradient(135deg, rgba(253,203,110,.1), rgba(253,203,110,.04));
+  border: 1px solid rgba(253,203,110,.25); border-radius: 14px;
+  padding: 14px 16px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 14px;
+  animation: cardIn .45s both;
+}
+.streak-fire { font-size: 32px; animation: fireFlicker 1.5s ease-in-out infinite; }
+@keyframes fireFlicker {
+  0%,100% { transform: scale(1) rotate(-3deg); }
+  50% { transform: scale(1.15) rotate(3deg); }
+}
+.streak-num { font-size: 28px; font-weight: 900; color: var(--gold); line-height: 1; }
+.streak-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+/* ══ CLOSEST GOAL CARD ══ */
+.closest-goal-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
+  cursor: pointer; animation: cardIn .55s both;
+  transition: transform .2s, border-color .2s;
+}
+.closest-goal-card:hover { transform: translateY(-2px); border-color: var(--green); }
+.closest-goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.closest-goal-name { font-size: 13px; font-weight: 900; }
+.closest-goal-pct { font-size: 18px; font-weight: 900; color: var(--green); }
+.closest-goal-bar { height: 8px; background: var(--bg4); border-radius: 8px; overflow: hidden; margin-bottom: 6px; }
+.closest-goal-fill { height: 100%; border-radius: 8px; transition: width 1s cubic-bezier(.22,1,.36,1); }
+.closest-goal-sub { font-size: 10px; color: var(--text2); display: flex; justify-content: space-between; }
+
+/* ══ BIGGEST EXPENSE ══ */
+.biggest-exp-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 14px;
+  animation: cardIn .6s both;
+}
+.biggest-exp-icon { font-size: 26px; flex-shrink: 0; }
+.biggest-exp-body { flex: 1; min-width: 0; }
+.biggest-exp-cat { font-size: 10px; color: var(--text2); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+.biggest-exp-desc { font-size: 13px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.biggest-exp-date { font-size: 10px; color: var(--text2); }
+.biggest-exp-amount { font-size: 18px; font-weight: 900; color: var(--red); flex-shrink: 0; }
+
+/* ══ DAY ANALYSIS ══ */
+.day-analysis-card {
+  background: linear-gradient(135deg, rgba(139,92,246,.08), rgba(139,92,246,.03));
+  border: 1px solid rgba(139,92,246,.2); border-radius: 14px;
+  padding: 14px 16px; margin-bottom: 14px;
+  animation: cardIn .65s both;
+}
+.day-bars { display: flex; gap: 4px; align-items: flex-end; height: 50px; margin-top: 10px; }
+.day-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.day-bar { width: 100%; border-radius: 4px 4px 0 0; min-height: 3px; transition: height 1s cubic-bezier(.22,1,.36,1); }
+.day-bar-lbl { font-size: 9px; color: var(--text2); }
+.day-bar-val { font-size: 9px; color: var(--text2); }
+
+/* ══ DAILY TIP ══ */
+.daily-tip-card {
+  background: linear-gradient(135deg, rgba(0,184,148,.06), rgba(74,144,217,.04));
+  border: 1px solid rgba(0,184,148,.2); border-radius: 14px;
+  padding: 14px 16px; margin-bottom: 14px;
+  display: flex; align-items: flex-start; gap: 12px;
+  animation: cardIn .7s both;
+}
+.daily-tip-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+.daily-tip-text { font-size: 12px; line-height: 1.8; color: var(--text2); flex: 1; }
+.daily-tip-text b { color: var(--green); }
+
+/* ══ BUDGET RING ══ */
+.budget-ring-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 16px;
+  animation: cardIn .35s both;
+}
+.budget-ring-svg { flex-shrink: 0; }
+.budget-ring-info { flex: 1; }
+.budget-ring-title { font-size: 10px; color: var(--text2); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.budget-ring-stats { display: flex; flex-direction: column; gap: 4px; }
+.budget-ring-stat { display: flex; justify-content: space-between; font-size: 11px; }
+.budget-ring-stat span:last-child { font-weight: 700; }
+
+/* ══ SPARKLINE ══ */
+.card-sparkline { position: absolute; bottom: 8px; left: 8px; right: 8px; height: 28px; opacity: .3; }
+.card { position: relative; overflow: hidden; }
+
+/* ══ COMPARE BADGES on cards ══ */
+.card-compare { font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 8px; display: inline-flex; align-items: center; gap: 2px; margin-top: 3px; }
+.card-compare.up { background: rgba(225,112,85,.15); color: var(--red); }
+.card-compare.down { background: rgba(0,184,148,.15); color: var(--green); }
 </style>
 </head>
 <body>
@@ -992,6 +1368,7 @@ body.light-mode .auth-overlay { background: var(--bg); }
       </select>
     </div>
     <span class="user-badge" id="user-badge">👤 ...</span>
+    <button class="theme-toggle" id="lang-btn" onclick="cycleLang()" style="min-width:80px">🇲🇦 العربية</button>
     <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">🌙 داكن</button>
     <button class="btn-sm btn-red-sm" onclick="doLogout()">🚪 خروج</button>
     <button class="btn-sm btn-outline-sm" onclick="expExcel()">📊 Excel</button>
@@ -1054,15 +1431,21 @@ body.light-mode .auth-overlay { background: var(--bg); }
   </div>
 
   <!-- ملخص الأسبوع -->
-  <div id="week-summary" style="display:none;background:linear-gradient(135deg,rgba(74,144,217,.08),rgba(139,92,246,.06));border:1px solid rgba(74,144,217,.2);border-radius:14px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-    <div>
-      <div style="font-size:10px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">📅 هذا الأسبوع</div>
-      <div style="font-size:22px;font-weight:900;color:var(--blue)" id="week-total">-</div>
-      <div style="font-size:11px;color:var(--text2)" id="week-count">-</div>
-    </div>
-    <div style="text-align:left">
-      <div style="font-size:10px;color:var(--text2);font-weight:700;margin-bottom:4px">أكثر فئة</div>
-      <div style="font-size:14px;font-weight:900;color:var(--purple)" id="week-top-cat">-</div>
+  <div id="week-summary" style="display:none;background:linear-gradient(135deg,rgba(74,144,217,.08),rgba(139,92,246,.06));border:1px solid rgba(74,144,217,.2);border-radius:14px;padding:14px 18px;margin-bottom:16px">
+    <div style="font-size:10px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📅 هذا الأسبوع</div>
+    <div class="week-mobile-grid">
+      <div class="week-mobile-item">
+        <div class="week-mobile-val" style="color:var(--blue)" id="week-total">-</div>
+        <div class="week-mobile-lbl">إجمالي</div>
+      </div>
+      <div class="week-mobile-item">
+        <div class="week-mobile-val" style="color:var(--text2)" id="week-count">-</div>
+        <div class="week-mobile-lbl">عملية</div>
+      </div>
+      <div class="week-mobile-item">
+        <div class="week-mobile-val" style="color:var(--purple)" id="week-top-cat">-</div>
+        <div class="week-mobile-lbl">أكثر فئة</div>
+      </div>
     </div>
   </div>
 
@@ -1088,6 +1471,104 @@ body.light-mode .auth-overlay { background: var(--bg); }
     </div>
   </div>
 
+  <!-- ══ MONTH PROGRESS ══ -->
+  <div class="month-progress-wrap" id="month-progress-wrap" style="display:none">
+    <div class="month-progress-header">
+      <div class="month-progress-title">📅 تقدم الشهر</div>
+      <div class="month-progress-status" id="month-progress-status"></div>
+    </div>
+    <div class="month-dual-bar">
+      <div class="month-bar-time" id="month-bar-time" style="width:0%;background:var(--blue)"></div>
+      <div class="month-bar-spend" id="month-bar-spend" style="width:0%"></div>
+    </div>
+    <div class="month-progress-labels">
+      <span id="month-time-pct"></span>
+      <span id="month-spend-pct"></span>
+    </div>
+  </div>
+
+  <!-- ══ BUDGET RING + FORECAST ══ -->
+  <div class="grid-2" style="margin-bottom:0">
+    <div class="budget-ring-card" id="budget-ring-card" style="display:none">
+      <svg class="budget-ring-svg" width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="32" fill="none" stroke="var(--bg4)" stroke-width="7"/>
+        <circle id="budget-arc" cx="40" cy="40" r="32" fill="none" stroke="var(--green)" stroke-width="7"
+          stroke-dasharray="201.1" stroke-dashoffset="201.1" stroke-linecap="round"
+          transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)"/>
+        <text id="budget-arc-pct" x="40" y="45" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="900" font-family="Cairo">0%</text>
+      </svg>
+      <div class="budget-ring-info">
+        <div class="budget-ring-title">⭕ استخدام الميزانية</div>
+        <div class="budget-ring-stats">
+          <div class="budget-ring-stat"><span>الدخل</span><span id="br-income" style="color:var(--green)">-</span></div>
+          <div class="budget-ring-stat"><span>الصرف</span><span id="br-exp" style="color:var(--red)">-</span></div>
+          <div class="budget-ring-stat"><span>الباقي</span><span id="br-rem" style="color:var(--blue)">-</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="forecast-card" id="forecast-card" style="display:none">
+      <div class="forecast-icon" id="forecast-icon">🔮</div>
+      <div class="forecast-body">
+        <div class="forecast-label" id="forecast-label">توقع نهاية الشهر</div>
+        <div class="forecast-value" id="forecast-value">-</div>
+        <div class="forecast-sub" id="forecast-sub"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STREAK + BIGGEST EXP ══ -->
+  <div class="grid-2" style="margin-bottom:0;margin-top:14px">
+    <div class="streak-card" id="streak-card" style="display:none">
+      <div class="streak-fire">🔥</div>
+      <div>
+        <div class="streak-num" id="streak-num">0</div>
+        <div class="streak-label" id="streak-label">أشهر متتالية في الادخار</div>
+      </div>
+    </div>
+
+    <div class="biggest-exp-card" id="biggest-exp-card" style="display:none">
+      <div class="biggest-exp-icon" id="biggest-exp-icon">💸</div>
+      <div class="biggest-exp-body">
+        <div class="biggest-exp-cat" id="biggest-exp-cat">أكبر مصروف</div>
+        <div class="biggest-exp-desc" id="biggest-exp-desc">-</div>
+        <div class="biggest-exp-date" id="biggest-exp-date"></div>
+      </div>
+      <div class="biggest-exp-amount" id="biggest-exp-amount">-</div>
+    </div>
+  </div>
+
+  <!-- ══ CLOSEST GOAL ══ -->
+  <div class="closest-goal-card" id="closest-goal-card" style="display:none" onclick="showTab('goals')">
+    <div class="closest-goal-header">
+      <div>
+        <div style="font-size:10px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">🎯 أقرب هدف للاكتمال</div>
+        <div class="closest-goal-name" id="closest-goal-name">-</div>
+      </div>
+      <div class="closest-goal-pct" id="closest-goal-pct">0%</div>
+    </div>
+    <div class="closest-goal-bar"><div class="closest-goal-fill" id="closest-goal-fill" style="width:0%;background:var(--green)"></div></div>
+    <div class="closest-goal-sub">
+      <span id="closest-goal-saved">-</span>
+      <span id="closest-goal-target">-</span>
+    </div>
+  </div>
+
+  <!-- ══ DAY ANALYSIS ══ -->
+  <div class="day-analysis-card" id="day-analysis-card" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:11px;font-weight:900;color:var(--purple)">📅 تحليل أيام الأسبوع</div>
+      <div style="font-size:10px;color:var(--text2)" id="day-analysis-note"></div>
+    </div>
+    <div class="day-bars" id="day-bars"></div>
+  </div>
+
+  <!-- ══ DAILY TIP ══ -->
+  <div class="daily-tip-card" id="daily-tip-card" style="display:none">
+    <div class="daily-tip-icon" id="daily-tip-icon">💡</div>
+    <div class="daily-tip-text" id="daily-tip-text">-</div>
+  </div>
+
   <div class="grid-2">
     <div class="panel">
       <div class="panel-header">📊 توزيع المصاريف</div>
@@ -1101,8 +1582,8 @@ body.light-mode .auth-overlay { background: var(--bg); }
   <div class="panel">
     <div class="panel-header">💳 آخر العمليات</div>
     <div class="panel-body" style="overflow-x:auto">
-      <table class="tbl"><thead><tr><th>الفئة</th><th>الوصف</th><th>المبلغ</th><th>التاريخ</th></tr></thead>
-      <tbody id="recent-ops"><tr><td colspan="4" class="loading">جاري التحميل...</td></tr></tbody></table>
+      <table class="tbl"><thead><tr><th>الفئة</th><th>الوصف</th><th>المبلغ</th><th>التاريخ</th><th></th></tr></thead>
+      <tbody id="recent-ops"><tr><td colspan="5" class="loading">جاري التحميل...</td></tr></tbody></table>
     </div>
   </div>
 </div>
@@ -1114,15 +1595,29 @@ body.light-mode .auth-overlay { background: var(--bg); }
     <div class="panel-header">الصالير والبريم</div>
     <div class="panel-body">
       <div class="form-grid">
-        <div><label class="lbl">🏦 الصالير (درهم)</label><input class="inp" type="number" id="in-salary" oninput="saveIncome()" placeholder="مثال: 6000"/></div>
-        <div><label class="lbl">🎁 بريم شهرين</label><input class="inp" type="number" id="in-b2" oninput="saveIncome()" placeholder="مثال: 12000"/></div>
-        <div><label class="lbl">🎊 بريم 6 أشهر</label><input class="inp" type="number" id="in-b6" oninput="saveIncome()" placeholder="مثال: 36000"/></div>
-        <div><label class="lbl">🌍 يوم عالمي</label><input class="inp" type="number" id="in-intl" oninput="saveIncome()" placeholder="مثال: 3000"/></div>
-        <div><label class="lbl">➕ دخل إضافي</label><input class="inp" type="number" id="in-extra" oninput="saveIncome()" placeholder="مثال: 1500"/></div>
-        <div><label class="lbl">بريم شهرين هذا الشهر؟</label><select class="inp" id="in-b2a" onchange="saveIncome()"><option value="false">لا</option><option value="true">نعم</option></select></div>
-        <div><label class="lbl">بريم 6 أشهر هذا الشهر؟</label><select class="inp" id="in-b6a" onchange="saveIncome()"><option value="false">لا</option><option value="true">نعم</option></select></div>
-        <div><label class="lbl">يوم عالمي هذا الشهر؟</label><select class="inp" id="in-ia" onchange="saveIncome()"><option value="false">لا</option><option value="true">نعم</option></select></div>
+        <div>
+          <label class="lbl">🏦 الصالير (درهم)</label>
+          <input class="inp" type="number" id="in-salary" placeholder="مثال: 6000"/>
+          <div class="salary-quick-btns">
+            <button class="salary-qbtn" onclick="setSalary(3000)">3,000</button>
+            <button class="salary-qbtn" onclick="setSalary(4000)">4,000</button>
+            <button class="salary-qbtn" onclick="setSalary(5000)">5,000</button>
+            <button class="salary-qbtn" onclick="setSalary(6000)">6,000</button>
+            <button class="salary-qbtn" onclick="setSalary(8000)">8,000</button>
+          </div>
+        </div>
+        <div><label class="lbl">🎁 بريم شهرين</label><input class="inp" type="number" id="in-b2" placeholder="مثال: 12000"/></div>
+        <div><label class="lbl">🎊 بريم 6 أشهر</label><input class="inp" type="number" id="in-b6" placeholder="مثال: 36000"/></div>
+        <div><label class="lbl">🌍 يوم عالمي</label><input class="inp" type="number" id="in-intl" placeholder="مثال: 3000"/></div>
+        <div><label class="lbl">➕ دخل إضافي</label><input class="inp" type="number" id="in-extra" placeholder="مثال: 1500"/></div>
+        <div><label class="lbl">بريم شهرين هذا الشهر؟</label><select class="inp" id="in-b2a"><option value="false">لا</option><option value="true">نعم</option></select></div>
+        <div><label class="lbl">بريم 6 أشهر هذا الشهر؟</label><select class="inp" id="in-b6a"><option value="false">لا</option><option value="true">نعم</option></select></div>
+        <div><label class="lbl">يوم عالمي هذا الشهر؟</label><select class="inp" id="in-ia"><option value="false">لا</option><option value="true">نعم</option></select></div>
       </div>
+      <!-- زر الحفظ الصريح -->
+      <button class="action-btn green" id="save-income-btn" onclick="saveIncomeManual()" style="width:100%;justify-content:center;margin-top:14px;font-size:14px;padding:14px">
+        💾 حفظ الدخل
+      </button>
     </div>
   </div>
   <div class="cards-grid">
@@ -1138,7 +1633,7 @@ body.light-mode .auth-overlay { background: var(--bg); }
   <div class="sec-title">💸 المصاريف</div>
   <div class="panel">
     <div class="panel-header">➕ إضافة مصروف
-      <button class="btn-sm btn-outline-sm" onclick="importLastMonth()" title="أضف المصاريف الثابتة من الشهر الماضي">📋 من الشهر الماضي</button>
+      <button class="btn-sm btn-outline-sm" onclick="importLastMonth()">📋 الشهر الماضي</button>
     </div>
     <div class="panel-body">
       <div class="form-grid">
@@ -1402,9 +1897,6 @@ body.light-mode .auth-overlay { background: var(--bg); }
       <p style="font-size:11px;color:var(--text2);margin-top:10px" id="email-status-lbl"></p>
     </div>
   </div>
-      </p>
-    </div>
-  </div>
 
   <!-- PIN Setup -->
   <div class="panel" style="margin-bottom:14px">
@@ -1626,6 +2118,501 @@ body.light-mode .auth-overlay { background: var(--bg); }
 
 <script>
 // ══ مالي+ Standalone — localStorage ══
+
+// ══════════════════════════════════════════
+//  i18n — نظام الترجمة الثلاثي
+// ══════════════════════════════════════════
+const LANGS = {
+  ar: {
+    dir: 'rtl', name: 'العربية', flag: '🇲🇦',
+    months: ['يناير','فبراير','مارس','أبريل','ماي','يونيو','يوليوز','غشت','شتنبر','أكتوبر','نونبر','دجنبر'],
+    cats: ['كراء','ماء وكهرباء','واي فاي','ترنسبور','تعليم العائلة','ماكلة','ترفيه','صحة','ملابس','ادخار','أخرى'],
+    currency: 'درهم',
+    t: {
+      // Header
+      app_name: 'مالي+',
+      export: '📤 تصدير',
+      logout: '🚪 خروج',
+      dark: '🌙 داكن', light: '☀️ فاتح',
+      // Tabs
+      tab_dashboard: '📊 القيادة',
+      tab_income: '💰 الدخل',
+      tab_expenses: '💸 المصاريف',
+      tab_goals: '🎯 الأهداف',
+      tab_annual: '📅 سنوي',
+      tab_stats: '📈 إحصائيات',
+      tab_settings: '⚙️ الإعدادات',
+      // Dashboard
+      dashboard_title: '📊 لوحة القيادة',
+      salary: 'الصالير',
+      total_income: 'الدخل الكلي',
+      expenses: 'المصاريف',
+      remaining: 'الباقي',
+      saving_rate: 'نسبة الادخار',
+      health_score: 'الصحة المالية',
+      this_week: '📅 هذا الأسبوع',
+      total: 'إجمالي',
+      operations: 'عملية',
+      top_cat: 'أكثر فئة',
+      expense_dist: '📊 توزيع المصاريف',
+      cat_details: '📉 تفصيل الفئات',
+      last_ops: '💳 آخر العمليات',
+      no_ops: 'ما كاين عمليات',
+      loading: 'جاري التحميل...',
+      no_bonus: 'بدون بريم',
+      vs_last: 'عن الشهر الماضي',
+      excellent: 'ممتاز', good: 'جيد', ok: 'معقول', weak: 'ضعيف',
+      // Income
+      income_title: '💰 الدخل',
+      salary_bonus: 'الصالير والبريم',
+      salary_lbl: '🏦 الصالير (درهم)',
+      bonus2_lbl: '🎁 بريم شهرين',
+      bonus6_lbl: '🎊 بريم 6 أشهر',
+      intl_lbl: '🌍 يوم عالمي',
+      extra_lbl: '➕ دخل إضافي',
+      bonus2_active: 'بريم شهرين هذا الشهر؟',
+      bonus6_active: 'بريم 6 أشهر هذا الشهر؟',
+      intl_active: 'يوم عالمي هذا الشهر؟',
+      yes: 'نعم', no: 'لا',
+      save_income: '💾 حفظ الدخل',
+      saving: '⏳ جاري الحفظ...',
+      saved_income: '✅ تم الحفظ',
+      income_saved_toast: 'تم حفظ دخل',
+      // Expenses
+      expenses_title: '💸 المصاريف',
+      add_expense: '➕ إضافة مصروف',
+      last_month_import: '📋 الشهر الماضي',
+      category: 'الفئة',
+      description: 'الوصف',
+      amount: 'المبلغ',
+      date: 'التاريخ',
+      add_btn: '➕ إضافة',
+      clear_month: '🗑️ مسح الشهر',
+      expense_added: '✅ تم الإضافة!',
+      expense_deleted: '🗑️ تم الحذف',
+      undo: '↩ تراجع',
+      // Goals
+      goals_title: '🎯 الأهداف',
+      add_goal: '➕ هدف جديد',
+      goal_name: 'اسم الهدف',
+      target: 'المبلغ المستهدف',
+      saved_amount: 'المدخر الآن',
+      months_lbl: 'عدد الأشهر المتبقية',
+      goal_type: 'نوع الهدف',
+      add_goal_btn: '🎯 إضافة الهدف',
+      monthly_needed: '/شهر مطلوب',
+      completed: '🏆 مكتمل',
+      remaining_lbl: 'الباقي',
+      months_left: 'شهر متبقي',
+      deposit: '➕ إيداع',
+      edit: '✏️ تعديل',
+      delete: '🗑️ حذف',
+      my_achievements: '🏆 منجزاتي',
+      // Settings
+      settings_title: '⚙️ الإعدادات',
+      data_backup: '💾 حفظ واستعادة البيانات',
+      export_csv: '💾 حفظ البيانات',
+      import_data: '📂 استعادة',
+      monthly_email: '📧 الملخص الشهري بإيميل',
+      setup_email: '📧 إعداد الإيميل',
+      send_now: '📤 إرسال الآن',
+      pin_title: '🔢 الرمز السري السريع',
+      create_pin: '🔢 إنشاء رمز',
+      delete_pin: '🗑️ حذف الرمز',
+      spending_fast: '🚫 صيام الإنفاق',
+      fast_days: 'مدة الصيام:',
+      start_fast: '🚫 ابدأ',
+      stop_fast: 'إيقاف',
+      share_summary: '📤 مشاركة الملخص',
+      generate_summary: '📸 ولّد الملخص',
+      copy_summary: '📋 نسخ الملخص',
+      daily_reminder: '🔔 تذكير يومي',
+      enable_reminder: '🔔 تفعيل التذكير اليومي',
+      alert_limits: '🔔 حدود التنبيه',
+      warn_label: '⚠️ تنبيه عند الباقي أقل من',
+      danger_label: '🚨 خطر عند الباقي أقل من',
+      budget_limit: '📊 حد الميزانية للفئة',
+      // Auth
+      login: 'تسجيل الدخول',
+      register: 'حساب جديد',
+      email_lbl: 'الإيميل',
+      password_lbl: 'كلمة السر',
+      login_btn: 'دخول',
+      register_btn: 'إنشاء حساب',
+      forgot: '🔑 نسيت كلمة السر؟',
+      // Misc
+      danger: '🚨 خطر!',
+      warning: '⚠️ تنبيه!',
+      remaining_is: 'الباقي',
+      less_than: 'أقل من',
+      smart_analysis: 'تحليل مالي مباشر',
+      auto_alloc: '💰 توزيع الادخار التلقائي',
+      adjust: '⚡ تعديل',
+      copied: '✅ تم النسخ!',
+    }
+  },
+  fr: {
+    dir: 'ltr', name: 'Français', flag: '🇫🇷',
+    months: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+    cats: ['Loyer','Eau & Élec.','Internet','Transport','Éducation','Alimentation','Loisirs','Santé','Vêtements','Épargne','Autres'],
+    currency: 'DH',
+    t: {
+      app_name: 'Mali+',
+      export: '📤 Exporter',
+      logout: '🚪 Déconnexion',
+      dark: '🌙 Sombre', light: '☀️ Clair',
+      tab_dashboard: '📊 Tableau',
+      tab_income: '💰 Revenus',
+      tab_expenses: '💸 Dépenses',
+      tab_goals: '🎯 Objectifs',
+      tab_annual: '📅 Annuel',
+      tab_stats: '📈 Statistiques',
+      tab_settings: '⚙️ Paramètres',
+      dashboard_title: '📊 Tableau de bord',
+      salary: 'Salaire',
+      total_income: 'Revenu total',
+      expenses: 'Dépenses',
+      remaining: 'Restant',
+      saving_rate: "Taux d'épargne",
+      health_score: 'Santé financière',
+      this_week: '📅 Cette semaine',
+      total: 'Total',
+      operations: 'opération',
+      top_cat: 'Top catégorie',
+      expense_dist: '📊 Répartition',
+      cat_details: '📉 Détail catégories',
+      last_ops: '💳 Dernières opérations',
+      no_ops: 'Aucune opération',
+      loading: 'Chargement...',
+      no_bonus: 'Sans prime',
+      vs_last: 'vs mois dernier',
+      excellent: 'Excellent', good: 'Bien', ok: 'Correct', weak: 'Faible',
+      income_title: '💰 Revenus',
+      salary_bonus: 'Salaire & Primes',
+      salary_lbl: '🏦 Salaire (DH)',
+      bonus2_lbl: '🎁 Prime bimestrielle',
+      bonus6_lbl: '🎊 Prime semestrielle',
+      intl_lbl: '🌍 Journée mondiale',
+      extra_lbl: '➕ Revenu supplémentaire',
+      bonus2_active: 'Prime bimestrielle ce mois?',
+      bonus6_active: 'Prime semestrielle ce mois?',
+      intl_active: 'Journée mondiale ce mois?',
+      yes: 'Oui', no: 'Non',
+      save_income: '💾 Enregistrer',
+      saving: '⏳ Enregistrement...',
+      saved_income: '✅ Enregistré',
+      income_saved_toast: 'Revenus enregistrés —',
+      expenses_title: '💸 Dépenses',
+      add_expense: '➕ Ajouter une dépense',
+      last_month_import: '📋 Mois précédent',
+      category: 'Catégorie',
+      description: 'Description',
+      amount: 'Montant',
+      date: 'Date',
+      add_btn: '➕ Ajouter',
+      clear_month: '🗑️ Vider le mois',
+      expense_added: '✅ Ajouté!',
+      expense_deleted: '🗑️ Supprimé',
+      undo: '↩ Annuler',
+      goals_title: '🎯 Objectifs',
+      add_goal: '➕ Nouvel objectif',
+      goal_name: "Nom de l'objectif",
+      target: 'Montant cible',
+      saved_amount: 'Déjà épargné',
+      months_lbl: 'Mois restants',
+      goal_type: "Type d'objectif",
+      add_goal_btn: '🎯 Ajouter',
+      monthly_needed: '/mois requis',
+      completed: '🏆 Complété',
+      remaining_lbl: 'Restant',
+      months_left: 'mois restants',
+      deposit: '➕ Dépôt',
+      edit: '✏️ Modifier',
+      delete: '🗑️ Supprimer',
+      my_achievements: '🏆 Mes succès',
+      settings_title: '⚙️ Paramètres',
+      data_backup: '💾 Sauvegarde des données',
+      export_csv: '💾 Sauvegarder',
+      import_data: '📂 Restaurer',
+      monthly_email: '📧 Résumé mensuel par email',
+      setup_email: '📧 Config. email',
+      send_now: '📤 Envoyer maintenant',
+      pin_title: '🔢 Code PIN rapide',
+      create_pin: '🔢 Créer un PIN',
+      delete_pin: '🗑️ Supprimer le PIN',
+      spending_fast: '🚫 Jeûne des dépenses',
+      fast_days: 'Durée:',
+      start_fast: '🚫 Commencer',
+      stop_fast: 'Arrêter',
+      share_summary: '📤 Partager le résumé',
+      generate_summary: '📸 Générer',
+      copy_summary: '📋 Copier',
+      daily_reminder: '🔔 Rappel quotidien',
+      enable_reminder: '🔔 Activer le rappel',
+      alert_limits: "🔔 Limites d'alerte",
+      warn_label: '⚠️ Alerte si restant <',
+      danger_label: '🚨 Danger si restant <',
+      budget_limit: '📊 Limite budget par catégorie',
+      login: 'Connexion',
+      register: 'Nouveau compte',
+      email_lbl: 'Email',
+      password_lbl: 'Mot de passe',
+      login_btn: 'Connexion',
+      register_btn: 'Créer un compte',
+      forgot: '🔑 Mot de passe oublié?',
+      danger: '🚨 Danger!',
+      warning: '⚠️ Alerte!',
+      remaining_is: 'Le restant',
+      less_than: 'inférieur à',
+      smart_analysis: 'Analyse financière en direct',
+      auto_alloc: "💰 Répartition auto de l'épargne",
+      adjust: '⚡ Ajuster',
+      copied: '✅ Copié!',
+    }
+  },
+  en: {
+    dir: 'ltr', name: 'English', flag: '🇬🇧',
+    months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    cats: ['Rent','Water & Elec.','Internet','Transport','Education','Food','Entertainment','Health','Clothes','Savings','Other'],
+    currency: 'DH',
+    t: {
+      app_name: 'Mali+',
+      export: '📤 Export',
+      logout: '🚪 Logout',
+      dark: '🌙 Dark', light: '☀️ Light',
+      tab_dashboard: '📊 Dashboard',
+      tab_income: '💰 Income',
+      tab_expenses: '💸 Expenses',
+      tab_goals: '🎯 Goals',
+      tab_annual: '📅 Annual',
+      tab_stats: '📈 Statistics',
+      tab_settings: '⚙️ Settings',
+      dashboard_title: '📊 Dashboard',
+      salary: 'Salary',
+      total_income: 'Total Income',
+      expenses: 'Expenses',
+      remaining: 'Remaining',
+      saving_rate: 'Saving Rate',
+      health_score: 'Financial Health',
+      this_week: '📅 This Week',
+      total: 'Total',
+      operations: 'transaction',
+      top_cat: 'Top Category',
+      expense_dist: '📊 Expense Distribution',
+      cat_details: '📉 Category Details',
+      last_ops: '💳 Recent Transactions',
+      no_ops: 'No transactions',
+      loading: 'Loading...',
+      no_bonus: 'No bonus',
+      vs_last: 'vs last month',
+      excellent: 'Excellent', good: 'Good', ok: 'Fair', weak: 'Weak',
+      income_title: '💰 Income',
+      salary_bonus: 'Salary & Bonuses',
+      salary_lbl: '🏦 Salary (DH)',
+      bonus2_lbl: '🎁 Bi-monthly bonus',
+      bonus6_lbl: '🎊 Semi-annual bonus',
+      intl_lbl: '🌍 International day',
+      extra_lbl: '➕ Extra income',
+      bonus2_active: 'Bi-monthly bonus this month?',
+      bonus6_active: 'Semi-annual bonus this month?',
+      intl_active: 'International day this month?',
+      yes: 'Yes', no: 'No',
+      save_income: '💾 Save Income',
+      saving: '⏳ Saving...',
+      saved_income: '✅ Saved',
+      income_saved_toast: 'Income saved —',
+      expenses_title: '💸 Expenses',
+      add_expense: '➕ Add Expense',
+      last_month_import: '📋 Last Month',
+      category: 'Category',
+      description: 'Description',
+      amount: 'Amount',
+      date: 'Date',
+      add_btn: '➕ Add',
+      clear_month: '🗑️ Clear Month',
+      expense_added: '✅ Added!',
+      expense_deleted: '🗑️ Deleted',
+      undo: '↩ Undo',
+      goals_title: '🎯 Goals',
+      add_goal: '➕ New Goal',
+      goal_name: 'Goal Name',
+      target: 'Target Amount',
+      saved_amount: 'Already Saved',
+      months_lbl: 'Months Remaining',
+      goal_type: 'Goal Type',
+      add_goal_btn: '🎯 Add Goal',
+      monthly_needed: '/month needed',
+      completed: '🏆 Completed',
+      remaining_lbl: 'Remaining',
+      months_left: 'months left',
+      deposit: '➕ Deposit',
+      edit: '✏️ Edit',
+      delete: '🗑️ Delete',
+      my_achievements: '🏆 My Achievements',
+      settings_title: '⚙️ Settings',
+      data_backup: '💾 Data Backup',
+      export_csv: '💾 Save Data',
+      import_data: '📂 Restore',
+      monthly_email: '📧 Monthly Email Summary',
+      setup_email: '📧 Setup Email',
+      send_now: '📤 Send Now',
+      pin_title: '🔢 Quick PIN',
+      create_pin: '🔢 Create PIN',
+      delete_pin: '🗑️ Remove PIN',
+      spending_fast: '🚫 Spending Fast',
+      fast_days: 'Duration:',
+      start_fast: '🚫 Start',
+      stop_fast: 'Stop',
+      share_summary: '📤 Share Summary',
+      generate_summary: '📸 Generate',
+      copy_summary: '📋 Copy',
+      daily_reminder: '🔔 Daily Reminder',
+      enable_reminder: '🔔 Enable Daily Reminder',
+      alert_limits: '🔔 Alert Limits',
+      warn_label: '⚠️ Warning when remaining <',
+      danger_label: '🚨 Danger when remaining <',
+      budget_limit: '📊 Budget Limit by Category',
+      login: 'Login',
+      register: 'New Account',
+      email_lbl: 'Email',
+      password_lbl: 'Password',
+      login_btn: 'Login',
+      register_btn: 'Create Account',
+      forgot: '🔑 Forgot password?',
+      danger: '🚨 Danger!',
+      warning: '⚠️ Warning!',
+      remaining_is: 'Remaining',
+      less_than: 'less than',
+      smart_analysis: 'Live Financial Analysis',
+      auto_alloc: '💰 Auto Savings Allocation',
+      adjust: '⚡ Adjust',
+      copied: '✅ Copied!',
+    }
+  }
+};
+
+let currentLang = 'ar';
+
+function t(key){ return LANGS[currentLang]?.t[key] || LANGS.ar.t[key] || key; }
+function M(i){ return LANGS[currentLang]?.months[i] || LANGS.ar.months[i]; }
+function C(i){ return LANGS[currentLang]?.cats[i] || LANGS.ar.cats[i]; }
+function curr(){ return LANGS[currentLang]?.currency || 'درهم'; }
+
+function setLang(lang){
+  if(!LANGS[lang]) return;
+  currentLang = lang;
+  DB.set('app_lang', lang);
+  const langData = LANGS[lang];
+  // اتجاه الصفحة
+  document.documentElement.lang = lang;
+  document.documentElement.dir = langData.dir;
+  document.body.style.direction = langData.dir;
+  // تحديث MONTHS و CATS للتوافق مع الكود القديم
+  MONTHS.splice(0, MONTHS.length, ...langData.months);
+  CATS.splice(0, CATS.length, ...langData.cats);
+  // تحديث UI
+  applyTranslations();
+  updateLangBtn();
+  loadAll();
+}
+
+function applyTranslations(){
+  // الهيدر
+  const logo = document.querySelector('.logo');
+  if(logo) logo.innerHTML = t('app_name').includes('+') ? `<span style="color:var(--gold)">+</span>${t('app_name').replace('+','')} <span style="color:var(--text2);font-size:12px">MA</span>` : t('app_name');
+
+  // الـ tabs
+  const tabLabels = ['tab_dashboard','tab_income','tab_expenses','tab_goals','tab_annual','tab_stats','tab_settings'];
+  document.querySelectorAll('.nav-tab').forEach((el,i)=>{
+    if(tabLabels[i]) el.textContent = t(tabLabels[i]);
+  });
+
+  // عناوين الأقسام
+  const secTitles = document.querySelectorAll('.sec-title');
+  const titleKeys = ['dashboard_title','income_title','expenses_title','goals_title',null,null,'settings_title'];
+  secTitles.forEach((el,i)=>{ if(titleKeys[i]) el.textContent = t(titleKeys[i]); });
+
+  // كاردات الداشبورد
+  const cardLabels = document.querySelectorAll('.card-label');
+  const cardKeys = ['salary','total_income','expenses','remaining','saving_rate','health_score'];
+  cardLabels.forEach((el,i)=>{ if(cardKeys[i]) el.textContent = t(cardKeys[i]); });
+
+  // أزرار
+  const themeBtn = document.getElementById('theme-btn');
+  if(themeBtn) themeBtn.innerHTML = document.body.classList.contains('light-mode') ? t('dark') : t('light');
+
+  const saveIncBtn = document.getElementById('save-income-btn');
+  if(saveIncBtn && !saveIncBtn.disabled) saveIncBtn.textContent = t('save_income');
+
+  // panel headers - dashboard
+  const panelHeaders = document.querySelectorAll('#tab-dashboard .panel-header');
+  const dashPanels = ['expense_dist','cat_details','last_ops'];
+  panelHeaders.forEach((el,i)=>{ if(dashPanels[i]) el.textContent = t(dashPanels[i]); });
+
+  // Income labels
+  const incLabels = ['salary_lbl','bonus2_lbl','bonus6_lbl','intl_lbl','extra_lbl',
+                     'bonus2_active','bonus6_active','intl_active'];
+  document.querySelectorAll('#tab-income .lbl').forEach((el,i)=>{
+    if(incLabels[i]) el.textContent = t(incLabels[i]);
+  });
+
+  // Auth
+  const authTabs = document.querySelectorAll('.auth-tabs .auth-tab');
+  if(authTabs[0]) authTabs[0].textContent = t('login');
+  if(authTabs[1]) authTabs[1].textContent = t('register');
+
+  const emailLbl = document.querySelector('label[for="auth-email"], .auth-card label');
+  document.querySelectorAll('.auth-card .lbl').forEach((el,i)=>{
+    if(i===0) el.textContent = t('email_lbl');
+    if(i===1) el.textContent = t('password_lbl');
+  });
+
+  // week summary
+  const weekLbl = document.querySelector('#week-summary .week-mobile-lbl');
+  document.querySelectorAll('#week-summary .week-mobile-lbl').forEach((el,i)=>{
+    if(i===0) el.textContent = t('total');
+    if(i===1) el.textContent = t('operations');
+    if(i===2) el.textContent = t('top_cat');
+  });
+
+  // ai header
+  const aiTitle = document.querySelector('.ai-header-title');
+  if(aiTitle) aiTitle.innerHTML = '<div class="ai-live-dot"></div>' + t('smart_analysis');
+
+  // auto alloc
+  const allocTitle = document.querySelector('#auto-alloc-section .auto-alloc-banner > div > div:first-child');
+  if(allocTitle) allocTitle.textContent = t('auto_alloc');
+
+  // recent ops table headers
+  const tblHeads = document.querySelectorAll('#tab-dashboard .tbl th');
+  const headKeys = ['category','description','amount','date'];
+  tblHeads.forEach((el,i)=>{ if(headKeys[i]) el.textContent = t(headKeys[i]); });
+}
+
+function updateLangBtn(){
+  const btn = document.getElementById('lang-btn');
+  if(btn) btn.textContent = LANGS[currentLang]?.flag + ' ' + LANGS[currentLang]?.name;
+}
+
+function cycleLang(){
+  const order = ['ar','fr','en'];
+  const idx = order.indexOf(currentLang);
+  setLang(order[(idx+1)%order.length]);
+}
+
+function initLang(){
+  const saved = DB.get('app_lang') || 'ar';
+  currentLang = saved;
+  const langData = LANGS[saved];
+  document.documentElement.lang = saved;
+  document.documentElement.dir = langData.dir;
+  document.body.style.direction = langData.dir;
+  MONTHS.splice(0, MONTHS.length, ...langData.months);
+  CATS.splice(0, CATS.length, ...langData.cats);
+  updateLangBtn();
+  setTimeout(applyTranslations, 100);
+}
+
 // ══════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════
@@ -1646,7 +2633,7 @@ let realMonthsCount=0;
 // ══════════════════════════════════════════
 //  UTILS
 // ══════════════════════════════════════════
-function fmt(n){return(n||0).toLocaleString('ar-MA')+' درهم';}
+function fmt(n){return Math.round(n||0).toLocaleString('ar-MA')+' '+(typeof curr==='function'?curr():'درهم');}
 
 function animateCount(el, target, prefix='', suffix=' درهم'){
   const start=0, duration=800, startTime=performance.now();
@@ -2858,11 +3845,364 @@ function showApp(){
   const badge = document.getElementById('user-badge');
   if(badge && currentUser) badge.textContent = '👤 ' + currentUser.email.split('@')[0];
   initTheme();
+  initLang();
   if(DB.get('notif_enabled')) scheduleReminder();
   checkAutoEmail();
   checkWeeklyBackup();
   loadAll();
   setTimeout(()=>{ initPin(); renderCompletedGoals(); renderFastStatus(); }, 500);
+}
+
+// ════════════════════════════════════════
+// MOBILE ENHANCEMENTS
+// ════════════════════════════════════════
+
+// أزرار صالير سريعة
+function setSalary(val){
+  const inp = document.getElementById('in-salary');
+  if(!inp) return;
+  inp.value = val;
+  document.querySelectorAll('.salary-qbtn').forEach(b=>{
+    b.classList.toggle('active', parseInt(b.textContent.replace(',',''))===val);
+  });
+  saveIncome();
+  showToast('✅ تم تعيين الصالير: '+val.toLocaleString()+' درهم');
+}
+
+
+
+// تحديث week-summary للنسخة الجديدة
+const _origRenderWeekSummary = renderWeekSummary;
+function renderWeekSummary(){
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - dayOfWeek);
+  startOfWeek.setHours(0,0,0,0);
+  const weekExps = expensesData.filter(e=>new Date(e.date)>=startOfWeek);
+  const el = document.getElementById('week-summary');
+  if(!weekExps.length){ if(el) el.style.display='none'; return; }
+  const total = weekExps.reduce((s,e)=>s+e.amount,0);
+  const catMap = {};
+  weekExps.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
+  const topCat = Object.entries(catMap).sort((a,b)=>b[1]-a[1])[0];
+  if(el){
+    el.style.display='block';
+    const totalEl = document.getElementById('week-total');
+    const countEl = document.getElementById('week-count');
+    const topEl   = document.getElementById('week-top-cat');
+    if(totalEl) totalEl.textContent = fmt(total);
+    if(countEl) countEl.textContent = weekExps.length;
+    if(topEl)   topEl.textContent   = topCat ? (CAT_ICONS[topCat[0]]||'')+''+topCat[0] : '-';
+  }
+}
+
+// ── تحديث الصالير buttons عند تحميل الصفحة ──
+function updateSalaryBtns(){
+  const val = parseFloat(document.getElementById('in-salary')?.value||0);
+  document.querySelectorAll('.salary-qbtn').forEach(b=>{
+    b.classList.toggle('active', parseInt(b.textContent.replace(/[,٬]/g,''))===val);
+  });
+}
+
+// ── Category chips للمصاريف (موبايل) ──
+function initCatChips(){
+  const expCat = document.getElementById('exp-cat');
+  if(!expCat) return;
+  const cats = Array.from(expCat.options).map(o=>o.value);
+  const existing = document.getElementById('cat-chips-wrap');
+  if(existing) return;
+  const wrap = document.createElement('div');
+  wrap.id = 'cat-chips-wrap';
+  wrap.className = 'cat-chips';
+  wrap.style.cssText = 'margin-bottom:10px';
+  cats.forEach(cat=>{
+    const btn = document.createElement('button');
+    btn.className = 'cat-chip';
+    btn.textContent = (CAT_ICONS[cat]||'') + ' ' + cat;
+    btn.onclick = ()=>{
+      expCat.value = cat;
+      wrap.querySelectorAll('.cat-chip').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    };
+    wrap.appendChild(btn);
+  });
+  expCat.parentElement.insertBefore(wrap, expCat);
+  expCat.style.display = 'none'; // أخفي select الأصلي
+}
+
+// ── loadIncome يحدث أزرار الصالير ──
+const _origLoadIncome2 = loadIncome;
+async function loadIncome(){
+  await _origLoadIncome2();
+  setTimeout(updateSalaryBtns, 100);
+}
+
+// ══════════════════════════════════════════
+//  DASHBOARD ENHANCEMENTS
+// ══════════════════════════════════════════
+
+// 1. شريط تقدم الشهر
+function renderMonthProgress(inc, totalExp){
+  const wrap = document.getElementById('month-progress-wrap');
+  if(!wrap || !inc) return;
+  const now = new Date();
+  const daysInMonth = new Date(curYear, curMonth, 0).getDate();
+  const dayOfMonth = curMonth === now.getMonth()+1 && curYear === now.getFullYear()
+    ? now.getDate() : daysInMonth;
+  const timePct = Math.round(dayOfMonth / daysInMonth * 100);
+  const spendPct = inc > 0 ? Math.min(Math.round(totalExp / inc * 100), 100) : 0;
+  const isOver = spendPct > timePct;
+  const spendColor = spendPct > 90 ? 'var(--red)' : spendPct > 70 ? 'var(--gold)' : 'var(--green)';
+
+  wrap.style.display = 'block';
+  document.getElementById('month-bar-time').style.width = timePct + '%';
+  document.getElementById('month-bar-spend').style.width = spendPct + '%';
+  document.getElementById('month-bar-spend').style.background = spendColor;
+  document.getElementById('month-time-pct').textContent = '⏱ ' + timePct + '% من الشهر';
+  document.getElementById('month-spend-pct').textContent = '💸 ' + spendPct + '% من الدخل';
+  const status = document.getElementById('month-progress-status');
+  if(isOver && spendPct > timePct + 10){
+    status.textContent = '⚠️ تجاوزت الريتم';
+    status.style.color = 'var(--red)';
+  } else if(spendPct < timePct - 10){
+    status.textContent = '✅ في الطريق الصحيح';
+    status.style.color = 'var(--green)';
+  } else {
+    status.textContent = '📊 مستوى طبيعي';
+    status.style.color = 'var(--text2)';
+  }
+}
+
+// 2. حلقة الميزانية
+function renderBudgetRing(inc, totalExp){
+  const card = document.getElementById('budget-ring-card');
+  if(!card) return;
+  if(!inc){ card.style.display='none'; return; }
+  card.style.display = 'flex';
+  const pct = Math.min(Math.round(totalExp / inc * 100), 100);
+  const circumference = 201.1;
+  const offset = circumference - (pct / 100) * circumference;
+  const arc = document.getElementById('budget-arc');
+  const arcPct = document.getElementById('budget-arc-pct');
+  const rem = inc - totalExp;
+  const color = pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--gold)' : 'var(--green)';
+  if(arc){ arc.style.strokeDashoffset = offset; arc.style.stroke = color; }
+  if(arcPct){ arcPct.textContent = pct + '%'; arcPct.style.fill = color; }
+  const brInc = document.getElementById('br-income');
+  const brExp = document.getElementById('br-exp');
+  const brRem = document.getElementById('br-rem');
+  if(brInc) brInc.textContent = fmt(inc);
+  if(brExp) brExp.textContent = fmt(totalExp);
+  if(brRem){ brRem.textContent = fmt(rem); brRem.style.color = rem >= 0 ? 'var(--blue)' : 'var(--red)'; }
+}
+
+// 3. توقع نهاية الشهر
+function renderForecast(inc, totalExp){
+  const card = document.getElementById('forecast-card');
+  if(!card) return;
+  const now = new Date();
+  const daysInMonth = new Date(curYear, curMonth, 0).getDate();
+  const dayOfMonth = curMonth === now.getMonth()+1 && curYear === now.getFullYear()
+    ? now.getDate() : daysInMonth;
+  if(dayOfMonth < 3 || totalExp === 0){ card.style.display='none'; return; }
+  const dailyRate = totalExp / dayOfMonth;
+  const projected = Math.round(dailyRate * daysInMonth);
+  const diff = projected - inc;
+  const isGood = projected <= inc;
+  card.style.display = 'flex';
+  card.style.background = isGood
+    ? 'linear-gradient(135deg,rgba(0,184,148,.08),rgba(0,184,148,.03))'
+    : 'linear-gradient(135deg,rgba(225,112,85,.08),rgba(225,112,85,.03))';
+  card.style.borderColor = isGood ? 'rgba(0,184,148,.25)' : 'rgba(225,112,85,.25)';
+  const icon = document.getElementById('forecast-icon');
+  const val  = document.getElementById('forecast-value');
+  const sub  = document.getElementById('forecast-sub');
+  const lbl  = document.getElementById('forecast-label');
+  if(icon) icon.textContent = isGood ? '✅' : '⚠️';
+  if(lbl)  lbl.style.color  = isGood ? 'var(--green)' : 'var(--red)';
+  if(val){  val.textContent = fmt(projected); val.style.color = isGood ? 'var(--green)' : 'var(--red)'; }
+  if(sub){
+    sub.textContent = isGood
+      ? 'ستوفر ' + fmt(Math.abs(diff)) + ' نهاية الشهر 🎉'
+      : 'تجاوز متوقع بـ ' + fmt(Math.abs(diff)) + ' ⚠️';
+  }
+}
+
+// 4. Streak الادخار
+function renderStreak(){
+  const card = document.getElementById('streak-card');
+  if(!card) return;
+  let streak = 0;
+  const now = new Date();
+  for(let i = 1; i <= 12; i++){
+    let m = curMonth - i; let y = curYear;
+    if(m <= 0){ m += 12; y--; }
+    const incKey = DB.get('income_'+y+'_'+m) || {};
+    const expList = DB.get('expenses_'+y+'_'+m) || [];
+    const incVal = incKey.total || 0;
+    const expVal = expList.reduce((s,e)=>s+e.amount, 0);
+    if(incVal > 0 && expVal < incVal) streak++;
+    else break;
+  }
+  if(streak < 1){ card.style.display='none'; return; }
+  card.style.display = 'flex';
+  const numEl = document.getElementById('streak-num');
+  const lblEl = document.getElementById('streak-label');
+  if(numEl) numEl.textContent = streak;
+  if(lblEl) lblEl.textContent = streak === 1 ? 'شهر متتالي في الادخار 🌱' : 'أشهر متتالية في الادخار 🔥';
+}
+
+// 5. أكبر مصروف
+function renderBiggestExpense(){
+  const card = document.getElementById('biggest-exp-card');
+  if(!card || !expensesData.length){ if(card) card.style.display='none'; return; }
+  const biggest = [...expensesData].sort((a,b)=>b.amount-a.amount)[0];
+  card.style.display = 'flex';
+  const icon = document.getElementById('biggest-exp-icon');
+  const cat  = document.getElementById('biggest-exp-cat');
+  const desc = document.getElementById('biggest-exp-desc');
+  const date = document.getElementById('biggest-exp-date');
+  const amt  = document.getElementById('biggest-exp-amount');
+  if(icon) icon.textContent = CAT_ICONS[biggest.category] || '💸';
+  if(cat)  cat.textContent  = biggest.category;
+  if(desc) desc.textContent = biggest.description || biggest.category;
+  if(date) date.textContent = '📅 ' + biggest.date;
+  if(amt)  amt.textContent  = fmt(biggest.amount);
+}
+
+// 6. أقرب هدف للاكتمال
+function renderClosestGoal(){
+  const card = document.getElementById('closest-goal-card');
+  if(!card || !goalsData.length){ if(card) card.style.display='none'; return; }
+  const withPct = goalsData
+    .filter(g => g.target_amount > 0)
+    .map(g => ({...g, pct: Math.min(Math.round((g.saved_amount||0)/g.target_amount*100), 99)}))
+    .filter(g => g.pct < 100)
+    .sort((a,b) => b.pct - a.pct);
+  if(!withPct.length){ card.style.display='none'; return; }
+  const g = withPct[0];
+  card.style.display = 'block';
+  const pct = g.pct;
+  const color = pct >= 75 ? 'var(--green)' : pct >= 50 ? 'var(--gold)' : 'var(--blue)';
+  document.getElementById('closest-goal-name').textContent = (g.type||'🎯') + ' ' + g.name;
+  document.getElementById('closest-goal-pct').textContent  = pct + '%';
+  document.getElementById('closest-goal-pct').style.color  = color;
+  document.getElementById('closest-goal-fill').style.width = pct + '%';
+  document.getElementById('closest-goal-fill').style.background = color;
+  document.getElementById('closest-goal-saved').textContent  = '💰 ' + fmt(g.saved_amount||0);
+  document.getElementById('closest-goal-target').textContent = '🎯 ' + fmt(g.target_amount);
+}
+
+// 7. تحليل أيام الأسبوع
+function renderDayAnalysis(){
+  const card = document.getElementById('day-analysis-card');
+  if(!card || expensesData.length < 5){ if(card) card.style.display='none'; return; }
+  const DAYS_AR = ['أح','إث','ثل','أر','خم','جم','سب'];
+  const DAYS_FR = ['Di','Lu','Ma','Me','Je','Ve','Sa'];
+  const DAYS_EN = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const daysMap = currentLang==='fr' ? DAYS_FR : currentLang==='en' ? DAYS_EN : DAYS_AR;
+  const dayTotals = new Array(7).fill(0);
+  const dayCounts = new Array(7).fill(0);
+  expensesData.forEach(e => {
+    const d = new Date(e.date).getDay();
+    dayTotals[d] += e.amount;
+    dayCounts[d]++;
+  });
+  const maxDay = Math.max(...dayTotals);
+  if(maxDay === 0){ card.style.display='none'; return; }
+  card.style.display = 'block';
+  const barsEl = document.getElementById('day-bars');
+  const noteEl = document.getElementById('day-analysis-note');
+  const topDay = dayTotals.indexOf(maxDay);
+  if(noteEl) noteEl.textContent = '⚠️ أكثر صرفاً: ' + daysMap[topDay];
+  if(barsEl){
+    barsEl.innerHTML = dayTotals.map((val, i) => {
+      const h = maxDay > 0 ? Math.round(val/maxDay*44) : 0;
+      const isTop = i === topDay;
+      const color = isTop ? 'var(--red)' : val > 0 ? 'var(--purple)' : 'var(--bg4)';
+      return '<div class="day-bar-wrap">' +
+        '<div class="day-bar-val" style="font-size:9px;color:'+(isTop?'var(--red)':'var(--text2)')+';">'+(val>0?Math.round(val/1000)+'k':'')+'</div>' +
+        '<div class="day-bar" style="height:'+h+'px;background:'+color+'"></div>' +
+        '<div class="day-bar-lbl" style="color:'+(isTop?'var(--red)':'var(--text2)')+';">' + daysMap[i] + '</div>' +
+        '</div>';
+    }).join('');
+  }
+}
+
+// 8. نصيحة اليوم الذكية
+function renderDailyTip(inc, totalExp){
+  const card = document.getElementById('daily-tip-card');
+  if(!card) return;
+  card.style.display = 'flex';
+  const rem = inc - totalExp;
+  const pct = inc > 0 ? Math.round(rem/inc*100) : 0;
+  const now = new Date();
+  const dayOfYear = Math.floor((now - new Date(now.getFullYear(),0,0)) / 86400000);
+
+  // بناء قائمة نصائح ديناميكية بناءً على البيانات
+  const tips = [];
+  const catMap = {};
+  expensesData.forEach(e => { catMap[e.category] = (catMap[e.category]||0) + e.amount; });
+  const topCat = Object.entries(catMap).sort((a,b)=>b[1]-a[1])[0];
+
+  if(pct >= 30) tips.push({icon:'🌟', text:'نسبة ادخارك <b>'+pct+'%</b> ممتازة — استمر على هاد النهج!'});
+  if(topCat && topCat[1] > inc*0.3) tips.push({icon:'⚠️', text:'فئة <b>'+topCat[0]+'</b> تأخذ <b>'+Math.round(topCat[1]/inc*100)+'%</b> من دخلك — ربما تقدر تقلل منها'});
+  if(rem > 0) tips.push({icon:'💡', text:'عندك <b>'+fmt(rem)+'</b> باقيين — فكر تضيفهم لأحد أهدافك'});
+  if(expensesData.length === 0) tips.push({icon:'📝', text:'ما سجلتيش مصاريف لهذا الشهر — ابدأ الآن باش تتابع'});
+  if(pct < 10 && inc > 0) tips.push({icon:'😬', text:'نسبة الادخار أقل من <b>10%</b> — حاول تقلل مصروف واحد كبير هذا الشهر'});
+
+  // نصائح ثابتة تدور بالأيام
+  const staticTips = [
+    {icon:'☕', text:'قهوة يومية بـ 15 درهم = <b>450 درهم</b> في الشهر — فكر فيها'},
+    {icon:'🛒', text:'اعمل قائمة تسوق قبل ما تخرج — تقلل المشتريات الزائدة بـ <b>20-30%</b>'},
+    {icon:'🎯', text:'قاعدة 50/30/20: <b>50%</b> أساسيات، <b>30%</b> ترفيه، <b>20%</b> ادخار'},
+    {icon:'📱', text:'راجع اشتراكاتك الشهرية — كثير منها ما تستعملهاش وتنسى تلغيها'},
+    {icon:'💪', text:'ادخار صغير منتظم أحسن من ادخار كبير غير منتظم — الانتظام هو السر'},
+  ];
+
+  tips.push(...staticTips);
+  const tip = tips[dayOfYear % tips.length];
+  const icon = document.getElementById('daily-tip-icon');
+  const text = document.getElementById('daily-tip-text');
+  if(icon) icon.textContent = tip.icon;
+  if(text) text.innerHTML = tip.text;
+}
+
+// 9. Sparklines على الكاردات (mini charts)
+function renderSparklines(){
+  const months = [];
+  for(let i = 5; i >= 0; i--){
+    let m = curMonth - i; let y = curYear;
+    if(m <= 0){ m += 12; y--; }
+    const expList = DB.get('expenses_'+y+'_'+m) || [];
+    months.push(expList.reduce((s,e)=>s+e.amount,0));
+  }
+  const maxVal = Math.max(...months, 1);
+  const sparkSVG = (color) => {
+    const pts = months.map((v,i) => `${i*20},${28 - Math.round(v/maxVal*24)}`).join(' ');
+    return '<svg class="card-sparkline" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+  };
+  const expCard = document.querySelector('.card.red .card-value');
+  const remCard = document.querySelector('.card.blue .card-value');
+  if(expCard && expCard.parentElement){
+    const old = expCard.parentElement.querySelector('.card-sparkline');
+    if(old) old.remove();
+    expCard.parentElement.insertAdjacentHTML('beforeend', sparkSVG('#e17055'));
+  }
+}
+
+// 10. مقارنة مع الشهر الماضي على الكاردات
+function renderCardCompare(totalExp){
+  if(prevMonthExp <= 0) return;
+  const diff = totalExp - prevMonthExp;
+  const pct = Math.abs(Math.round(diff/prevMonthExp*100));
+  const el = document.getElementById('d-exp-trend');
+  if(!el) return;
+  const isUp = diff > 0;
+  el.innerHTML = '<span class="card-compare '+(isUp?'up':'down')+'">' +
+    (isUp?'▲':'▼') + ' ' + pct + '% ' + (isUp?'زيادة':'توفير') +
+    '</span>';
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
@@ -2935,7 +4275,39 @@ function saveIncome(){
     };
     incomeData=await api(`/api/income/${curMonth}/${curYear}`,'POST',body)||incomeData;
     renderIncomeSummary(); renderDashboard();
+    const monthName = MONTHS[curMonth-1] + ' ' + curYear;
+    showToast(`✅ تم حفظ دخل ${monthName} — ${fmt(incomeData.total||0)}`);
   },600);
+}
+
+async function saveIncomeManual(){
+  const btn = document.getElementById('save-income-btn');
+  const body={
+    salary:parseFloat(document.getElementById('in-salary').value)||0,
+    bonus2:parseFloat(document.getElementById('in-b2').value)||0,
+    bonus6:parseFloat(document.getElementById('in-b6').value)||0,
+    bonus_intl:parseFloat(document.getElementById('in-intl').value)||0,
+    extra:parseFloat(document.getElementById('in-extra').value)||0,
+    bonus2_active:document.getElementById('in-b2a').value==='true',
+    bonus6_active:document.getElementById('in-b6a').value==='true',
+    intl_active:document.getElementById('in-ia').value==='true'
+  };
+  // تأثير الزر
+  if(btn){ btn.textContent='⏳ جاري الحفظ...'; btn.disabled=true; }
+  incomeData=await api(`/api/income/${curMonth}/${curYear}`,'POST',body)||incomeData;
+  renderIncomeSummary(); renderDashboard();
+  const monthName = MONTHS[curMonth-1] + ' ' + curYear;
+  // زر يتحول لـ ✅
+  if(btn){
+    btn.textContent=t('saved_income')+' — '+monthName;
+    btn.style.background='var(--green-d)';
+    btn.disabled=false;
+    setTimeout(()=>{
+      btn.textContent='💾 حفظ الدخل';
+      btn.style.background='';
+    }, 2500);
+  }
+  showToast(t('income_saved_toast')+' '+monthName+' — '+fmt(incomeData.total||0));
 }
 
 function renderIncomeSummary(){
@@ -3674,6 +5046,17 @@ function renderDashboard(){
   updateHealthScore(inc,totalExp,rem);
   generateAiTips(inc,totalExp,rem);
   checkBudgetAlerts();
+  // ── New Dashboard Enhancements ──
+  renderMonthProgress(inc, totalExp);
+  renderBudgetRing(inc, totalExp);
+  renderForecast(inc, totalExp);
+  renderStreak();
+  renderBiggestExpense();
+  renderClosestGoal();
+  renderDayAnalysis();
+  renderDailyTip(inc, totalExp);
+  renderSparklines();
+  renderCardCompare(totalExp);
 
   // Alert
   const banner=document.getElementById('alertBanner');
@@ -3693,10 +5076,13 @@ function renderDashboard(){
   const colors=labels.map(l=>CAT_COLORS[CATS.indexOf(l)]||'#aaa');
   if(pieChart)pieChart.destroy();
   if(labels.length){
+    const isLightNow = document.body.classList.contains('light-mode');
+    const legendColor = isLightNow ? '#1a2235' : '#e8eaf0';
+    const borderCol   = isLightNow ? '#f0f4f8' : '#1a2235';
     pieChart=new Chart(document.getElementById('chartPie').getContext('2d'),{
-      type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:'#1a2235'}]},
+      type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:borderCol}]},
       options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'right',labels:{color:'#e8eaf0',font:{family:'Cairo',size:10},padding:8}},
+        plugins:{legend:{position:'right',labels:{color:legendColor,font:{family:'Cairo',size:10},padding:8}},
           tooltip:{callbacks:{label:c=>` ${c.label}: ${fmt(c.raw)}`}}}}});
   }
 
@@ -3716,10 +5102,17 @@ function renderDashboard(){
   // Recent ops
   document.getElementById('recent-ops').innerHTML=
     [...expensesData].sort((a,b)=>b.id-a.id).slice(0,8).map(e=>
-    `<tr><td><span class="tag">${CAT_ICONS[e.category]||''} ${e.category}</span></td>
-    <td>${e.description||'-'}</td><td style="color:var(--red);font-weight:700">${fmt(e.amount)}</td>
-    <td style="color:var(--text2)">${e.date}</td></tr>`).join('')
-    ||'<tr><td colspan="4" class="loading">ما كاين عمليات</td></tr>';
+    `<tr>
+      <td><span class="tag">${CAT_ICONS[e.category]||''} ${e.category}</span></td>
+      <td>${e.description||'-'}</td>
+      <td style="color:var(--red);font-weight:700">${fmt(e.amount)}</td>
+      <td style="color:var(--text2);font-size:11px">${e.date}</td>
+      <td style="display:flex;gap:4px">
+        <button class="action-btn" style="padding:3px 7px;font-size:10px;background:var(--bg4);color:var(--text2)" onclick="openEditExpense(${e.id})">✏️</button>
+        <button class="action-btn red" style="padding:3px 7px;font-size:10px" onclick="delExpense(${e.id})">🗑️</button>
+      </td>
+    </tr>`).join('')
+    ||'<tr><td colspan="5" class="loading">ما كاين عمليات</td></tr>';
 }
 
 // ══════════════════════════════════════════
@@ -3743,7 +5136,7 @@ async function loadAnnual(){
       {label:'الدخل',data:data.map(d=>d.income),backgroundColor:'rgba(0,184,148,.7)',borderRadius:5},
       {label:'المصاريف',data:data.map(d=>d.expenses),backgroundColor:'rgba(225,112,85,.7)',borderRadius:5}
     ]},options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#e8eaf0',font:{family:'Cairo'}}}},
+      plugins:{legend:{labels:{color:document.body.classList.contains('light-mode')?'#1a2235':'#e8eaf0',font:{family:'Cairo'}}}},
       scales:{x:{ticks:{color:'#8892a4',font:{family:'Cairo'}},grid:{color:'#2a3555'}},
               y:{ticks:{color:'#8892a4'},grid:{color:'#2a3555'}}}}});
 
@@ -3753,7 +5146,7 @@ async function loadAnnual(){
       data:data.map(d=>{cumS+=Math.max(0,d.remaining);return cumS;}),
       borderColor:'#00b894',backgroundColor:'rgba(0,184,148,.1)',fill:true,tension:.4,pointBackgroundColor:'#00b894'}]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#e8eaf0',font:{family:'Cairo'}}}},
+      plugins:{legend:{labels:{color:document.body.classList.contains('light-mode')?'#1a2235':'#e8eaf0',font:{family:'Cairo'}}}},
       scales:{x:{ticks:{color:'#8892a4',font:{family:'Cairo'}},grid:{color:'#2a3555'}},
               y:{ticks:{color:'#8892a4'},grid:{color:'#2a3555'}}}}});
 
@@ -3780,6 +5173,7 @@ function showTab(name){
   if(name==='annual')loadAnnual();
   if(name==='stats')loadStats();
   if(name==='goals'){refreshAnnualAvg().catch(()=>{}).then(()=>{updateGoalPreview();loadGoals();});}
+  if(name==='expenses'){setTimeout(initCatChips, 100);}
 }
 
 // ══════════════════════════════════════════
@@ -3955,7 +5349,7 @@ async function loadStats(){
     <div class="card gold"><div class="card-label">أفضل شهر ادخاراً</div><div class="card-value gold">${bestMonth.label||'—'}</div><div class="card-sub">${fmt(bestMonth.saving||0)}</div></div>`;
 
   const chartOpts={responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{labels:{color:'#e8eaf0',font:{family:'Cairo',size:10}}}},
+    plugins:{legend:{labels:{color:document.body.classList.contains('light-mode')?'#1a2235':'#e8eaf0',font:{family:'Cairo',size:10}}}},
     scales:{x:{ticks:{color:'#8892a4',font:{family:'Cairo',size:10}},grid:{color:'#2a3555'}},
             y:{ticks:{color:'#8892a4'},grid:{color:'#2a3555'}}}};
 
