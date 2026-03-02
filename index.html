@@ -11,174 +11,452 @@
 <link rel="apple-touch-icon" href="./icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <script>
-// ══ Mini Charts Library — بدون CDN ══
-const MiniChart = {
-  // Doughnut Chart
+// ══ Mali+ Charts — Animated Professional Library ══
+
+const MaliCharts = {
+  _anims: new Map(),
+
+  _easeOut(t){ return 1 - Math.pow(1-t, 3); },
+  _easeInOut(t){ return t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; },
+
+  _hexToRgb(hex){
+    const h = hex.replace('#','');
+    const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+    return `${r},${g},${b}`;
+  },
+
+  _numFmt(v){
+    if(v>=1000000) return (v/1000000).toFixed(1)+'م';
+    if(v>=1000) return Math.round(v/1000)+'ك';
+    return Math.round(v).toString();
+  },
+
+  _animate(key, duration, draw){
+    if(this._anims.has(key)) cancelAnimationFrame(this._anims.get(key));
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      draw(this._easeOut(t));
+      if(t < 1) this._anims.set(key, requestAnimationFrame(step));
+      else this._anims.delete(key);
+    };
+    this._anims.set(key, requestAnimationFrame(step));
+  },
+
+  _sz(canvas, fw, fh){
+    const p = canvas.parentElement;
+    const W = canvas.offsetWidth || p?.clientWidth || fw;
+    const H = canvas.offsetHeight || p?.clientHeight || fh;
+    return { W: W||fw, H: H||fh };
+  },
+
+  // ══ Doughnut ══
   doughnut(canvasId, labels, vals, colors, legendColor){
     const canvas = document.getElementById(canvasId);
     if(!canvas) return;
+    const isLight = document.body.classList.contains('light-mode');
     const ctx = canvas.getContext('2d');
-    const W = canvas.offsetWidth || 220;
-    const H = canvas.offsetHeight || 220;
-    canvas.width = W; canvas.height = H;
-    ctx.clearRect(0,0,W,H);
+    const dpr = window.devicePixelRatio || 1;
+    const {W, H} = this._sz(canvas, 280, 220);
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W+'px'; canvas.style.height = H+'px';
+    ctx.scale(dpr, dpr);
     const total = vals.reduce((s,v)=>s+v,0);
     if(!total) return;
-    const cx = W*0.42, cy = H/2, r = Math.min(cx,cy)*0.78, ir = r*0.55;
-    let angle = -Math.PI/2;
-    vals.forEach((v,i)=>{
-      const sweep = (v/total)*Math.PI*2;
+
+    const cx = W * 0.40, cy = H / 2;
+    const r = Math.min(cx, cy) * 0.82, ir = r * 0.58;
+    const bgColor = isLight ? '#f0f4ff' : '#141c2e';
+
+    // حساب الزوايا
+    const angles = [];
+    let a = -Math.PI / 2;
+    vals.forEach(v => { const sweep = (v/total)*Math.PI*2; angles.push({start:a, sweep}); a += sweep; });
+
+    this._animate('doughnut_'+canvasId, 900, (progress) => {
+      ctx.clearRect(0, 0, W, H);
+
+      // رسم القطع مع animation
+      angles.forEach(({start, sweep}, i) => {
+        const animSweep = sweep * progress;
+        const color = colors[i] || '#aaa';
+        const rgb = this._hexToRgb(color.replace(/rgba?\([^)]+\)/,'#aaa').startsWith('#') ? color : '#aaa');
+
+        // shadow glow
+        ctx.save();
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 8 * progress;
+
+        // slice
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, start, start + animSweep);
+        ctx.closePath();
+
+        // gradient per slice
+        const grad = ctx.createRadialGradient(cx, cy, ir, cx, cy, r);
+        grad.addColorStop(0, color + 'cc');
+        grad.addColorStop(1, color);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // separator
+        ctx.strokeStyle = bgColor;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // hole
       ctx.beginPath();
-      ctx.moveTo(cx,cy);
-      ctx.arc(cx,cy,r,angle,angle+sweep);
-      ctx.closePath();
-      ctx.fillStyle = colors[i]||'#aaa';
+      ctx.arc(cx, cy, ir, 0, Math.PI*2);
+      ctx.fillStyle = bgColor;
       ctx.fill();
-      ctx.strokeStyle = '#1a2235';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      angle += sweep;
-    });
-    // hole
-    ctx.beginPath();
-    ctx.arc(cx,cy,ir,0,Math.PI*2);
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg2')||'#141c2e';
-    ctx.fill();
-    // legend
-    const lx = W*0.72, startY = H/2 - (labels.length*14)/2;
-    labels.forEach((lbl,i)=>{
-      const ly = startY + i*16;
-      ctx.fillStyle = colors[i]||'#aaa';
-      ctx.beginPath(); ctx.arc(lx,ly,5,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle = legendColor||'#e8eaf0';
-      ctx.font = '10px Cairo,sans-serif';
-      ctx.textAlign = 'left';
-      const shortLbl = lbl.length>8 ? lbl.slice(0,7)+'…' : lbl;
-      ctx.fillText(shortLbl, lx+10, ly+4);
+
+      // center text
+      if(progress > 0.7){
+        const op = Math.min((progress - 0.7) / 0.3, 1);
+        ctx.globalAlpha = op;
+        ctx.fillStyle = legendColor || '#e8eaf0';
+        ctx.font = `bold ${Math.round(ir*0.38)}px Cairo,sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this._numFmt(total), cx, cy - 6);
+        ctx.font = `${Math.round(ir*0.22)}px Cairo,sans-serif`;
+        ctx.fillStyle = isLight ? '#7a8899' : '#8892a4';
+        ctx.fillText('درهم', cx, cy + ir*0.25);
+        ctx.globalAlpha = 1;
+      }
+
+      // legend
+      if(progress === 1){
+        const lx = W * 0.73;
+        const totalH = labels.length * 18;
+        const startLy = H/2 - totalH/2;
+        labels.forEach((lbl, i) => {
+          const ly = startLy + i * 20;
+          const pct = Math.round(vals[i]/total*100);
+          const color = colors[i] || '#aaa';
+
+          // dot with glow
+          ctx.shadowColor = color; ctx.shadowBlur = 6;
+          ctx.beginPath(); ctx.arc(lx, ly+1, 5, 0, Math.PI*2);
+          ctx.fillStyle = color; ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // label
+          ctx.fillStyle = legendColor || '#e8eaf0';
+          ctx.font = '10px Cairo,sans-serif';
+          ctx.textAlign = 'left';
+          const shortLbl = lbl.length > 7 ? lbl.slice(0,6)+'…' : lbl;
+          ctx.fillText(shortLbl, lx+10, ly+5);
+
+          // pct
+          ctx.fillStyle = color;
+          ctx.font = 'bold 9px Cairo,sans-serif';
+          ctx.fillText(pct+'%', lx+10, ly+16);
+        });
+      }
     });
   },
-  // Bar Chart
+
+  // ══ Bar Chart ══
   bar(canvasId, labels, datasets, options={}){
     const canvas = document.getElementById(canvasId);
     if(!canvas) return;
+    const isLight = document.body.classList.contains('light-mode');
     const ctx = canvas.getContext('2d');
-    const W = canvas.offsetWidth||400, H = canvas.offsetHeight||220;
-    canvas.width=W; canvas.height=H;
-    ctx.clearRect(0,0,W,H);
-    const pad = {top:20,right:10,bottom:30,left:50};
+    const dpr = window.devicePixelRatio || 1;
+    const {W, H} = this._sz(canvas, 400, 220);
+    canvas.width=W*dpr; canvas.height=H*dpr;
+    canvas.style.width=W+'px'; canvas.style.height=H+'px';
+    ctx.scale(dpr,dpr);
+
+    const pad = {top:24, right:16, bottom:36, left:48};
     const cW = W-pad.left-pad.right, cH = H-pad.top-pad.bottom;
-    const allVals = datasets.flatMap(d=>d.data);
-    const maxV = Math.max(...allVals,1);
+    const allVals = datasets.flatMap(d=>d.data).filter(v=>v>0);
+    const maxV = Math.max(...allVals, 1);
     const n = labels.length;
-    const grpW = cW/n;
-    const barW = grpW/(datasets.length+1)*0.8;
-    // grid lines
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-    ctx.lineWidth = 1;
-    [0.25,0.5,0.75,1].forEach(t=>{
-      const y = pad.top + cH*(1-t);
-      ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(W-pad.right,y); ctx.stroke();
-    });
-    // bars
-    datasets.forEach((ds,di)=>{
-      ds.data.forEach((v,i)=>{
-        const bH = Math.max((v/maxV)*cH,2);
-        const x = pad.left + i*grpW + (di+0.5)*barW + grpW*0.1;
-        const y = pad.top + cH - bH;
-        ctx.fillStyle = ds.color||'#00b894';
-        ctx.beginPath();
-        ctx.roundRect ? ctx.roundRect(x,y,barW,bH,3) : ctx.rect(x,y,barW,bH);
-        ctx.fill();
+    const grpW = cW / n;
+    const numDs = datasets.length;
+    const barW = Math.min(grpW / (numDs + 0.8) * 0.85, 28);
+    const groupOffset = (grpW - barW * numDs) / 2;
+    const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+    const labelColor = options.labelColor || (isLight ? '#4a5568' : '#8892a4');
+
+    this._animate('bar_'+canvasId, 800, (progress) => {
+      ctx.clearRect(0,0,W,H);
+
+      // grid lines + y labels
+      [0, 0.25, 0.5, 0.75, 1].forEach(t => {
+        const y = pad.top + cH*(1-t);
+        ctx.strokeStyle = gridColor;
+        ctx.lineWidth = t===0 ? 1.5 : 1;
+        ctx.setLineDash(t===0 ? [] : [3,3]);
+        ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(W-pad.right,y); ctx.stroke();
+        ctx.setLineDash([]);
+        if(t > 0){
+          ctx.fillStyle = labelColor;
+          ctx.font = '9px Cairo,sans-serif';
+          ctx.textAlign = 'right';
+          ctx.fillText(this._numFmt(maxV*t), pad.left-5, y+3);
+        }
       });
-    });
-    // labels
-    ctx.fillStyle = options.labelColor||'#8899aa';
-    ctx.font = '9px Cairo,sans-serif';
-    ctx.textAlign = 'center';
-    labels.forEach((lbl,i)=>{
-      const x = pad.left + i*grpW + grpW/2;
-      ctx.fillText(lbl.slice(0,4), x, H-8);
+
+      // bars with gradient + animation
+      datasets.forEach((ds, di) => {
+        const color = ds.color || ['#00b894','#e17055','#4a90d9','#fdcb6e'][di % 4];
+        const rgb = color.startsWith('#') ? this._hexToRgb(color) : '0,184,148';
+
+        ds.data.forEach((v, i) => {
+          if(!v) return;
+          const bH = Math.max((v/maxV)*cH * progress, 2);
+          const x = pad.left + i*grpW + groupOffset + di*barW;
+          const y = pad.top + cH - bH;
+
+          // gradient vertical
+          const grad = ctx.createLinearGradient(x, y, x, pad.top+cH);
+          grad.addColorStop(0, color);
+          grad.addColorStop(1, `rgba(${rgb},0.3)`);
+
+          ctx.save();
+          ctx.shadowColor = color;
+          ctx.shadowBlur = progress > 0.8 ? 8 : 0;
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          if(ctx.roundRect) ctx.roundRect(x, y, barW-2, bH, [4,4,0,0]);
+          else { ctx.rect(x, y, barW-2, bH); }
+          ctx.fill();
+          ctx.restore();
+
+          // value on top when done
+          if(progress === 1 && v > 0){
+            ctx.fillStyle = labelColor;
+            ctx.font = 'bold 8px Cairo,sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(this._numFmt(v), x+barW/2-1, y-4);
+          }
+        });
+      });
+
+      // x labels
+      ctx.fillStyle = labelColor;
+      ctx.font = '10px Cairo,sans-serif';
+      ctx.textAlign = 'center';
+      labels.forEach((lbl, i) => {
+        const x = pad.left + i*grpW + grpW/2;
+        ctx.fillText(lbl.slice(0,4), x, H-10);
+      });
+
+      // legend
+      if(datasets.length > 1 && progress === 1){
+        datasets.forEach((ds, di) => {
+          const color = ds.color || ['#00b894','#e17055','#4a90d9'][di];
+          const lx = pad.left + di * 70;
+          ctx.fillStyle = color;
+          ctx.beginPath(); ctx.roundRect ? ctx.roundRect(lx,6,16,6,3) : ctx.rect(lx,6,16,6);
+          ctx.fill();
+          ctx.fillStyle = labelColor;
+          ctx.font = '9px Cairo,sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(ds.label||'', lx+20, 13);
+        });
+      }
     });
   },
-  // Line Chart
+
+  // ══ Line Chart ══
   line(canvasId, labels, datasets, options={}){
     const canvas = document.getElementById(canvasId);
     if(!canvas) return;
+    const isLight = document.body.classList.contains('light-mode');
     const ctx = canvas.getContext('2d');
-    const W = canvas.offsetWidth||400, H = canvas.offsetHeight||220;
-    canvas.width=W; canvas.height=H;
-    ctx.clearRect(0,0,W,H);
-    const pad = {top:20,right:10,bottom:30,left:50};
+    const dpr = window.devicePixelRatio || 1;
+    const {W, H} = this._sz(canvas, 400, 220);
+    canvas.width=W*dpr; canvas.height=H*dpr;
+    canvas.style.width=W+'px'; canvas.style.height=H+'px';
+    ctx.scale(dpr,dpr);
+
+    const pad = {top:24, right:20, bottom:36, left:48};
     const cW = W-pad.left-pad.right, cH = H-pad.top-pad.bottom;
     const allVals = datasets.flatMap(d=>d.data);
-    const maxV = Math.max(...allVals,1);
+    const maxV = Math.max(...allVals, 1), minV = Math.min(...allVals.filter(v=>v>0), 0);
+    const range = maxV - minV || 1;
     const n = labels.length;
-    // grid
-    ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1;
-    [0.25,0.5,0.75,1].forEach(t=>{
-      const y=pad.top+cH*(1-t);
-      ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(W-pad.right,y); ctx.stroke();
-    });
-    datasets.forEach(ds=>{
-      const pts = ds.data.map((v,i)=>({
-        x: pad.left + (i/(n-1||1))*cW,
-        y: pad.top + cH - (v/maxV)*cH
-      }));
-      // fill
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x, pad.top+cH);
-      pts.forEach(p=>ctx.lineTo(p.x,p.y));
-      ctx.lineTo(pts[pts.length-1].x, pad.top+cH);
-      ctx.closePath();
-      ctx.fillStyle = (ds.color||'#00b894')+'22';
-      ctx.fill();
-      // line
-      ctx.beginPath();
-      pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
-      ctx.strokeStyle = ds.color||'#00b894';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      // dots
-      pts.forEach(p=>{
-        ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2);
-        ctx.fillStyle=ds.color||'#00b894'; ctx.fill();
+    const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+    const labelColor = options.labelColor || (isLight ? '#4a5568' : '#8892a4');
+
+    const getX = i => pad.left + (i/(n-1||1))*cW;
+    const getY = v => pad.top + cH - ((v-minV)/range)*cH;
+
+    this._animate('line_'+canvasId, 1000, (progress) => {
+      ctx.clearRect(0,0,W,H);
+
+      // grid + y labels
+      [0, 0.25, 0.5, 0.75, 1].forEach(t => {
+        const y = pad.top + cH*(1-t);
+        ctx.strokeStyle = gridColor;
+        ctx.lineWidth = t===0 ? 1.5 : 1;
+        ctx.setLineDash(t===0 ? [] : [3,3]);
+        ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(W-pad.right,y); ctx.stroke();
+        ctx.setLineDash([]);
+        if(t > 0){
+          ctx.fillStyle = labelColor;
+          ctx.font = '9px Cairo,sans-serif';
+          ctx.textAlign = 'right';
+          ctx.fillText(this._numFmt(minV + range*t), pad.left-5, y+3);
+        }
       });
-    });
-    // x labels
-    ctx.fillStyle=options.labelColor||'#8899aa';
-    ctx.font='9px Cairo,sans-serif'; ctx.textAlign='center';
-    labels.forEach((lbl,i)=>{
-      const x=pad.left+(i/(n-1||1))*cW;
-      ctx.fillText(lbl.slice(0,4),x,H-8);
+
+      // draw each dataset up to progress point
+      datasets.forEach((ds, di) => {
+        if(!ds.data.length) return;
+        const color = ds.color || ['#00b894','#e17055','#4a90d9','#fdcb6e'][di % 4];
+        const rgb = color.startsWith('#') ? this._hexToRgb(color) : '0,184,148';
+
+        // compute visible points
+        const totalPoints = n - 1;
+        const visibleEnd = progress * totalPoints;
+        const fullPoints = Math.floor(visibleEnd);
+        const partial = visibleEnd - fullPoints;
+
+        // fill area
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(getX(0), pad.top+cH);
+        for(let i=0; i<=fullPoints; i++) ctx.lineTo(getX(i), getY(ds.data[i]||0));
+        if(fullPoints < n-1 && partial > 0){
+          const xP = getX(fullPoints) + partial*(getX(fullPoints+1)-getX(fullPoints));
+          const yP = getY(ds.data[fullPoints]||0) + partial*(getY(ds.data[fullPoints+1]||0)-getY(ds.data[fullPoints]||0));
+          ctx.lineTo(xP, yP);
+          ctx.lineTo(xP, pad.top+cH);
+        } else {
+          ctx.lineTo(getX(Math.min(fullPoints, n-1)), pad.top+cH);
+        }
+        ctx.closePath();
+        const fillGrad = ctx.createLinearGradient(0, pad.top, 0, pad.top+cH);
+        fillGrad.addColorStop(0, `rgba(${rgb},0.25)`);
+        fillGrad.addColorStop(1, `rgba(${rgb},0.01)`);
+        ctx.fillStyle = fillGrad;
+        ctx.fill();
+        ctx.restore();
+
+        // line with smooth curve
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(getX(0), getY(ds.data[0]||0));
+        for(let i=1; i<=fullPoints; i++){
+          const px = getX(i-1), py = getY(ds.data[i-1]||0);
+          const cx1 = px + (getX(i)-px)*0.5, cy1 = py;
+          const cx2 = getX(i) - (getX(i)-px)*0.5, cy2 = getY(ds.data[i]||0);
+          ctx.bezierCurveTo(cx1,cy1,cx2,cy2,getX(i),getY(ds.data[i]||0));
+        }
+        if(fullPoints < n-1 && partial > 0){
+          const xP = getX(fullPoints) + partial*(getX(fullPoints+1)-getX(fullPoints));
+          const yP = getY(ds.data[fullPoints]||0) + partial*(getY(ds.data[fullPoints+1]||0)-getY(ds.data[fullPoints]||0));
+          ctx.lineTo(xP, yP);
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.lineJoin = 'round';
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 6;
+        ctx.stroke();
+        ctx.restore();
+
+        // dots
+        for(let i=0; i<=fullPoints; i++){
+          ctx.save();
+          ctx.shadowColor = color; ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.arc(getX(i), getY(ds.data[i]||0), 4, 0, Math.PI*2);
+          ctx.fillStyle = '#1a2235';
+          ctx.fill();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+          ctx.restore();
+
+          // value label on dot
+          if(progress === 1 && (n <= 7 || i % 2 === 0)){
+            ctx.fillStyle = labelColor;
+            ctx.font = 'bold 8px Cairo,sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(this._numFmt(ds.data[i]||0), getX(i), getY(ds.data[i]||0)-10);
+          }
+        }
+      });
+
+      // x labels
+      ctx.fillStyle = labelColor;
+      ctx.font = '10px Cairo,sans-serif';
+      ctx.textAlign = 'center';
+      labels.forEach((lbl, i) => {
+        ctx.fillText(lbl.slice(0,4), getX(i), H-10);
+      });
+
+      // legend
+      if(datasets.length > 1 && progress === 1){
+        datasets.forEach((ds, di) => {
+          const color = ds.color || ['#00b894','#e17055','#4a90d9'][di];
+          const lx = pad.left + di * 80;
+          ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+          ctx.beginPath(); ctx.moveTo(lx, 12); ctx.lineTo(lx+18, 12); ctx.stroke();
+          ctx.fillStyle = color;
+          ctx.beginPath(); ctx.arc(lx+9, 12, 3, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = labelColor;
+          ctx.font = '9px Cairo,sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(ds.label||'', lx+22, 16);
+        });
+      }
     });
   }
 };
-// Chart compatibility shim
+
+// ══ Chart shim — compatible with existing code ══
 function Chart(ctx, config){
-  this._ctx = ctx; this._config = config;
+  this._ctx = ctx;
+  this._config = config;
   this._render();
 }
 Chart.prototype._render = function(){
   const c = this._config;
   const canvas = this._ctx.canvas;
-  const isLight = document.body.classList.contains('light-mode');
-  const lc = isLight?'#1a2235':'#e8eaf0';
   if(!canvas || !c.data) return;
-  if(c.type==='doughnut'||c.type==='pie'){
+  const isLight = document.body.classList.contains('light-mode');
+  const lc = isLight ? '#1a2235' : '#e8eaf0';
+
+  if(c.type==='doughnut' || c.type==='pie'){
     const ds = c.data.datasets[0];
-    MiniChart.doughnut(canvas.id, c.data.labels, ds.data, ds.backgroundColor, lc);
+    MaliCharts.doughnut(canvas.id, c.data.labels, ds.data, ds.backgroundColor, lc);
+
   } else if(c.type==='bar'){
-    const ds = c.data.datasets.map((d,i)=>({data:d.data,color:Array.isArray(d.backgroundColor)?d.backgroundColor[0]:d.backgroundColor||['#00b894','#4a90d9'][i]}));
-    MiniChart.bar(canvas.id, c.data.labels, ds, {labelColor:lc});
+    const ds = c.data.datasets.map((d,i)=>({
+      data: d.data,
+      label: d.label||'',
+      color: Array.isArray(d.backgroundColor) ? d.backgroundColor[0] : d.backgroundColor || ['#00b894','#e17055','#4a90d9','#fdcb6e'][i]
+    }));
+    MaliCharts.bar(canvas.id, c.data.labels, ds, {labelColor:lc});
+
   } else if(c.type==='line'){
-    const ds = c.data.datasets.map((d,i)=>({data:d.data,color:d.borderColor||['#00b894','#4a90d9','#fdcb6e'][i]}));
-    MiniChart.line(canvas.id, c.data.labels, ds, {labelColor:lc});
+    const ds = c.data.datasets.map((d,i)=>({
+      data: d.data,
+      label: d.label||'',
+      color: d.borderColor || ['#00b894','#e17055','#4a90d9','#fdcb6e'][i]
+    }));
+    MaliCharts.line(canvas.id, c.data.labels, ds, {labelColor:lc});
   }
 };
-Chart.prototype.destroy = function(){ 
+Chart.prototype.destroy = function(){
   try{
     const canvas = this._ctx?.canvas;
-    if(canvas){ const ctx2=canvas.getContext('2d'); if(ctx2) ctx2.clearRect(0,0,canvas.width,canvas.height); }
+    if(canvas){
+      const key1='bar_'+canvas.id, key2='line_'+canvas.id, key3='doughnut_'+canvas.id;
+      [key1,key2,key3].forEach(k=>{ if(MaliCharts._anims.has(k)){ cancelAnimationFrame(MaliCharts._anims.get(k)); MaliCharts._anims.delete(k); }});
+      const ctx2=canvas.getContext('2d');
+      if(ctx2){ ctx2.setTransform(1,0,0,1,0,0); ctx2.clearRect(0,0,canvas.width,canvas.height); }
+    }
   }catch(e){}
 };
 </script>
@@ -290,7 +568,7 @@ main{padding:16px;max-width:1200px;margin:0 auto}
 .prog-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;font-weight:700}
 .prog-bar{height:8px;background:var(--bg4);border-radius:8px;overflow:hidden}
 .prog-fill{height:100%;border-radius:8px;transition:width .8s cubic-bezier(.4,0,.2,1)}
-.chart-wrap{position:relative;height:220px}
+.chart-wrap{position:relative;height:220px;width:100%;display:block}
 
 /* ── ALERT ── */
 .alert-banner{border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;font-weight:700;display:none;align-items:center;gap:8px}
@@ -363,7 +641,7 @@ main{padding:16px;max-width:1200px;margin:0 auto}
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:18px;}
 .stat-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
 .stat-title{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;}
-.chart-wrap-sm{height:180px;position:relative;}
+.chart-wrap-sm{height:180px;position:relative;width:100%;display:block;}
 
 /* ── BUDGET ALERT ── */
 .budget-over{background:rgba(225,112,85,.1);border:1px solid var(--red);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:10px;display:none;}
@@ -788,6 +1066,19 @@ body::after {
   60%  { transform: scale(1.1) rotate(3deg); }
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
+.auto-credit-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;padding:4px 10px;
+  border-radius:20px;margin:8px 16px 0;width:fit-content;
+}
+.auto-credit-badge.credited{
+  background:rgba(0,184,148,.15);color:var(--green);
+  border:1px solid rgba(0,184,148,.3);
+}
+.auto-credit-badge.pending{
+  background:rgba(253,203,110,.12);color:var(--gold);
+  border:1px solid rgba(253,203,110,.3);
+}
 .goal-complete-badge {
   position: absolute; top: 10px; left: 10px;
   background: linear-gradient(135deg, var(--gold), #f39c12);
@@ -980,7 +1271,7 @@ body.light-mode .undo-toast { background: var(--bg2); color: var(--text); }
 body.light-mode .health-ring circle:first-child { stroke: var(--bg4); }
 
 /* chart.js — نغير لون النص للـ legend */
-body.light-mode canvas { filter: none; }
+.chart-wrap canvas, .chart-wrap-sm canvas { display:block; width:100% !important; height:100% !important; }
 .theme-toggle {
   background: var(--bg3); border: 1px solid var(--border);
   border-radius: 20px; padding: 5px 10px; cursor: pointer;
@@ -2830,8 +3121,8 @@ function showTab(name){
   const idx = TABS.indexOf(name);
   const navTabs = document.querySelectorAll('.nav-tab');
   if(navTabs[idx]) navTabs[idx].classList.add('active');
-  if(name==='annual') loadAnnual();
-  if(name==='stats') loadStats();
+  if(name==='annual') requestAnimationFrame(()=>requestAnimationFrame(()=>loadAnnual()));
+  if(name==='stats') requestAnimationFrame(()=>requestAnimationFrame(()=>loadStats()));
   if(name==='goals'){ refreshAnnualAvg().catch(()=>{}).then(()=>{ updateGoalPreview(); loadGoals(); }); }
   if(name==='expenses'){ setTimeout(initCatChips, 100); }
 }
@@ -3229,8 +3520,68 @@ function selectGoalType(el){
   }
 }
 
+// ════════════════════════════════════════════
+//  AUTO MONTHLY SAVE — تحيين الأهداف تلقائياً
+// ════════════════════════════════════════════
+async function checkAutoMonthlyCredit(){
+  const goals = DB.get('goals') || [];
+  if(!goals.length) return;
+  const now = new Date();
+  const thisMonthKey = `${now.getFullYear()}_${now.getMonth()+1}`;
+  let creditedCount = 0;
+  const updatedGoals = goals.map(g => {
+    if((g.saved_amount||0) >= g.target_amount) return g;
+    if(!g.monthly_needed || g.monthly_needed <= 0) return g;
+    const credited = g.auto_credited || {};
+    if(credited[thisMonthKey]) return g;
+    const newSaved = Math.min((g.saved_amount||0) + g.monthly_needed, g.target_amount);
+    const newPct = Math.round(newSaved / g.target_amount * 100);
+    const remaining = g.target_amount - newSaved;
+    const mLeft = Math.max((g.months||1) - 1, 1);
+    credited[thisMonthKey] = { amount: g.monthly_needed, date: now.toISOString() };
+    creditedCount++;
+    return {
+      ...g,
+      saved_amount: newSaved,
+      progress_pct: newPct,
+      monthly_needed: remaining > 0 ? Math.ceil(remaining / mLeft) : 0,
+      auto_credited: credited,
+      last_auto_date: now.toISOString()
+    };
+  });
+  if(creditedCount > 0){
+    DB.set('goals', updatedGoals);
+    updatedGoals.forEach(g => {
+      if(g.saved_amount >= g.target_amount) archiveCompletedGoal(g);
+    });
+    setTimeout(()=>{
+      showToast(`⚡ تم تحيين ${creditedCount} هدف تلقائياً — ${MONTHS[now.getMonth()]} ${now.getFullYear()}`, 'success');
+    }, 800);
+  }
+}
+
+async function undoAutoCredit(goalId){
+  const goals = DB.get('goals') || [];
+  const now = new Date();
+  const thisMonthKey = `${now.getFullYear()}_${now.getMonth()+1}`;
+  const updated = goals.map(g => {
+    if(g.id !== goalId) return g;
+    const credited = {...(g.auto_credited || {})};
+    const credit = credited[thisMonthKey];
+    if(!credit) return g;
+    delete credited[thisMonthKey];
+    const newSaved = Math.max(0, (g.saved_amount||0) - credit.amount);
+    return { ...g, saved_amount: newSaved, progress_pct: Math.round(newSaved/g.target_amount*100), auto_credited: credited };
+  });
+  DB.set('goals', updated);
+  goalsData = updated;
+  renderGoals(); updateSavingBanner();
+  showToast('↩ تم التراجع عن التحيين');
+}
+
 async function loadGoals(){
-  goalsData=await api('/api/goals')||[];
+  await checkAutoMonthlyCredit();
+  goalsData = DB.get('goals') || [];
   renderGoals();
   updateSavingBanner();
   renderCompletedGoals();
@@ -3263,9 +3614,22 @@ function renderGoals(){
         <div class="milestone-dot" style="${pct>=ms?'background:'+accentColor+';border-color:'+accentColor+';':''}">${pct>=ms?'✓':''}</div>
         <div class="milestone-lbl">${ms}%</div></div>`).join('')}</div>`;
     const urgency = etaMonths <= 3 && pct < 100 ? '🔥 قريب!' : etaMonths > 24 ? '💡 فكر في زيادة الادخار' : '';
+    // تحقق من التحيين التلقائي هذا الشهر
+    const now = new Date();
+    const thisMonthKey = `${now.getFullYear()}_${now.getMonth()+1}`;
+    const creditedThisMonth = g.auto_credited && g.auto_credited[thisMonthKey];
+    const creditAmount = creditedThisMonth ? g.auto_credited[thisMonthKey].amount : 0;
+    // أيام لنهاية الشهر
+    const lastDay = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+    const daysLeft = lastDay - now.getDate();
+    const autoStatusHTML = pct < 100 ? (creditedThisMonth
+      ? `<div class="auto-credit-badge credited">⚡ تم الشهر: +${creditAmount.toLocaleString()} درهم <button onclick="undoAutoCredit(${g.id})" style="background:none;border:none;color:inherit;cursor:pointer;font-size:10px;padding:0 4px;opacity:.7">↩</button></div>`
+      : `<div class="auto-credit-badge pending">⏳ ${daysLeft} يوم للتحيين التلقائي</div>`
+    ) : '';
     return`<div class="goal-card-v2" style="animation-delay:${idx*0.07}s">
       <div class="goal-card-banner" style="background:linear-gradient(90deg,${accentColor},transparent)"></div>
       ${pct>=100?'<div class="goal-complete-badge">🏆 مكتمل</div>':''}
+      ${autoStatusHTML}
       <div class="goal-card-top">
         <div style="display:flex;justify-content:space-between;align-items:flex-start">
           <span class="goal-emoji-big">${g.type||'⭐'}</span>
@@ -3687,12 +4051,16 @@ function renderDashboard(){
     ||'<tr><td colspan="5" class="loading">ما كاين عمليات</td></tr>';
   if(pieChart){try{pieChart.destroy();}catch(e){} pieChart=null;}
   if(labels.length){
-    const pieCanvas=document.getElementById('chartPie');
-    if(pieCanvas){
-      pieCanvas.width=pieCanvas.parentElement.offsetWidth||300;
-      pieCanvas.height=pieCanvas.parentElement.offsetHeight||220;
-      pieChart=new Chart(pieCanvas.getContext('2d'),{ type:'doughnut', data:{labels,datasets:[{data:vals,backgroundColor:colors}]}, options:{legendColor:document.body.classList.contains('light-mode')?'#1a2235':'#e8eaf0'} });
-    }
+    requestAnimationFrame(()=>{
+      const pieCanvas=document.getElementById('chartPie');
+      if(pieCanvas){
+        pieChart=new Chart(pieCanvas.getContext('2d'),{
+          type:'doughnut',
+          data:{labels,datasets:[{data:vals,backgroundColor:colors}]},
+          options:{legendColor:document.body.classList.contains('light-mode')?'#1a2235':'#e8eaf0'}
+        });
+      }
+    });
   }
 }
 
@@ -4014,27 +4382,63 @@ async function loadAnnual(){
   const data=await api(`/api/annual/${curYear}`)||[];
   let totI=0,totE=0,cumS=0;
   data.forEach(d=>{totI+=d.income;totE+=d.expenses;});
-  const totalGoalsSaved=goalsData.reduce((s,g)=>s+g.saved_amount,0);
+
   document.getElementById('annual-cards').innerHTML=`
     <div class="card green"><div class="card-label">الدخل السنوي</div><div class="card-value green">${fmt(totI)}</div></div>
     <div class="card red"><div class="card-label">المصاريف السنوية</div><div class="card-value red">${fmt(totE)}</div></div>
     <div class="card blue"><div class="card-label">الادخار التقريبي</div><div class="card-value blue">${fmt(Math.max(0,totI-totE))}</div></div>
     <div class="card gold"><div class="card-label">متوسط الادخار الشهري</div><div class="card-value gold">${fmt(monthlyAvgSaving)}</div><div class="card-sub">${realMonthsCount} شهر</div></div>`;
-  if(barChart)barChart.destroy();
-  barChart=new Chart(document.getElementById('chartBar').getContext('2d'),{
-    type:'bar',data:{labels:MONTHS,datasets:[
-      {label:'الدخل',data:data.map(d=>d.income),backgroundColor:'rgba(0,184,148,.7)',borderRadius:5},
-      {label:'المصاريف',data:data.map(d=>d.expenses),backgroundColor:'rgba(225,112,85,.7)',borderRadius:5}
-    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:document.body.classList.contains('light-mode')?'#1a2235':'#e8eaf0',font:{family:'Cairo'}}}},scales:{x:{ticks:{color:'#8892a4'},grid:{color:'#2a3555'}},y:{ticks:{color:'#8892a4'},grid:{color:'#2a3555'}}}}});
-  if(lineChart)lineChart.destroy();
-  lineChart=new Chart(document.getElementById('chartLine').getContext('2d'),{
-    type:'line',data:{labels:MONTHS,datasets:[{label:'الادخار التراكمي',data:data.map(d=>{cumS+=Math.max(0,d.remaining);return cumS;}),borderColor:'#00b894',backgroundColor:'rgba(0,184,148,.1)',fill:true,tension:.4,pointBackgroundColor:'#00b894'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:document.body.classList.contains('light-mode')?'#1a2235':'#e8eaf0',font:{family:'Cairo'}}}},scales:{x:{ticks:{color:'#8892a4'},grid:{color:'#2a3555'}},y:{ticks:{color:'#8892a4'},grid:{color:'#2a3555'}}}}});
+
+  const isLight = document.body.classList.contains('light-mode');
+  const legendColor = isLight ? '#1a2235' : '#e8eaf0';
+  const gridColor = isLight ? '#e0e6ef' : '#2a3555';
+  const tickColor = isLight ? '#4a5568' : '#8892a4';
+
+  // الـ chart كيشتغل LTR دائماً — نعكس البيانات باش يناير يكون على اليسار
+  const labels = [...MONTHS];
+  const incomes = data.map(d=>d.income);
+  const expenses = data.map(d=>d.expenses);
+  const savings = [];
+  data.forEach(d=>{ cumS+=Math.max(0,d.remaining); savings.push(cumS); });
+
+  const chartOpts = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ labels:{ color:legendColor, font:{family:'Cairo',size:11}, boxWidth:12 } } },
+    scales:{
+      x:{ reverse:false, ticks:{color:tickColor,font:{family:'Cairo',size:10}}, grid:{color:gridColor} },
+      y:{ ticks:{color:tickColor,font:{family:'Cairo'}}, grid:{color:gridColor} }
+    }
+  };
+
+  if(barChart) barChart.destroy();
+  barChart = new Chart(document.getElementById('chartBar').getContext('2d'),{
+    type:'bar',
+    data:{ labels, datasets:[
+      {label:'الدخل', data:incomes, backgroundColor:'rgba(0,184,148,.75)', borderColor:'#00b894', borderWidth:1, borderRadius:5},
+      {label:'المصاريف', data:expenses, backgroundColor:'rgba(225,112,85,.75)', borderColor:'#e17055', borderWidth:1, borderRadius:5}
+    ]},
+    options:chartOpts
+  });
+
+  if(lineChart) lineChart.destroy();
+  lineChart = new Chart(document.getElementById('chartLine').getContext('2d'),{
+    type:'line',
+    data:{ labels, datasets:[{
+      label:'الادخار التراكمي', data:savings,
+      borderColor:'#00b894', backgroundColor:'rgba(0,184,148,.15)',
+      fill:true, tension:.4, pointBackgroundColor:'#00b894',
+      pointRadius:4, pointHoverRadius:6, borderWidth:2
+    }]},
+    options:chartOpts
+  });
+
+  // جدول شهر بشهر — نفلتر الأشهر اللي فيها بيانات فقط
+  const activeMonths = data.filter(d=>d.income>0||d.expenses>0);
   document.getElementById('annual-tbl').innerHTML=`
     <thead><tr><th>الشهر</th><th>الدخل</th><th>المصاريف</th><th>الباقي</th><th>نسبة</th></tr></thead>
-    <tbody>${data.map(d=>{const p=d.income>0?Math.round((d.remaining/d.income)*100):0;
+    <tbody>${activeMonths.length ? activeMonths.map(d=>{const p=d.income>0?Math.round((d.remaining/d.income)*100):0;
       return`<tr><td style="font-weight:700">${MONTHS[d.month-1]}</td><td style="color:var(--green)">${fmt(d.income)}</td><td style="color:var(--red)">${fmt(d.expenses)}</td><td style="color:${d.remaining>=0?'var(--blue)':'var(--red)'};font-weight:700">${fmt(d.remaining)}</td><td><span class="badge ${p>=20?'badge-green':p>=10?'badge-gold':'badge-red'}">${p}%</span></td></tr>`;
-    }).join('')}</tbody>`;
+    }).join('') : '<tr><td colspan="5" class="loading">ما كاين بيانات لهذه السنة</td></tr>'}</tbody>`;
 }
 
 // ══════════════════════════════════════════
@@ -4070,28 +4474,40 @@ async function loadStats(){
     <div class="card red"><div class="card-label">مجموع المصاريف (6 أشهر)</div><div class="card-value red">${fmt(totalExp)}</div></div>
     <div class="card blue"><div class="card-label">متوسط الادخار الشهري</div><div class="card-value blue">${fmt(avgSaving)}</div></div>
     <div class="card gold"><div class="card-label">أفضل شهر ادخاراً</div><div class="card-value gold">${bestMonth.label||'—'}</div><div class="card-sub">${fmt(bestMonth.saving||0)}</div></div>`;
+  const isLight2 = document.body.classList.contains('light-mode');
+  const lc2 = isLight2 ? '#1a2235' : '#e8eaf0';
+  const gc2 = isLight2 ? '#e0e6ef' : '#2a3555';
+  const tc2 = isLight2 ? '#4a5568' : '#8892a4';
+  const statsOpts = { responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:lc2,font:{family:'Cairo',size:11},boxWidth:12}}},
+    scales:{x:{ticks:{color:tc2,font:{family:'Cairo',size:10}},grid:{color:gc2}},y:{ticks:{color:tc2,font:{family:'Cairo'}},grid:{color:gc2}}}
+  };
+
   if(trendChart)trendChart.destroy();
   trendChart=new Chart(document.getElementById('chartTrend').getContext('2d'),{
     type:'line',data:{labels:months.map(m=>m.label),datasets:[
-      {label:'المصاريف',data:months.map(m=>m.expenses),borderColor:'#e17055',backgroundColor:'rgba(225,112,85,.1)',fill:true,tension:.4,pointBackgroundColor:'#e17055'},
-      {label:'الدخل',data:months.map(m=>m.income),borderColor:'#00b894',backgroundColor:'rgba(0,184,148,.05)',fill:false,tension:.4}
-    ]},options:{responsive:true,maintainAspectRatio:false}});
+      {label:'المصاريف',data:months.map(m=>m.expenses),borderColor:'#e17055',backgroundColor:'rgba(225,112,85,.15)',fill:true,tension:.4,pointBackgroundColor:'#e17055',pointRadius:4,borderWidth:2},
+      {label:'الدخل',data:months.map(m=>m.income),borderColor:'#00b894',backgroundColor:'rgba(0,184,148,.05)',fill:false,tension:.4,pointBackgroundColor:'#00b894',pointRadius:4,borderWidth:2}
+    ]},options:statsOpts});
+
   if(savingChart)savingChart.destroy();
   savingChart=new Chart(document.getElementById('chartSaving').getContext('2d'),{
-    type:'bar',data:{labels:months.map(m=>m.label),datasets:[{label:'الادخار',data:months.map(m=>m.saving),backgroundColor:months.map(m=>m.saving>0?'rgba(0,184,148,.7)':'rgba(225,112,85,.7)'),borderRadius:6}]},
-    options:{responsive:true,maintainAspectRatio:false}});
+    type:'bar',data:{labels:months.map(m=>m.label),datasets:[{label:'الادخار',data:months.map(m=>m.saving),backgroundColor:months.map(m=>m.saving>0?'rgba(0,184,148,.75)':'rgba(225,112,85,.75)'),borderColor:months.map(m=>m.saving>0?'#00b894':'#e17055'),borderWidth:1,borderRadius:6}]},
+    options:statsOpts});
+
   if(topCatsChart)topCatsChart.destroy();
   if(sortedCats.length){
     topCatsChart=new Chart(document.getElementById('chartTopCats').getContext('2d'),{
-      type:'bar',data:{labels:sortedCats.map(([k])=>`${CAT_ICONS[k]||''} ${k}`),datasets:[{label:'المصاريف',data:sortedCats.map(([,v])=>v),backgroundColor:sortedCats.map(([k])=>CAT_COLORS[CATS.indexOf(k)]||'#aaa'),borderRadius:6}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+      type:'bar',data:{labels:sortedCats.map(([k])=>`${CAT_ICONS[k]||''} ${k}`),datasets:[{label:'المصاريف',data:sortedCats.map(([,v])=>v),backgroundColor:sortedCats.map(([k])=>CAT_COLORS[CATS.indexOf(k)]||'#aaa'),borderRadius:6,borderWidth:1}]},
+      options:{...statsOpts,plugins:{legend:{display:false}}}});
   }
+
   if(compareChart)compareChart.destroy();
   compareChart=new Chart(document.getElementById('chartCompare').getContext('2d'),{
     type:'bar',data:{labels:months.map(m=>m.label),datasets:[
-      {label:'الدخل',data:months.map(m=>m.income),backgroundColor:'rgba(0,184,148,.7)',borderRadius:4},
-      {label:'المصاريف',data:months.map(m=>m.expenses),backgroundColor:'rgba(225,112,85,.7)',borderRadius:4}
-    ]},options:{responsive:true,maintainAspectRatio:false}});
+      {label:'الدخل',data:months.map(m=>m.income),backgroundColor:'rgba(0,184,148,.75)',borderColor:'#00b894',borderWidth:1,borderRadius:4},
+      {label:'المصاريف',data:months.map(m=>m.expenses),backgroundColor:'rgba(225,112,85,.75)',borderColor:'#e17055',borderWidth:1,borderRadius:4}
+    ]},options:statsOpts});
   const analysis=[];
   const lastM=months[months.length-1], prevM=months[months.length-2];
   if(lastM&&prevM){
