@@ -10,7 +10,178 @@
 <meta name="apple-mobile-web-app-title" content="مالي+">
 <link rel="apple-touch-icon" href="./icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ══ Mini Charts Library — بدون CDN ══
+const MiniChart = {
+  // Doughnut Chart
+  doughnut(canvasId, labels, vals, colors, legendColor){
+    const canvas = document.getElementById(canvasId);
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.offsetWidth || 220;
+    const H = canvas.offsetHeight || 220;
+    canvas.width = W; canvas.height = H;
+    ctx.clearRect(0,0,W,H);
+    const total = vals.reduce((s,v)=>s+v,0);
+    if(!total) return;
+    const cx = W*0.42, cy = H/2, r = Math.min(cx,cy)*0.78, ir = r*0.55;
+    let angle = -Math.PI/2;
+    vals.forEach((v,i)=>{
+      const sweep = (v/total)*Math.PI*2;
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.arc(cx,cy,r,angle,angle+sweep);
+      ctx.closePath();
+      ctx.fillStyle = colors[i]||'#aaa';
+      ctx.fill();
+      ctx.strokeStyle = '#1a2235';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      angle += sweep;
+    });
+    // hole
+    ctx.beginPath();
+    ctx.arc(cx,cy,ir,0,Math.PI*2);
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg2')||'#141c2e';
+    ctx.fill();
+    // legend
+    const lx = W*0.72, startY = H/2 - (labels.length*14)/2;
+    labels.forEach((lbl,i)=>{
+      const ly = startY + i*16;
+      ctx.fillStyle = colors[i]||'#aaa';
+      ctx.beginPath(); ctx.arc(lx,ly,5,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = legendColor||'#e8eaf0';
+      ctx.font = '10px Cairo,sans-serif';
+      ctx.textAlign = 'left';
+      const shortLbl = lbl.length>8 ? lbl.slice(0,7)+'…' : lbl;
+      ctx.fillText(shortLbl, lx+10, ly+4);
+    });
+  },
+  // Bar Chart
+  bar(canvasId, labels, datasets, options={}){
+    const canvas = document.getElementById(canvasId);
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.offsetWidth||400, H = canvas.offsetHeight||220;
+    canvas.width=W; canvas.height=H;
+    ctx.clearRect(0,0,W,H);
+    const pad = {top:20,right:10,bottom:30,left:50};
+    const cW = W-pad.left-pad.right, cH = H-pad.top-pad.bottom;
+    const allVals = datasets.flatMap(d=>d.data);
+    const maxV = Math.max(...allVals,1);
+    const n = labels.length;
+    const grpW = cW/n;
+    const barW = grpW/(datasets.length+1)*0.8;
+    // grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    [0.25,0.5,0.75,1].forEach(t=>{
+      const y = pad.top + cH*(1-t);
+      ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(W-pad.right,y); ctx.stroke();
+    });
+    // bars
+    datasets.forEach((ds,di)=>{
+      ds.data.forEach((v,i)=>{
+        const bH = Math.max((v/maxV)*cH,2);
+        const x = pad.left + i*grpW + (di+0.5)*barW + grpW*0.1;
+        const y = pad.top + cH - bH;
+        ctx.fillStyle = ds.color||'#00b894';
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(x,y,barW,bH,3) : ctx.rect(x,y,barW,bH);
+        ctx.fill();
+      });
+    });
+    // labels
+    ctx.fillStyle = options.labelColor||'#8899aa';
+    ctx.font = '9px Cairo,sans-serif';
+    ctx.textAlign = 'center';
+    labels.forEach((lbl,i)=>{
+      const x = pad.left + i*grpW + grpW/2;
+      ctx.fillText(lbl.slice(0,4), x, H-8);
+    });
+  },
+  // Line Chart
+  line(canvasId, labels, datasets, options={}){
+    const canvas = document.getElementById(canvasId);
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.offsetWidth||400, H = canvas.offsetHeight||220;
+    canvas.width=W; canvas.height=H;
+    ctx.clearRect(0,0,W,H);
+    const pad = {top:20,right:10,bottom:30,left:50};
+    const cW = W-pad.left-pad.right, cH = H-pad.top-pad.bottom;
+    const allVals = datasets.flatMap(d=>d.data);
+    const maxV = Math.max(...allVals,1);
+    const n = labels.length;
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1;
+    [0.25,0.5,0.75,1].forEach(t=>{
+      const y=pad.top+cH*(1-t);
+      ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(W-pad.right,y); ctx.stroke();
+    });
+    datasets.forEach(ds=>{
+      const pts = ds.data.map((v,i)=>({
+        x: pad.left + (i/(n-1||1))*cW,
+        y: pad.top + cH - (v/maxV)*cH
+      }));
+      // fill
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pad.top+cH);
+      pts.forEach(p=>ctx.lineTo(p.x,p.y));
+      ctx.lineTo(pts[pts.length-1].x, pad.top+cH);
+      ctx.closePath();
+      ctx.fillStyle = (ds.color||'#00b894')+'22';
+      ctx.fill();
+      // line
+      ctx.beginPath();
+      pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+      ctx.strokeStyle = ds.color||'#00b894';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // dots
+      pts.forEach(p=>{
+        ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2);
+        ctx.fillStyle=ds.color||'#00b894'; ctx.fill();
+      });
+    });
+    // x labels
+    ctx.fillStyle=options.labelColor||'#8899aa';
+    ctx.font='9px Cairo,sans-serif'; ctx.textAlign='center';
+    labels.forEach((lbl,i)=>{
+      const x=pad.left+(i/(n-1||1))*cW;
+      ctx.fillText(lbl.slice(0,4),x,H-8);
+    });
+  }
+};
+// Chart compatibility shim
+function Chart(ctx, config){
+  this._ctx = ctx; this._config = config;
+  this._render();
+}
+Chart.prototype._render = function(){
+  const c = this._config;
+  const canvas = this._ctx.canvas;
+  const isLight = document.body.classList.contains('light-mode');
+  const lc = isLight?'#1a2235':'#e8eaf0';
+  if(!canvas || !c.data) return;
+  if(c.type==='doughnut'||c.type==='pie'){
+    const ds = c.data.datasets[0];
+    MiniChart.doughnut(canvas.id, c.data.labels, ds.data, ds.backgroundColor, lc);
+  } else if(c.type==='bar'){
+    const ds = c.data.datasets.map((d,i)=>({data:d.data,color:Array.isArray(d.backgroundColor)?d.backgroundColor[0]:d.backgroundColor||['#00b894','#4a90d9'][i]}));
+    MiniChart.bar(canvas.id, c.data.labels, ds, {labelColor:lc});
+  } else if(c.type==='line'){
+    const ds = c.data.datasets.map((d,i)=>({data:d.data,color:d.borderColor||['#00b894','#4a90d9','#fdcb6e'][i]}));
+    MiniChart.line(canvas.id, c.data.labels, ds, {labelColor:lc});
+  }
+};
+Chart.prototype.destroy = function(){ 
+  try{
+    const canvas = this._ctx?.canvas;
+    if(canvas){ const ctx2=canvas.getContext('2d'); if(ctx2) ctx2.clearRect(0,0,canvas.width,canvas.height); }
+  }catch(e){}
+};
+</script>
 <style>
 :root{
   --green:#00b894;--green-d:#00896e;--red:#e17055;--red-d:#c0392b;
@@ -5034,14 +5205,7 @@ function renderDashboard(){
   document.getElementById('d-pct').textContent=pct+'%';
   document.getElementById('d-bonus-sub').textContent=bonus>0?`+ بريم ${fmt(bonus)}`:'بدون بريم';
 
-  // Trend
-  const trend=document.getElementById('d-exp-trend');
-  if(prevMonthExp>0){
-    const diff=totalExp-prevMonthExp;
-    const p=Math.abs(Math.round((diff/prevMonthExp)*100));
-    trend.textContent=diff>0?`▲ +${p}% عن الشهر الماضي`:`▼ -${p}% عن الشهر الماضي`;
-    trend.className='card-trend '+(diff>0?'down':'up');
-  }
+  // Trend — handled by renderCardCompare()
   renderIncomeSummary();
   updateHealthScore(inc,totalExp,rem);
   generateAiTips(inc,totalExp,rem);
@@ -5069,12 +5233,16 @@ function renderDashboard(){
     banner.innerHTML=`⚠️ <b>تنبيه!</b> الباقي (${fmt(rem)}) أقل من ${fmt(settingsData.warn_threshold)}`;
   }
 
-  // Pie Chart
+  // Pie Chart + Breakdown — defer to ensure canvas is rendered
+  setTimeout(()=>{
+  // البيانات دايماً محفوظة بالعربية — نستخدم AR_CATS الثابتة
+  const AR_CATS=['كراء','ماء وكهرباء','واي فاي','ترنسبور','تعليم العائلة','ماكلة','ترفيه','صحة','ملابس','ادخار','أخرى'];
+  const AR_ICONS={كراء:'🏠','ماء وكهرباء':'💡','واي فاي':'📶',ترنسبور:'🚌','تعليم العائلة':'📚',ماكلة:'🛒',ترفيه:'🎬',صحة:'🏥',ملابس:'👔',ادخار:'💎',أخرى:'📌'};
   const catMap={};
   expensesData.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
   const labels=Object.keys(catMap), vals=labels.map(l=>catMap[l]);
-  const colors=labels.map(l=>CAT_COLORS[CATS.indexOf(l)]||'#aaa');
-  if(pieChart)pieChart.destroy();
+  const colors=labels.map(l=>CAT_COLORS[AR_CATS.indexOf(l)]||'#aaa');
+  if(pieChart){ try{pieChart.destroy();}catch(e){} pieChart=null; }
   if(labels.length){
     const isLightNow = document.body.classList.contains('light-mode');
     const legendColor = isLightNow ? '#1a2235' : '#e8eaf0';
@@ -5093,8 +5261,9 @@ function renderDashboard(){
     const p=totalExp>0?Math.round((catMap[l]/totalExp)*100):0;
     const lim=limits[l]||0;
     const over=lim>0&&catMap[l]>lim;
+    const icon=AR_ICONS[l]||CAT_ICONS[l]||'📌';
     return`<div class="prog-row">
-      <div class="prog-label"><span>${CAT_ICONS[l]||''} ${l} ${over?'<span class="badge badge-red">تجاوز</span>':''}</span>
+      <div class="prog-label"><span>${icon} ${l} ${over?'<span class="badge badge-red">تجاوز</span>':''}</span>
       <span style="color:var(--text2)">${fmt(catMap[l])}</span></div>
       <div class="prog-bar"><div class="prog-fill" style="width:${p}%;background:${colors[i]}"></div></div>
     </div>`}).join(''):'<p class="loading">ما كاين مصاريف</p>';
@@ -5113,6 +5282,7 @@ function renderDashboard(){
       </td>
     </tr>`).join('')
     ||'<tr><td colspan="5" class="loading">ما كاين عمليات</td></tr>';
+  }, 50); // end setTimeout for chart
 }
 
 // ══════════════════════════════════════════
