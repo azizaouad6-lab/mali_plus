@@ -4399,6 +4399,7 @@ async function loadAll(){
   ]);
   prevMonthExp=((prevExps)||[]).reduce((s,e)=>s+e.amount,0);
   try{await refreshAnnualAvg();}catch(e){}
+  console.log('loadAll done, expenses:', expensesData.length);
   renderDashboard();
   updateGoalPreview();
   buildSmartGreeting();
@@ -4513,6 +4514,7 @@ function clearExpSearch(){
 }
 async function loadExpenses(){
   expensesData=await api(`/api/expenses/${curMonth}/${curYear}`)||[];
+  console.log('loadExpenses done:', expensesData.length, 'items for', curMonth, curYear);
   renderExpenses();
 }
 
@@ -5189,6 +5191,7 @@ function updateHealthScore(inc, totalExp, rem){
 //  DASHBOARD RENDER
 // ══════════════════════════════════════════
 function renderDashboard(){
+  console.log('renderDashboard called, expenses:', expensesData.length, 'income:', incomeData.total);
   const inc=incomeData.total||0;
   const salary=incomeData.salary||0;
   const bonus=(incomeData.bonus2_active?incomeData.bonus2:0)+(incomeData.bonus6_active?incomeData.bonus6:0)+(incomeData.intl_active?incomeData.bonus_intl:0);
@@ -5233,35 +5236,22 @@ function renderDashboard(){
     banner.innerHTML=`⚠️ <b>تنبيه!</b> الباقي (${fmt(rem)}) أقل من ${fmt(settingsData.warn_threshold)}`;
   }
 
-  // Pie Chart + Breakdown — defer to ensure canvas is rendered
-  setTimeout(()=>{
-  // البيانات دايماً محفوظة بالعربية — نستخدم AR_CATS الثابتة
+  // ── Breakdown + Recent ops ──
   const AR_CATS=['كراء','ماء وكهرباء','واي فاي','ترنسبور','تعليم العائلة','ماكلة','ترفيه','صحة','ملابس','ادخار','أخرى'];
   const AR_ICONS={كراء:'🏠','ماء وكهرباء':'💡','واي فاي':'📶',ترنسبور:'🚌','تعليم العائلة':'📚',ماكلة:'🛒',ترفيه:'🎬',صحة:'🏥',ملابس:'👔',ادخار:'💎',أخرى:'📌'};
   const catMap={};
   expensesData.forEach(e=>{catMap[e.category]=(catMap[e.category]||0)+e.amount;});
   const labels=Object.keys(catMap), vals=labels.map(l=>catMap[l]);
   const colors=labels.map(l=>CAT_COLORS[AR_CATS.indexOf(l)]||'#aaa');
-  if(pieChart){ try{pieChart.destroy();}catch(e){} pieChart=null; }
-  if(labels.length){
-    const isLightNow = document.body.classList.contains('light-mode');
-    const legendColor = isLightNow ? '#1a2235' : '#e8eaf0';
-    const borderCol   = isLightNow ? '#f0f4f8' : '#1a2235';
-    pieChart=new Chart(document.getElementById('chartPie').getContext('2d'),{
-      type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:2,borderColor:borderCol}]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'right',labels:{color:legendColor,font:{family:'Cairo',size:10},padding:8}},
-          tooltip:{callbacks:{label:c=>` ${c.label}: ${fmt(c.raw)}`}}}}});
-  }
 
   // Breakdown
   const limits=settingsData.budget_limits||{};
   const bd=document.getElementById('exp-breakdown');
-  bd.innerHTML=labels.length?labels.map((l,i)=>{
+  if(bd) bd.innerHTML=labels.length?labels.map((l,i)=>{
     const p=totalExp>0?Math.round((catMap[l]/totalExp)*100):0;
     const lim=limits[l]||0;
     const over=lim>0&&catMap[l]>lim;
-    const icon=AR_ICONS[l]||CAT_ICONS[l]||'📌';
+    const icon=AR_ICONS[l]||'📌';
     return`<div class="prog-row">
       <div class="prog-label"><span>${icon} ${l} ${over?'<span class="badge badge-red">تجاوز</span>':''}</span>
       <span style="color:var(--text2)">${fmt(catMap[l])}</span></div>
@@ -5269,10 +5259,11 @@ function renderDashboard(){
     </div>`}).join(''):'<p class="loading">ما كاين مصاريف</p>';
 
   // Recent ops
-  document.getElementById('recent-ops').innerHTML=
+  const recentEl=document.getElementById('recent-ops');
+  if(recentEl) recentEl.innerHTML=
     [...expensesData].sort((a,b)=>b.id-a.id).slice(0,8).map(e=>
     `<tr>
-      <td><span class="tag">${CAT_ICONS[e.category]||''} ${e.category}</span></td>
+      <td><span class="tag">${AR_ICONS[e.category]||''} ${e.category}</span></td>
       <td>${e.description||'-'}</td>
       <td style="color:var(--red);font-weight:700">${fmt(e.amount)}</td>
       <td style="color:var(--text2);font-size:11px">${e.date}</td>
@@ -5282,7 +5273,23 @@ function renderDashboard(){
       </td>
     </tr>`).join('')
     ||'<tr><td colspan="5" class="loading">ما كاين عمليات</td></tr>';
-  }, 50); // end setTimeout for chart
+
+  // ── Pie Chart ──
+  if(pieChart){try{pieChart.destroy();}catch(e){} pieChart=null;}
+  if(labels.length){
+    const isLightNow=document.body.classList.contains('light-mode');
+    const legendColor=isLightNow?'#1a2235':'#e8eaf0';
+    const pieCanvas=document.getElementById('chartPie');
+    if(pieCanvas){
+      pieCanvas.width=pieCanvas.parentElement.offsetWidth||300;
+      pieCanvas.height=pieCanvas.parentElement.offsetHeight||220;
+      pieChart=new Chart(pieCanvas.getContext('2d'),{
+        type:'doughnut',
+        data:{labels,datasets:[{data:vals,backgroundColor:colors}]},
+        options:{legendColor}
+      });
+    }
+  }
 }
 
 // ══════════════════════════════════════════
